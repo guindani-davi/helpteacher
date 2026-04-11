@@ -1,5 +1,1 @@
-export enum LocaleEnum {
-  PT_BR = 'pt-BR',
-  EN = 'en',
-  ES = 'es',
-}
+export { LocaleEnum } from '@help-teacher/shared';

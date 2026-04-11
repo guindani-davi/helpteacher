@@ -1,4 +1,1 @@
-export enum BillingCycleEnum {
-  MONTHLY = 'monthly',
-  YEARLY = 'yearly',
-}
+export { BillingCycleEnum } from '@help-teacher/shared';

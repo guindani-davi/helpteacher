@@ -9,6 +9,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-      - run: npm install
-      - run: npm run format:check
+          node-version-file: 'backend/.nvmrc'
+      - run: cd backend && npm install
+      - run: cd backend && npm run format:check

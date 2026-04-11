@@ -1,5 +1,1 @@
-export enum DependencyStatusEnum {
-  UP = 'up',
-  DOWN = 'down',
-  CONFIGURED = 'configured',
-}
+export { DependencyStatusEnum } from '@help-teacher/shared';

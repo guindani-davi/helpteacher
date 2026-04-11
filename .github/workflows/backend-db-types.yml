@@ -11,9 +11,10 @@ jobs:
         with:
           version: latest
       - name: Start Supabase
-        run: supabase start
+        run: cd backend && supabase start
       - name: Generate Types and Verify No Changes
         run: |
+          cd backend && 
           supabase gen types typescript --local > src/database/types.ts
           if ! git diff --ignore-space-at-eol --exit-code --quiet src/database/types.ts; then
             echo "Detected uncommitted changes after build. See status below:"

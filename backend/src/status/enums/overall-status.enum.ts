@@ -1,5 +1,1 @@
-export enum OverallStatusEnum {
-  HEALTHY = 'healthy',
-  DEGRADED = 'degraded',
-  UNHEALTHY = 'unhealthy',
-}
+export { OverallStatusEnum } from '@help-teacher/shared';

@@ -1,0 +1,9 @@
+{
+  "name": "help-teacher",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend",
+    "packages/*"
+  ]
+}
