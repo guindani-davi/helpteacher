@@ -1,3 +1,2 @@
-- pentest
 - documentação
-- pensar em como compartilhar coisas em comum entre front e back como estilos (pdf e email) (modelagem do domínio)
+- front
