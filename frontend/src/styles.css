@@ -1,3 +1,77 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: helpteacher --default;
+}
 
-@import 'tailwindcss';
+/*
+ * Help Teacher — Custom daisyUI Theme
+ *
+ * Colors derived from @help-teacher/shared design tokens.
+ * Uses the 60-30-10 rule:
+ *   60% base (white/surface) — base-100, base-200, base-300
+ *   30% primary (blue)       — primary, secondary (primaryDark)
+ *   10% accent (amber)       — accent
+ */
+@plugin "daisyui/theme" {
+  name: "helpteacher";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+
+  /* Base (60%) — backgrounds & surfaces */
+  --color-base-100: oklch(100% 0 0);          /* #ffffff — background */
+  --color-base-200: oklch(98.46% 0.0018 249); /* #f9fafb — surface */
+  --color-base-300: oklch(92.76% 0.0059 265); /* #e5e7eb — borderLight */
+  --color-base-content: oklch(21.78% 0 0);    /* #1a1a1a — text */
+
+  /* Primary (30%) — brand blue */
+  --color-primary: oklch(54.61% 0.2153 263);         /* #2563eb */
+  --color-primary-content: oklch(97.05% 0.0143 255); /* #eff6ff — primaryLight */
+
+  /* Secondary — darker blue for headers, focused states */
+  --color-secondary: oklch(42.44% 0.1809 266);  /* #1e40af — primaryDark */
+  --color-secondary-content: oklch(100% 0 0);    /* #ffffff */
+
+  /* Accent (10%) — amber for CTAs */
+  --color-accent: oklch(66.59% 0.1574 58);          /* #d97706 */
+  --color-accent-content: oklch(98.69% 0.0213 95);  /* #fffbeb — accentLight */
+
+  /* Neutral — for non-saturated UI chrome */
+  --color-neutral: oklch(37.17% 0.0392 257);   /* #334155 — neutral700 */
+  --color-neutral-content: oklch(98.42% 0.0035 248); /* #f8fafc */
+
+  /* Semantic states */
+  --color-info: oklch(54.61% 0.2153 263);       /* same as primary */
+  --color-info-content: oklch(100% 0 0);
+  --color-success: oklch(69.59% 0.1491 163);    /* #10b981 */
+  --color-success-content: oklch(100% 0 0);
+  --color-warning: oklch(76.86% 0.1646 70);     /* #f59e0b */
+  --color-warning-content: oklch(21.78% 0 0);
+  --color-error: oklch(63.69% 0.2078 25);       /* #ef4444 */
+  --color-error-content: oklch(100% 0 0);
+
+  /* Shape */
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.75rem;
+
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+/* ============================================================
+   Custom utility tokens (non-daisyUI)
+   Expose design-token values for one-off Tailwind usage.
+   ============================================================ */
+@theme {
+  --color-text-secondary: oklch(55.1% 0.0234 264);
+  --color-border-default: oklch(87.17% 0.0094 258);
+  --color-primary-dark: oklch(42.44% 0.1809 266);
+  --color-accent-dark: oklch(55.53% 0.1455 49);
+  --color-accent-light: oklch(98.69% 0.0213 95);
+  --color-primary-light: oklch(97.05% 0.0143 255);
+}
