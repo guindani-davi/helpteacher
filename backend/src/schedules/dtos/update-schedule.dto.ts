@@ -1,3 +1,4 @@
+import type { UpdateScheduleBody } from '@help-teacher/shared';
 import {
   IsEnum,
   IsNotEmpty,
@@ -19,7 +20,7 @@ export class UpdateScheduleParamsDTO {
   public scheduleId: string;
 }
 
-export class UpdateScheduleBodyDTO {
+export class UpdateScheduleBodyDTO implements UpdateScheduleBody {
   @IsEnum(DayOfWeekEnum)
   @IsOptional()
   public dayOfWeek?: DayOfWeekEnum;

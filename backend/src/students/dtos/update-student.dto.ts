@@ -1,3 +1,4 @@
+import type { UpdateStudentBody } from '@help-teacher/shared';
 import {
   IsNotEmpty,
   IsOptional,
@@ -16,7 +17,7 @@ export class UpdateStudentParamsDTO {
   public studentId: string;
 }
 
-export class UpdateStudentBodyDTO {
+export class UpdateStudentBodyDTO implements UpdateStudentBody {
   @IsString()
   @IsNotEmpty()
   @IsOptional()

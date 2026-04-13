@@ -1,3 +1,4 @@
+import type { UpdateGradeLevelBody } from '@help-teacher/shared';
 import {
   IsNotEmpty,
   IsOptional,
@@ -19,7 +20,7 @@ export class UpdateGradeLevelParamsDTO {
   public gradeLevelId: string;
 }
 
-export class UpdateGradeLevelBodyDTO {
+export class UpdateGradeLevelBodyDTO implements UpdateGradeLevelBody {
   @IsString()
   @IsNotEmpty()
   @IsOptional()

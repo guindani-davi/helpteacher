@@ -1,3 +1,4 @@
+import type { CreateScheduleBody } from '@help-teacher/shared';
 import {
   IsEnum,
   IsNotEmpty,
@@ -14,7 +15,7 @@ export class CreateScheduleParamsDTO {
   public slug: string;
 }
 
-export class CreateScheduleBodyDTO {
+export class CreateScheduleBodyDTO implements CreateScheduleBody {
   @IsEnum(DayOfWeekEnum)
   public dayOfWeek: DayOfWeekEnum;
 

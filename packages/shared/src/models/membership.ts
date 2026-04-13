@@ -1,4 +1,5 @@
 import type { RolesEnum } from "../enums/roles.enum";
+import type { Organization } from "./organization";
 
 export interface Membership {
   id: string;
@@ -10,4 +11,9 @@ export interface Membership {
   updatedBy: string | null;
   createdAt: string;
   updatedAt: string | null;
+}
+
+/** Membership with the joined organization summary — returned by `GET /memberships/mine`. */
+export interface MembershipWithOrg extends Membership {
+  organization: Pick<Organization, "id" | "name" | "slug" | "logoUrl">;
 }

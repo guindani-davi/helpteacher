@@ -12,6 +12,7 @@ import {
   UpdateMemberBodyDTO,
   UpdateMemberParamsDTO,
 } from '../dtos/update-member.dto';
+import { MembershipWithOrg } from '../models/membership-with-org.model';
 import { Membership } from '../models/membership.model';
 import { IMembershipsRepository } from '../repositories/i.memberships.repository';
 
@@ -83,4 +84,7 @@ export abstract class IMembershipsService {
     organizationId: string,
     role: RolesEnum,
   ): Promise<boolean>;
+  public abstract getUserMemberships(
+    user: JwtPayload,
+  ): Promise<MembershipWithOrg[]>;
 }

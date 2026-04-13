@@ -1,3 +1,4 @@
+import type { CreateTopicBody } from '@help-teacher/shared';
 import { IsNotEmpty, IsString, IsUUID, MaxLength } from 'class-validator';
 
 export class CreateTopicParamsDTO {
@@ -7,7 +8,7 @@ export class CreateTopicParamsDTO {
   public slug: string;
 }
 
-export class CreateTopicBodyDTO {
+export class CreateTopicBodyDTO implements CreateTopicBody {
   @IsString()
   @IsNotEmpty()
   @MaxLength(255)

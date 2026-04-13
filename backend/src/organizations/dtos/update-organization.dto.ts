@@ -1,3 +1,4 @@
+import type { UpdateOrganizationBody } from '@help-teacher/shared';
 import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class UpdateOrganizationBySlugParamsDTO {
@@ -7,7 +8,7 @@ export class UpdateOrganizationBySlugParamsDTO {
   public slug: string;
 }
 
-export class UpdateOrganizationBySlugBodyDTO {
+export class UpdateOrganizationBySlugBodyDTO implements UpdateOrganizationBody {
   @IsString()
   @IsNotEmpty()
   @IsOptional()

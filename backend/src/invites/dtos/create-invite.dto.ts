@@ -1,3 +1,4 @@
+import type { CreateInviteBody } from '@help-teacher/shared';
 import {
   ArrayNotEmpty,
   IsArray,
@@ -16,7 +17,7 @@ export class CreateInviteParamsDTO {
   public slug: string;
 }
 
-export class CreateInviteBodyDTO {
+export class CreateInviteBodyDTO implements CreateInviteBody {
   @IsEmail()
   @IsNotEmpty()
   @MaxLength(320)

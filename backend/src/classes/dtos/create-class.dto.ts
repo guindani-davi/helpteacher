@@ -1,3 +1,4 @@
+import type { CreateClassBody } from '@help-teacher/shared';
 import {
   IsDateString,
   IsNotEmpty,
@@ -13,7 +14,7 @@ export class CreateClassParamsDTO {
   public slug: string;
 }
 
-export class CreateClassBodyDTO {
+export class CreateClassBodyDTO implements CreateClassBody {
   @IsUUID()
   public scheduleId: string;
 

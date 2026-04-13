@@ -1,2 +1,2 @@
-- env vars: vercel e dotenv/configservcie
+- linguas
 - documentação

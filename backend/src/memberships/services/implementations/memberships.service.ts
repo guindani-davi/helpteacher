@@ -13,6 +13,7 @@ import {
   UpdateMemberParamsDTO,
 } from '../../dtos/update-member.dto';
 import { ForbiddenOperationException } from '../../exceptions/forbidden-operation.exception';
+import { MembershipWithOrg } from '../../models/membership-with-org.model';
 import { Membership } from '../../models/membership.model';
 import { IMembershipsRepository } from '../../repositories/i.memberships.repository';
 import { IMembershipsService } from '../i.memberships.service';
@@ -222,6 +223,12 @@ export class MembershipsService extends IMembershipsService {
     role: RolesEnum,
   ): Promise<boolean> {
     return this.membershipsRepository.hasRole(userId, organizationId, role);
+  }
+
+  public async getUserMemberships(
+    user: JwtPayload,
+  ): Promise<MembershipWithOrg[]> {
+    return this.membershipsRepository.getUserMemberships(user.sub);
   }
 
   private validateOwnerRoleIntegrity(

@@ -1,3 +1,4 @@
+import type { CreateGradeLevelBody } from '@help-teacher/shared';
 import { IsNotEmpty, IsString, IsUUID, MaxLength } from 'class-validator';
 
 export class CreateGradeLevelParamsDTO {
@@ -10,7 +11,7 @@ export class CreateGradeLevelParamsDTO {
   public educationLevelId: string;
 }
 
-export class CreateGradeLevelBodyDTO {
+export class CreateGradeLevelBodyDTO implements CreateGradeLevelBody {
   @IsString()
   @IsNotEmpty()
   @MaxLength(255)

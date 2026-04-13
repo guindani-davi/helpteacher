@@ -1,3 +1,4 @@
+import type { CreateStudentBody } from '@help-teacher/shared';
 import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
 export class CreateStudentParamsDTO {
@@ -7,7 +8,7 @@ export class CreateStudentParamsDTO {
   public slug: string;
 }
 
-export class CreateStudentBodyDTO {
+export class CreateStudentBodyDTO implements CreateStudentBody {
   @IsString()
   @IsNotEmpty()
   @MaxLength(255)

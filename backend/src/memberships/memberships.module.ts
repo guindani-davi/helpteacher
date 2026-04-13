@@ -5,6 +5,7 @@ import { HelpersModule } from '../helpers/helpers.module';
 import { OrganizationsModule } from '../organizations/organizations.module';
 import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { MembershipsController } from './controllers/implementations/memberships.controller';
+import { UserMembershipsController } from './controllers/implementations/user-memberships.controller';
 import { MembershipGuard } from './guards/membership.guard';
 import { IMembershipsRepository } from './repositories/i.memberships.repository';
 import { MembershipsRepository } from './repositories/implementations/memberships.repository';
@@ -12,7 +13,7 @@ import { IMembershipsService } from './services/i.memberships.service';
 import { MembershipsService } from './services/implementations/memberships.service';
 
 @Module({
-  controllers: [MembershipsController],
+  controllers: [UserMembershipsController, MembershipsController],
   imports: [
     DatabaseModule,
     HelpersModule,

@@ -1,3 +1,4 @@
+import type { UpdateRegistrationBody } from '@help-teacher/shared';
 import {
   IsDateString,
   IsNotEmpty,
@@ -17,7 +18,7 @@ export class UpdateRegistrationParamsDTO {
   public registrationId: string;
 }
 
-export class UpdateRegistrationBodyDTO {
+export class UpdateRegistrationBodyDTO implements UpdateRegistrationBody {
   @IsUUID()
   @IsOptional()
   public studentId?: string;

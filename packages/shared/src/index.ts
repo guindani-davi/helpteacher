@@ -29,6 +29,7 @@ export type {
   GradeLevel,
   Invite,
   Membership,
+  MembershipWithOrg,
   Organization,
   PaginatedResponse,
   Registration,

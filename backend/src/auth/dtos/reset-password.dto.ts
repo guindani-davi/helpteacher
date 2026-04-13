@@ -1,6 +1,7 @@
+import type { ResetPasswordBody } from '@help-teacher/shared';
 import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
 
-export class ResetPasswordDTO {
+export class ResetPasswordDTO implements ResetPasswordBody {
   @IsString()
   @IsNotEmpty()
   @MaxLength(2048)

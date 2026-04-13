@@ -1,3 +1,4 @@
+import type { UpdateClassBody } from '@help-teacher/shared';
 import {
   IsDateString,
   IsNotEmpty,
@@ -17,7 +18,7 @@ export class UpdateClassParamsDTO {
   public classId: string;
 }
 
-export class UpdateClassBodyDTO {
+export class UpdateClassBodyDTO implements UpdateClassBody {
   @IsUUID()
   @IsOptional()
   public scheduleId?: string;

@@ -10,6 +10,7 @@ import {
   UpdateMemberBodyDTO,
   UpdateMemberParamsDTO,
 } from '../dtos/update-member.dto';
+import { MembershipWithOrg } from '../models/membership-with-org.model';
 import { Membership } from '../models/membership.model';
 
 export abstract class IMembershipsRepository {
@@ -78,4 +79,7 @@ export abstract class IMembershipsRepository {
     organizationId: string,
     role: RolesEnum,
   ): Promise<boolean>;
+  public abstract getUserMemberships(
+    userId: string,
+  ): Promise<MembershipWithOrg[]>;
 }

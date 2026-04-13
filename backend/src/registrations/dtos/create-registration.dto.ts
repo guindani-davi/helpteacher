@@ -1,3 +1,4 @@
+import type { CreateRegistrationBody } from '@help-teacher/shared';
 import {
   IsDateString,
   IsNotEmpty,
@@ -14,7 +15,7 @@ export class CreateRegistrationParamsDTO {
   public slug: string;
 }
 
-export class CreateRegistrationBodyDTO {
+export class CreateRegistrationBodyDTO implements CreateRegistrationBody {
   @IsUUID()
   public studentId: string;
 

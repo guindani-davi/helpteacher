@@ -1,3 +1,4 @@
+import type { LinkStudentUserBody } from '@help-teacher/shared';
 import { IsNotEmpty, IsString, IsUUID, MaxLength } from 'class-validator';
 
 export class LinkStudentUserParamsDTO {
@@ -10,7 +11,7 @@ export class LinkStudentUserParamsDTO {
   public studentId: string;
 }
 
-export class LinkStudentUserBodyDTO {
+export class LinkStudentUserBodyDTO implements LinkStudentUserBody {
   @IsUUID()
   public userId: string;
 }

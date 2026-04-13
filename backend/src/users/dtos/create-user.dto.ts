@@ -1,3 +1,4 @@
+import type { CreateUserBody } from '@help-teacher/shared';
 import {
   IsEmail,
   IsEnum,
@@ -9,7 +10,7 @@ import {
 } from 'class-validator';
 import { LocaleEnum } from '../../i18n/enums/locale.enum';
 
-export class CreateUserBodyDTO {
+export class CreateUserBodyDTO implements CreateUserBody {
   @IsEmail()
   @IsNotEmpty()
   @MaxLength(320)

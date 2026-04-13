@@ -1,6 +1,7 @@
+import type { LoginBody } from '@help-teacher/shared';
 import { IsEmail, IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
-export class LoginDTO {
+export class LoginDTO implements LoginBody {
   @IsEmail()
   @IsNotEmpty()
   @MaxLength(320)

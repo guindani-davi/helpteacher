@@ -14,6 +14,10 @@ import {
   UpdateMemberBodyDTO,
   UpdateMemberParamsDTO,
 } from '../../dtos/update-member.dto';
+import {
+  MembershipWithOrg,
+  OrganizationSummary,
+} from '../../models/membership-with-org.model';
 import { Membership } from '../../models/membership.model';
 import { IMembershipsRepository } from '../i.memberships.repository';
 
@@ -325,6 +329,46 @@ export class MembershipsRepository extends IMembershipsRepository {
 
     const roles = result.data.roles as RolesEnum[];
     return roles.includes(role);
+  }
+
+  public async getUserMemberships(
+    userId: string,
+  ): Promise<MembershipWithOrg[]> {
+    const result = await this.databaseService
+      .from('memberships')
+      .select('*, organizations!inner(id, name, slug, logo_url)')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .eq('organizations.is_active', true);
+
+    if (result.error) {
+      throw new DatabaseException();
+    }
+
+    return (result.data ?? []).map((row) => {
+      const { createdAtDate, updatedAtDate } =
+        this.helperService.parseEntitiesDates(row.created_at, row.updated_at);
+
+      const org = row.organizations as unknown as {
+        id: string;
+        name: string;
+        slug: string;
+        logo_url: string | null;
+      };
+
+      return new MembershipWithOrg(
+        row.id,
+        row.user_id,
+        row.organization_id,
+        row.roles as RolesEnum[],
+        row.is_active,
+        row.created_by,
+        row.updated_by,
+        createdAtDate,
+        updatedAtDate,
+        new OrganizationSummary(org.id, org.name, org.slug, org.logo_url),
+      );
+    });
   }
 
   private mapToEntity(

@@ -1,3 +1,4 @@
+import type { CreateClassTopicBody } from '@help-teacher/shared';
 import { IsNotEmpty, IsString, IsUUID, MaxLength } from 'class-validator';
 
 export class CreateClassTopicParamsDTO {
@@ -10,7 +11,7 @@ export class CreateClassTopicParamsDTO {
   public classId: string;
 }
 
-export class CreateClassTopicBodyDTO {
+export class CreateClassTopicBodyDTO implements CreateClassTopicBody {
   @IsUUID()
   public topicId: string;
 }

@@ -36,11 +36,51 @@ export const routes: Routes = [
   // -----------------------------------------------------------------------
   // Private routes — SPA, auth required
   // -----------------------------------------------------------------------
+
+  // Organization selector
   {
     path: 'orgs',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/orgs/org-selector/org-selector.page'),
     title: 'Organizations — Help Teacher',
+  },
+
+  // Pending invites
+  {
+    path: 'invites',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/invites/invites-pending.page'),
+    title: 'Pending Invites — Help Teacher',
+  },
+
+  // Profile
+  {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/profile/profile.page'),
+    title: 'My Profile — Help Teacher',
+  },
+
+  // Subscription (auth required)
+  {
+    path: 'subscription',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/subscription/subscription.page'),
+    title: 'My Subscription — Help Teacher',
+  },
+
+  // Plans (public)
+  {
+    path: 'plans',
+    loadComponent: () => import('./pages/plans/plans.page'),
+    title: 'Plans — Help Teacher',
+  },
+
+  // Organization context (org layout + all child features)
+  {
+    path: 'orgs/:slug',
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/organizations/org.routes').then((m) => m.orgRoutes),
   },
 
   // Redirect root to /login (later can be a landing page)
