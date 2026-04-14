@@ -3,7 +3,6 @@ import type {
   ApiResponse,
   CreateEducationLevelBody,
   EducationLevel,
-  PaginatedResponse,
   UpdateEducationLevelBody,
 } from '@help-teacher/shared';
 import { ApiService } from '../../../core/services/api.service';
@@ -13,10 +12,10 @@ export class EducationLevelService {
   private readonly api = inject(ApiService);
 
   list(slug: string, page = 1, limit = 20) {
-    return this.api.get<PaginatedResponse<EducationLevel>>(
-      `/organizations/${slug}/education-levels`,
-      { page, limit },
-    );
+    return this.api.getPaginated<EducationLevel>(`/organizations/${slug}/education-levels`, {
+      page,
+      limit,
+    });
   }
 
   getById(slug: string, educationLevelId: string) {

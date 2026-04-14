@@ -11,6 +11,7 @@ import {
   UpdateMemberParamsDTO,
 } from '../dtos/update-member.dto';
 import { MembershipWithOrg } from '../models/membership-with-org.model';
+import { MembershipWithUser } from '../models/membership-with-user.model';
 import { Membership } from '../models/membership.model';
 
 export abstract class IMembershipsRepository {
@@ -36,7 +37,7 @@ export abstract class IMembershipsRepository {
   public abstract getMembers(
     organizationId: string,
     pagination: PaginationQueryDTO,
-  ): Promise<PaginatedResponse<Membership>>;
+  ): Promise<PaginatedResponse<MembershipWithUser>>;
   public abstract updateMember(
     params: UpdateMemberParamsDTO,
     body: UpdateMemberBodyDTO,

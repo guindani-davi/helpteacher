@@ -17,7 +17,7 @@ import { ConfirmDialog, EmptyState, ToastContainer } from '../../shared';
           <a routerLink="/orgs" class="text-xl font-bold text-primary">Help Teacher</a>
         </div>
         <div class="flex-none">
-          <a routerLink="/plans" class="btn btn-ghost btn-sm">View Plans</a>
+          <a routerLink="/plans" class="btn btn-ghost">View Plans</a>
         </div>
       </header>
 

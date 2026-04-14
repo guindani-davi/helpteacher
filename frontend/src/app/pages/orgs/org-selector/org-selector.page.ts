@@ -23,8 +23,9 @@ import { EmptyState, ToastContainer } from '../../../shared';
           <span class="text-xl font-bold text-primary">Help Teacher</span>
         </div>
         <div class="flex-none gap-2">
-          <a routerLink="/profile" class="btn btn-ghost btn-sm">Profile</a>
-          <button class="btn btn-ghost btn-sm" (click)="logout()">Logout</button>
+          <a routerLink="/invites" class="btn btn-ghost">Pending Invites</a>
+          <a routerLink="/profile" class="btn btn-ghost">Profile</a>
+          <button class="btn btn-ghost" (click)="logout()">Logout</button>
         </div>
       </header>
 
@@ -49,7 +50,7 @@ import { EmptyState, ToastContainer } from '../../../shared';
               />
             </svg>
             <span>You have {{ pendingInvites().length }} pending invite(s)</span>
-            <a routerLink="/invites" class="btn btn-sm btn-primary">View</a>
+            <a routerLink="/invites" class="btn btn-primary">View</a>
           </div>
         }
 

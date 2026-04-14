@@ -1,10 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import type {
-  ApiResponse,
-  CreateInviteBody,
-  Invite,
-  PaginatedResponse,
-} from '@help-teacher/shared';
+import type { ApiResponse, CreateInviteBody, Invite } from '@help-teacher/shared';
 import { ApiService } from '../../../core/services/api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -13,7 +8,7 @@ export class InviteService {
 
   /** List invites for an organization (admin/owner). */
   listByOrg(slug: string, page = 1, limit = 10) {
-    return this.api.get<PaginatedResponse<Invite>>(`/organizations/${slug}/invites`, {
+    return this.api.getPaginated<Invite>(`/organizations/${slug}/invites`, {
       page,
       limit,
     });
@@ -21,7 +16,7 @@ export class InviteService {
 
   /** List current user's pending invites. */
   listMyPending(page = 1, limit = 20) {
-    return this.api.get<PaginatedResponse<Invite>>('/invites/pending', { page, limit });
+    return this.api.getPaginated<Invite>('/invites/pending', { page, limit });
   }
 
   /** Get a single invite by id. */

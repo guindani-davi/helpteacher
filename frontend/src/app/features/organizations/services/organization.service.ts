@@ -26,4 +26,8 @@ export class OrganizationService {
   delete(slug: string) {
     return this.api.delete<void>(`/organizations/${slug}`);
   }
+
+  uploadLogo(slug: string, file: File) {
+    return this.api.putFile<ApiResponse<Organization>>(`/organizations/${slug}/logo`, 'file', file);
+  }
 }

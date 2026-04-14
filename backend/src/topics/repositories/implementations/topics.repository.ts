@@ -66,15 +66,21 @@ export class TopicsRepository extends ITopicsRepository {
   public async getByOrganizationId(
     organizationId: string,
     pagination: PaginationQueryDTO,
+    subjectId?: string,
   ): Promise<PaginatedResponse<Topic>> {
     const { from, to } = pagination.getRange();
 
-    const result = await this.databaseService
+    let query = this.databaseService
       .from('topics')
       .select('*', { count: 'exact' })
       .eq('organization_id', organizationId)
-      .eq('is_active', true)
-      .range(from, to);
+      .eq('is_active', true);
+
+    if (subjectId) {
+      query = query.eq('subject_id', subjectId);
+    }
+
+    const result = await query.range(from, to);
 
     if (result.error) {
       throw new DatabaseException();

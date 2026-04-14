@@ -18,7 +18,6 @@ import { AllowedRoles } from '../../../auth/decorators/roles.decorator';
 import { RolesEnum } from '../../../auth/enums/roles.enum';
 import { RolesGuard } from '../../../auth/guards/roles.guard';
 import type { JwtPayload } from '../../../auth/models/jwt.model';
-import { PaginationQueryDTO } from '../../../common/dtos/pagination-query.dto';
 import { PaginatedResponse } from '../../../common/models/paginated-response.model';
 import { MembershipGuard } from '../../../memberships/guards/membership.guard';
 import type { Membership } from '../../../memberships/models/membership.model';
@@ -26,6 +25,7 @@ import { ActiveSubscriptionGuard } from '../../../subscriptions/guards/active-su
 import { CreateTopicBodyDTO } from '../../dtos/create-topic.dto';
 import { DeleteTopicParamsDTO } from '../../dtos/delete-topic.dto';
 import { GetTopicParamsDTO } from '../../dtos/get-topic.dto';
+import { GetTopicsQueryDTO } from '../../dtos/get-topics-query.dto';
 import {
   UpdateTopicBodyDTO,
   UpdateTopicParamsDTO,
@@ -55,9 +55,9 @@ export class TopicsController extends ITopicsController {
   @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN, RolesEnum.TEACHER)
   public async getByOrganization(
     @CurrentMembership() membership: Membership,
-    @Query() pagination: PaginationQueryDTO,
+    @Query() query: GetTopicsQueryDTO,
   ): Promise<PaginatedResponse<Topic>> {
-    return this.topicsService.getByOrganization(membership, pagination);
+    return this.topicsService.getByOrganization(membership, query);
   }
 
   @Get(':slug/topics/:topicId')

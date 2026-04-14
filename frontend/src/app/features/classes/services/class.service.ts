@@ -4,7 +4,6 @@ import type {
   Class,
   ClassDetail,
   CreateClassBody,
-  PaginatedResponse,
   UpdateClassBody,
 } from '@help-teacher/shared';
 import { ApiService } from '../../../core/services/api.service';
@@ -14,7 +13,14 @@ export class ClassService {
   private readonly api = inject(ApiService);
 
   list(slug: string, page = 1, limit = 20) {
-    return this.api.get<PaginatedResponse<Class>>(`/organizations/${slug}/classes`, {
+    return this.api.getPaginated<Class>(`/organizations/${slug}/classes`, {
+      page,
+      limit,
+    });
+  }
+
+  listWithDetails(slug: string, page = 1, limit = 20) {
+    return this.api.getPaginated<ClassDetail>(`/organizations/${slug}/classes/list-details`, {
       page,
       limit,
     });

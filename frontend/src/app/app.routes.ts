@@ -3,6 +3,16 @@ import { authGuard, guestGuard } from './core/auth';
 
 export const routes: Routes = [
   // -----------------------------------------------------------------------
+  // Public landing page
+  // -----------------------------------------------------------------------
+  {
+    path: '',
+    loadComponent: () => import('./pages/landing/landing.page'),
+    title: 'Help Teacher — Manage your students, classes, and curriculum',
+    pathMatch: 'full',
+  },
+
+  // -----------------------------------------------------------------------
   // Public / Auth routes — SSG-friendly, guest-only
   // -----------------------------------------------------------------------
   {
@@ -82,9 +92,6 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadChildren: () => import('./features/organizations/org.routes').then((m) => m.orgRoutes),
   },
-
-  // Redirect root to /login (later can be a landing page)
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
 
   // Catch-all
   {

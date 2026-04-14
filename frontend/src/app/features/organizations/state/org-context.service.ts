@@ -36,6 +36,12 @@ export class OrgContextService {
     () => this.isOwner() || this.currentUserRoles().some((r) => r === 'admin'),
   );
 
+  /** True when the user has ONLY the 'responsible' role (no admin/owner/teacher). */
+  readonly isOnlyResponsible = computed(() => {
+    const roles = this.currentUserRoles();
+    return roles.length > 0 && roles.every((r) => r === 'responsible');
+  });
+
   /**
    * Load org + current user's membership for the given slug.
    * Called by `orgResolver`.

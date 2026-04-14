@@ -8,6 +8,7 @@ import {
   UpdateMemberBodyDTO,
   UpdateMemberParamsDTO,
 } from '../dtos/update-member.dto';
+import { MembershipWithUser } from '../models/membership-with-user.model';
 import { Membership } from '../models/membership.model';
 import { IMembershipsService } from '../services/i.memberships.service';
 
@@ -22,7 +23,7 @@ export abstract class IMembershipsController {
   public abstract getMembers(
     params: GetMembersParamsDTO,
     pagination: PaginationQueryDTO,
-  ): Promise<PaginatedResponse<Membership>>;
+  ): Promise<PaginatedResponse<MembershipWithUser>>;
   public abstract updateMember(
     params: UpdateMemberParamsDTO,
     body: UpdateMemberBodyDTO,

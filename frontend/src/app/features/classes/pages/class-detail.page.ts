@@ -22,8 +22,8 @@ function capitalize(value: string): string {
       subtitle="Class details and topics"
     >
       <div class="flex gap-2">
-        <button class="btn btn-sm" (click)="goBack()">Back</button>
-        <button class="btn btn-sm" (click)="goToEdit()">Edit</button>
+        <button class="btn" (click)="goBack()">Back</button>
+        <button class="btn" (click)="goToEdit()">Edit</button>
       </div>
     </app-page-header>
 
@@ -75,7 +75,7 @@ function capitalize(value: string): string {
                   <span class="badge badge-sm">{{ topics().length }}</span>
                 }
               </h2>
-              <button class="btn btn-primary btn-xs" (click)="openAddTopicModal()">
+              <button class="btn btn-primary" (click)="openAddTopicModal()">
                 + Add Topic
               </button>
             </div>
@@ -87,7 +87,7 @@ function capitalize(value: string): string {
               <p class="text-base-content/60 mt-2">No topics attached to this class.</p>
             } @else {
               <div class="overflow-x-auto mt-2">
-                <table class="table table-sm">
+                <table class="table table">
                   <thead>
                     <tr>
                       <th>Topic</th>
@@ -102,7 +102,7 @@ function capitalize(value: string): string {
                         <td>{{ topic.subjectName }}</td>
                         <td class="text-right">
                           <button
-                            class="btn btn-ghost btn-xs text-error"
+                            class="btn btn-ghost text-error"
                             (click)="confirmRemoveTopic(topic)"
                           >
                             Remove

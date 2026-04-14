@@ -94,6 +94,50 @@ export class ClassesRepository extends IClassesRepository {
     );
   }
 
+  public async getByOrganizationIdWithDetails(
+    organizationId: string,
+    pagination: PaginationQueryDTO,
+  ): Promise<PaginatedResponse<ClassDetail>> {
+    const { from, to } = pagination.getRange();
+
+    const result = await this.databaseService
+      .from('classes')
+      .select(
+        `
+        id, date,
+        students(id, name, surname),
+        schedules(id, day_of_week, start_time, end_time),
+        users!classes_teacher_id_fkey(id, name, surname),
+        class_topics(
+          topics(id, name,
+            subjects(id, name)
+          )
+        )
+      `,
+        { count: 'exact' },
+      )
+      .eq('organization_id', organizationId)
+      .eq('is_active', true)
+      .eq('class_topics.is_active', true)
+      .order('date', { ascending: false })
+      .range(from, to);
+
+    if (result.error) {
+      throw new DatabaseException();
+    }
+
+    const items = (result.data ?? []).map((row: any) =>
+      this.mapToClassDetail(row),
+    );
+
+    return new PaginatedResponse(
+      items,
+      result.count ?? 0,
+      pagination.page,
+      pagination.limit,
+    );
+  }
+
   public async update(
     classId: string,
     scheduleId: string | undefined,

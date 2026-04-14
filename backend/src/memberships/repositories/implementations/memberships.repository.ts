@@ -18,6 +18,10 @@ import {
   MembershipWithOrg,
   OrganizationSummary,
 } from '../../models/membership-with-org.model';
+import {
+  MembershipWithUser,
+  UserSummary,
+} from '../../models/membership-with-user.model';
 import { Membership } from '../../models/membership.model';
 import { IMembershipsRepository } from '../i.memberships.repository';
 
@@ -72,12 +76,14 @@ export class MembershipsRepository extends IMembershipsRepository {
   public async getMembers(
     organizationId: string,
     pagination: PaginationQueryDTO,
-  ): Promise<PaginatedResponse<Membership>> {
+  ): Promise<PaginatedResponse<MembershipWithUser>> {
     const { from, to } = pagination.getRange();
 
     const result = await this.databaseService
       .from('memberships')
-      .select('*', { count: 'exact' })
+      .select('*, users!memberships_user_id_fkey(id, name, surname, email)', {
+        count: 'exact',
+      })
       .eq('organization_id', organizationId)
       .eq('is_active', true)
       .range(from, to);
@@ -86,7 +92,27 @@ export class MembershipsRepository extends IMembershipsRepository {
       throw new DatabaseException();
     }
 
-    const items = result.data.map((row) => this.mapToEntity(row));
+    const items = result.data.map((row) => {
+      const base = this.mapToEntity(row);
+      const u = row.users as unknown as {
+        id: string;
+        name: string;
+        surname: string;
+        email: string;
+      };
+      return new MembershipWithUser(
+        base.id,
+        base.userId,
+        base.organizationId,
+        base.roles,
+        base.isActive,
+        base.createdBy,
+        base.updatedBy,
+        base.createdAt,
+        base.updatedAt,
+        new UserSummary(u.id, u.name, u.surname, u.email),
+      );
+    });
     return new PaginatedResponse(
       items,
       result.count ?? 0,

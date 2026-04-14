@@ -1,7 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import type { JwtPayload } from '../../../auth/models/jwt.model';
 import { IClassTopicsService } from '../../../class-topics/services/i.class-topics.service';
-import { PaginationQueryDTO } from '../../../common/dtos/pagination-query.dto';
 import { PaginatedResponse } from '../../../common/models/paginated-response.model';
 import { IHelpersService } from '../../../helpers/services/i.helpers.service';
 import type { Membership } from '../../../memberships/models/membership.model';
@@ -10,6 +9,7 @@ import { ISubjectsService } from '../../../subjects/services/i.subjects.service'
 import { CreateTopicBodyDTO } from '../../dtos/create-topic.dto';
 import { DeleteTopicParamsDTO } from '../../dtos/delete-topic.dto';
 import { GetTopicParamsDTO } from '../../dtos/get-topic.dto';
+import { GetTopicsQueryDTO } from '../../dtos/get-topics-query.dto';
 import {
   UpdateTopicBodyDTO,
   UpdateTopicParamsDTO,
@@ -69,11 +69,12 @@ export class TopicsService extends ITopicsService {
 
   public async getByOrganization(
     membership: Membership,
-    pagination: PaginationQueryDTO,
+    query: GetTopicsQueryDTO,
   ): Promise<PaginatedResponse<Topic>> {
     return this.topicsRepository.getByOrganizationId(
       membership.organizationId,
-      pagination,
+      query,
+      query.subjectId,
     );
   }
 

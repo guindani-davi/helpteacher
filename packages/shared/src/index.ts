@@ -30,6 +30,7 @@ export type {
   Invite,
   Membership,
   MembershipWithOrg,
+  MembershipWithUser,
   Organization,
   PaginatedResponse,
   Registration,

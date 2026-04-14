@@ -6,7 +6,7 @@ import { Component, computed, input, output } from '@angular/core';
     @if (totalPages() > 1) {
       <div class="join">
         <button
-          class="join-item btn btn-sm"
+          class="join-item btn"
           [disabled]="currentPage() <= 1"
           (click)="pageChanged.emit(currentPage() - 1)"
         >
@@ -14,7 +14,7 @@ import { Component, computed, input, output } from '@angular/core';
         </button>
         @for (page of visiblePages(); track page) {
           <button
-            class="join-item btn btn-sm"
+            class="join-item btn"
             [class.btn-active]="page === currentPage()"
             (click)="pageChanged.emit(page)"
           >
@@ -22,7 +22,7 @@ import { Component, computed, input, output } from '@angular/core';
           </button>
         }
         <button
-          class="join-item btn btn-sm"
+          class="join-item btn"
           [disabled]="currentPage() >= totalPages()"
           (click)="pageChanged.emit(currentPage() + 1)"
         >

@@ -70,6 +70,10 @@ export abstract class IClassesService {
     membership: Membership,
     pagination: PaginationQueryDTO,
   ): Promise<PaginatedResponse<Class>>;
+  public abstract getByOrganizationWithDetails(
+    membership: Membership,
+    pagination: PaginationQueryDTO,
+  ): Promise<PaginatedResponse<ClassDetail>>;
   public abstract update(
     params: UpdateClassParamsDTO,
     body: UpdateClassBodyDTO,

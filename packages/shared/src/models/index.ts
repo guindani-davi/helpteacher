@@ -5,7 +5,11 @@ export type { ClassTopic, ClassTopicDetail } from "./class-topic";
 export type { EducationLevel } from "./education-level";
 export type { GradeLevel } from "./grade-level";
 export type { Invite } from "./invite";
-export type { Membership, MembershipWithOrg } from "./membership";
+export type {
+  Membership,
+  MembershipWithOrg,
+  MembershipWithUser,
+} from "./membership";
 export type { Organization } from "./organization";
 export type { Registration } from "./registration";
 export type {

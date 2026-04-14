@@ -3,7 +3,7 @@ import type {
   ApiResponse,
   Membership,
   MembershipWithOrg,
-  PaginatedResponse,
+  MembershipWithUser,
   UpdateMemberBody,
 } from '@help-teacher/shared';
 import { ApiService } from '../../../core/services/api.service';
@@ -27,7 +27,7 @@ export class MembershipService {
 
   /** List members of an org (admin/owner only). */
   listMembers(slug: string, page = 1, limit = 20) {
-    return this.api.get<PaginatedResponse<Membership>>(`/memberships/${slug}/members`, {
+    return this.api.getPaginated<MembershipWithUser>(`/memberships/${slug}/members`, {
       page,
       limit,
     });

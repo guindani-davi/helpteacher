@@ -6,9 +6,4 @@ export const subjectRoutes: Routes = [
     loadComponent: () => import('./pages/subject-list.page'),
     title: 'Subjects — Help Teacher',
   },
-  {
-    path: ':subjectId/topics',
-    loadComponent: () => import('./pages/topic-list.page'),
-    title: 'Topics — Help Teacher',
-  },
 ];

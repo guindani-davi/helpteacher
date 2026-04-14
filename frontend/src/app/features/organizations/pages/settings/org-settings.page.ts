@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { form, FormField, required, submit } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { ToastService } from '../../../../core/services/toast.service';
@@ -13,6 +13,57 @@ import { OrgContextService } from '../../state/org-context.service';
     <app-page-header title="Organization Settings" subtitle="Manage your organization details" />
 
     <div class="max-w-2xl space-y-6">
+      <!-- Logo upload -->
+      <div class="card bg-base-100 shadow-sm border border-base-300">
+        <div class="card-body">
+          <h2 class="card-title text-base">Organization Logo</h2>
+          <div class="flex items-center gap-6 mt-2">
+            @if (logoUrl()) {
+              <img
+                [src]="logoUrl()"
+                alt="Organization logo"
+                class="w-20 h-20 rounded-lg object-cover border border-base-300"
+              />
+            } @else {
+              <div
+                class="w-20 h-20 rounded-lg bg-base-200 flex items-center justify-center border border-base-300"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-8 w-8 text-base-content/30"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+            }
+            <div class="flex flex-col gap-2">
+              <input
+                #logoInput
+                type="file"
+                accept="image/png,image/jpeg"
+                class="hidden"
+                (change)="onLogoSelected($event)"
+              />
+              <button type="button" class="btn btn-outline w-fit" (click)="logoInput.click()">
+                Choose File
+              </button>
+              <p class="text-sm text-base-content/50">PNG or JPEG, max 2 MB</p>
+              @if (uploadingLogo()) {
+                <span class="loading loading-spinner loading-sm text-primary"></span>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Edit form -->
       <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body">
@@ -20,7 +71,7 @@ import { OrgContextService } from '../../state/org-context.service';
 
           <form (submit)="onSave($event)">
             <fieldset class="fieldset mb-4">
-              <legend class="fieldset-legend">Organization Name</legend>
+              <legend class="fieldset-legend text-sm mb-0.5">Organization Name</legend>
               <input
                 type="text"
                 class="input input-bordered w-full"
@@ -84,6 +135,9 @@ export default class OrgSettingsPage implements OnInit {
 
   protected readonly saving = signal(false);
   protected readonly showDeleteConfirm = signal(false);
+  protected readonly uploadingLogo = signal(false);
+
+  protected readonly logoUrl = computed(() => this.orgContext.org()?.logoUrl ?? '');
 
   protected readonly settingsModel = signal({ name: '' });
 
@@ -96,6 +150,28 @@ export default class OrgSettingsPage implements OnInit {
     if (org) {
       this.settingsModel.set({ name: org.name });
     }
+  }
+
+  onLogoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    const slug = this.orgContext.org()?.slug;
+    if (!slug) return;
+
+    this.uploadingLogo.set(true);
+    this.orgService.uploadLogo(slug, file).subscribe({
+      next: () => {
+        this.toastService.success('Logo updated');
+        // Reload org context to pick up new logoUrl
+        this.orgContext.load(slug).finally(() => this.uploadingLogo.set(false));
+      },
+      error: () => {
+        this.toastService.error('Failed to upload logo');
+        this.uploadingLogo.set(false);
+      },
+    });
   }
 
   onSave(event: Event): void {

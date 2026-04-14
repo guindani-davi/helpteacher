@@ -31,6 +31,7 @@ import {
   UpdateMemberParamsDTO,
 } from '../../dtos/update-member.dto';
 import { MembershipGuard } from '../../guards/membership.guard';
+import { MembershipWithUser } from '../../models/membership-with-user.model';
 import { Membership } from '../../models/membership.model';
 import { IMembershipsService } from '../../services/i.memberships.service';
 import { IMembershipsController } from '../i.memberships.controller';
@@ -58,7 +59,7 @@ export class MembershipsController extends IMembershipsController {
   public async getMembers(
     @Param() params: GetMembersParamsDTO,
     @Query() pagination: PaginationQueryDTO,
-  ): Promise<PaginatedResponse<Membership>> {
+  ): Promise<PaginatedResponse<MembershipWithUser>> {
     return this.membershipsService.getMembers(params, pagination);
   }
 

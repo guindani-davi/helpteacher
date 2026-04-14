@@ -36,6 +36,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     [DomainExceptionCode.INVALID_RESET_TOKEN, HttpStatus.UNAUTHORIZED],
     [DomainExceptionCode.INVALID_REFRESH_TOKEN, HttpStatus.UNAUTHORIZED],
     [DomainExceptionCode.FORBIDDEN_OPERATION, HttpStatus.FORBIDDEN],
+    [DomainExceptionCode.VALIDATION_ERROR, HttpStatus.UNPROCESSABLE_ENTITY],
     [DomainExceptionCode.INVITE_ALREADY_EXISTS, HttpStatus.CONFLICT],
     [DomainExceptionCode.INVITE_EXPIRED, HttpStatus.GONE],
     [DomainExceptionCode.INSUFFICIENT_SUBSCRIPTION, HttpStatus.FORBIDDEN],

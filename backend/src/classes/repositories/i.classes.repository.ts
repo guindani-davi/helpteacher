@@ -33,6 +33,10 @@ export abstract class IClassesRepository {
     organizationId: string,
     pagination: PaginationQueryDTO,
   ): Promise<PaginatedResponse<Class>>;
+  public abstract getByOrganizationIdWithDetails(
+    organizationId: string,
+    pagination: PaginationQueryDTO,
+  ): Promise<PaginatedResponse<ClassDetail>>;
   public abstract update(
     classId: string,
     scheduleId: string | undefined,

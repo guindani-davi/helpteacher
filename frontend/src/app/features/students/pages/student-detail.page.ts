@@ -26,8 +26,11 @@ import { StudentService } from '../services/student.service';
       subtitle="Student details"
     >
       <div class="flex gap-2">
-        <button class="btn btn-sm" (click)="goToEdit()">Edit Student</button>
-        <button class="btn btn-primary btn-sm" (click)="openRegistrationModal()">
+        @if (orgContext.isAdmin()) {
+          <button class="btn" (click)="goToEdit()">Edit Student</button>
+        }
+        <button class="btn btn-accent" (click)="goToReport()">📊 View Report</button>
+        <button class="btn btn-primary" (click)="openRegistrationModal()">
           + Add Registration
         </button>
       </div>
@@ -94,13 +97,13 @@ import { StudentService } from '../services/student.service';
           <div class="card-body">
             <div class="flex items-center justify-between">
               <h2 class="card-title text-base">Registration History</h2>
-              <button class="btn btn-ghost btn-xs" (click)="goToRegistrations()">View All</button>
+              <button class="btn btn-ghost" (click)="goToRegistrations()">View All</button>
             </div>
             @if (detail()!.registrations.length === 0) {
               <p class="text-base-content/60 mt-2">No registrations found.</p>
             } @else {
               <div class="overflow-x-auto mt-2">
-                <table class="table table-sm">
+                <table class="table table">
                   <thead>
                     <tr>
                       <th>School</th>
@@ -140,7 +143,7 @@ import { StudentService } from '../services/student.service';
               <p class="text-base-content/60 mt-2">No classes found.</p>
             } @else {
               <div class="overflow-x-auto mt-2">
-                <table class="table table-sm">
+                <table class="table table">
                   <thead>
                     <tr>
                       <th>Date</th>
@@ -250,7 +253,7 @@ import { StudentService } from '../services/student.service';
   `,
 })
 export default class StudentDetailPage implements OnInit {
-  private readonly orgContext = inject(OrgContextService);
+  protected readonly orgContext = inject(OrgContextService);
   private readonly studentService = inject(StudentService);
   private readonly registrationService = inject(RegistrationService);
   private readonly schoolService = inject(SchoolService);
@@ -305,6 +308,12 @@ export default class StudentDetailPage implements OnInit {
         this.loading.set(false);
       },
     });
+  }
+
+  protected goToReport(): void {
+    const slug = this.orgContext.org()?.slug;
+    if (!slug) return;
+    this.router.navigate(['/orgs', slug, 'students', this.studentId, 'report']);
   }
 
   protected goToEdit(): void {

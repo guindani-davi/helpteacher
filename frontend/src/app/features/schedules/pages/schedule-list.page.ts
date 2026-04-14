@@ -26,7 +26,9 @@ function capitalize(value: string): string {
   imports: [PageHeader, ConfirmDialog, Pagination, EmptyState, FormField],
   template: `
     <app-page-header title="Schedules" subtitle="Manage your weekly schedules">
-      <button class="btn btn-primary btn-sm" (click)="openCreateModal()">+ Add Schedule</button>
+      @if (orgContext.isAdmin()) {
+        <button class="btn btn-primary" (click)="openCreateModal()">+ Add Schedule</button>
+      }
     </app-page-header>
 
     @if (loading()) {
@@ -39,7 +41,9 @@ function capitalize(value: string): string {
         title="No schedules yet"
         description="Create your first schedule to define class time slots."
       >
-        <button class="btn btn-primary" (click)="openCreateModal()">Add Schedule</button>
+        @if (orgContext.isAdmin()) {
+          <button class="btn btn-primary" (click)="openCreateModal()">Add Schedule</button>
+        }
       </app-empty-state>
     } @else {
       <div class="card bg-base-100 shadow-sm border border-base-300">
@@ -57,18 +61,15 @@ function capitalize(value: string): string {
               @for (schedule of sortedSchedules(); track schedule.id) {
                 <tr>
                   <td class="font-medium">{{ capitalize(schedule.dayOfWeek) }}</td>
-                  <td>{{ schedule.startTime }}</td>
-                  <td>{{ schedule.endTime }}</td>
+                  <td>{{ formatTime(schedule.startTime) }}</td>
+                  <td>{{ formatTime(schedule.endTime) }}</td>
                   <td class="text-right">
-                    <button class="btn btn-ghost btn-xs" (click)="openEditModal(schedule)">
-                      Edit
-                    </button>
-                    <button
-                      class="btn btn-ghost btn-xs text-error"
-                      (click)="confirmDelete(schedule)"
-                    >
-                      Delete
-                    </button>
+                    @if (orgContext.isAdmin()) {
+                      <button class="btn btn-ghost" (click)="openEditModal(schedule)">Edit</button>
+                      <button class="btn btn-ghost text-error" (click)="confirmDelete(schedule)">
+                        Delete
+                      </button>
+                    }
                   </td>
                 </tr>
               }
@@ -161,9 +162,9 @@ function capitalize(value: string): string {
         'Delete this schedule (' +
         capitalize(deleteTarget()?.dayOfWeek ?? '') +
         ' ' +
-        (deleteTarget()?.startTime ?? '') +
+        formatTime(deleteTarget()?.startTime ?? '') +
         '–' +
-        (deleteTarget()?.endTime ?? '') +
+        formatTime(deleteTarget()?.endTime ?? '') +
         ')? This cannot be undone.'
       "
       confirmLabel="Delete"
@@ -174,7 +175,7 @@ function capitalize(value: string): string {
   `,
 })
 export default class ScheduleListPage implements OnInit {
-  private readonly orgContext = inject(OrgContextService);
+  protected readonly orgContext = inject(OrgContextService);
   private readonly scheduleService = inject(ScheduleService);
   private readonly toastService = inject(ToastService);
 
@@ -212,6 +213,10 @@ export default class ScheduleListPage implements OnInit {
   });
 
   protected capitalize = capitalize;
+
+  protected formatTime(time: string): string {
+    return time?.slice(0, 5) ?? '';
+  }
 
   ngOnInit(): void {
     this.loadSchedules(1);

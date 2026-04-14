@@ -1,8 +1,10 @@
+import { DayOfWeekEnum } from '@help-teacher/shared';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { RolesEnum } from '../../../auth/enums/roles.enum';
 import type { JwtPayload } from '../../../auth/models/jwt.model';
 import { IClassTopicsService } from '../../../class-topics/services/i.class-topics.service';
 import { PaginationQueryDTO } from '../../../common/dtos/pagination-query.dto';
+import { ValidationException } from '../../../common/exceptions/validation.exception';
 import { PaginatedResponse } from '../../../common/models/paginated-response.model';
 import { IHelpersService } from '../../../helpers/services/i.helpers.service';
 import { ForbiddenOperationException } from '../../../memberships/exceptions/forbidden-operation.exception';
@@ -22,6 +24,17 @@ import { ClassDetail } from '../../models/class-detail.model';
 import { Class } from '../../models/class.model';
 import { IClassesRepository } from '../../repositories/i.classes.repository';
 import { IClassesService } from '../i.classes.service';
+
+/** Maps DayOfWeekEnum to JS Date.getUTCDay() values (0 = Sunday … 6 = Saturday). */
+const DAY_OF_WEEK_TO_JS: Record<DayOfWeekEnum, number> = {
+  [DayOfWeekEnum.SUNDAY]: 0,
+  [DayOfWeekEnum.MONDAY]: 1,
+  [DayOfWeekEnum.TUESDAY]: 2,
+  [DayOfWeekEnum.WEDNESDAY]: 3,
+  [DayOfWeekEnum.THURSDAY]: 4,
+  [DayOfWeekEnum.FRIDAY]: 5,
+  [DayOfWeekEnum.SATURDAY]: 6,
+};
 
 @Injectable()
 export class ClassesService extends IClassesService {
@@ -55,11 +68,13 @@ export class ClassesService extends IClassesService {
   ): Promise<Class> {
     const organizationId = membership.organizationId;
 
-    await Promise.all([
+    const [schedule] = await Promise.all([
       this.schedulesService.getById(body.scheduleId, organizationId),
       this.studentsService.getById(body.studentId, organizationId),
       this.validateTeacher(body.teacherId, organizationId),
     ]);
+
+    this.validateDateMatchesDayOfWeek(body.date, schedule.dayOfWeek);
 
     const created = await this.classesRepository.create(
       body.scheduleId,
@@ -123,6 +138,16 @@ export class ClassesService extends IClassesService {
     );
   }
 
+  public async getByOrganizationWithDetails(
+    membership: Membership,
+    pagination: PaginationQueryDTO,
+  ): Promise<PaginatedResponse<ClassDetail>> {
+    return this.classesRepository.getByOrganizationIdWithDetails(
+      membership.organizationId,
+      pagination,
+    );
+  }
+
   public async update(
     params: UpdateClassParamsDTO,
     body: UpdateClassBodyDTO,
@@ -137,10 +162,13 @@ export class ClassesService extends IClassesService {
     );
 
     const validations: Promise<unknown>[] = [];
+    let schedulePromise: Promise<unknown> | undefined;
     if (body.scheduleId) {
-      validations.push(
-        this.schedulesService.getById(body.scheduleId, organizationId),
+      schedulePromise = this.schedulesService.getById(
+        body.scheduleId,
+        organizationId,
       );
+      validations.push(schedulePromise);
     }
     if (body.studentId) {
       validations.push(
@@ -151,6 +179,21 @@ export class ClassesService extends IClassesService {
       validations.push(this.validateTeacher(body.teacherId, organizationId));
     }
     await Promise.all(validations);
+
+    // Validate date matches schedule day-of-week when either changes
+    const effectiveDate = body.date ?? existing.date;
+    const effectiveScheduleId = body.scheduleId ?? existing.scheduleId;
+    if (body.date || body.scheduleId) {
+      const schedule = schedulePromise
+        ? ((await schedulePromise) as Awaited<
+            ReturnType<typeof this.schedulesService.getById>
+          >)
+        : await this.schedulesService.getById(
+            effectiveScheduleId,
+            organizationId,
+          );
+      this.validateDateMatchesDayOfWeek(effectiveDate, schedule.dayOfWeek);
+    }
 
     const updated = await this.classesRepository.update(
       params.classId,
@@ -210,6 +253,22 @@ export class ClassesService extends IClassesService {
       throw new ForbiddenOperationException(
         'The specified user does not have the teacher role in this organization',
         'errors.teacherNotInOrganization',
+      );
+    }
+  }
+
+  private validateDateMatchesDayOfWeek(
+    date: string,
+    expectedDay: DayOfWeekEnum,
+  ): void {
+    const jsDay = new Date(date + 'T00:00:00Z').getUTCDay();
+    const expectedJsDay = DAY_OF_WEEK_TO_JS[expectedDay];
+
+    if (jsDay !== expectedJsDay) {
+      throw new ValidationException(
+        `The date ${date} is not a ${expectedDay}. Please choose a date that falls on a ${expectedDay}.`,
+        'errors.dateDayOfWeekMismatch',
+        { date, expected: expectedDay },
       );
     }
   }

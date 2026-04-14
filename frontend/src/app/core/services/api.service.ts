@@ -1,5 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import type { ApiResponse, PaginatedResponse } from '@help-teacher/shared';
+import { map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 /**
@@ -23,6 +25,15 @@ export class ApiService {
     return this.http.get<T>(`${this.base}${path}`, { params: httpParams });
   }
 
+  /**
+   * GET a paginated endpoint, auto-unwrapping the ApiResponse wrapper.
+   * Backend wraps all responses in { data: T, timestamp }, so this returns
+   * the inner PaginatedResponse directly.
+   */
+  getPaginated<T>(path: string, params?: Record<string, string | number | boolean>) {
+    return this.get<ApiResponse<PaginatedResponse<T>>>(path, params).pipe(map((res) => res.data));
+  }
+
   post<T>(path: string, body?: unknown) {
     return this.http.post<T>(`${this.base}${path}`, body);
   }
@@ -37,5 +48,11 @@ export class ApiService {
 
   delete<T>(path: string) {
     return this.http.delete<T>(`${this.base}${path}`);
+  }
+
+  putFile<T>(path: string, fieldName: string, file: File) {
+    const formData = new FormData();
+    formData.append(fieldName, file);
+    return this.http.put<T>(`${this.base}${path}`, formData);
   }
 }

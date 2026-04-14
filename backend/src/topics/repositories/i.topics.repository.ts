@@ -29,6 +29,7 @@ export abstract class ITopicsRepository {
   public abstract getByOrganizationId(
     organizationId: string,
     pagination: PaginationQueryDTO,
+    subjectId?: string,
   ): Promise<PaginatedResponse<Topic>>;
   public abstract update(
     topicId: string,

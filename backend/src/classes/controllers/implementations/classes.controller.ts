@@ -62,6 +62,18 @@ export class ClassesController extends IClassesController {
     return this.classesService.getByOrganization(membership, pagination);
   }
 
+  @Get(':slug/classes/list-details')
+  @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN, RolesEnum.TEACHER)
+  public async getByOrganizationWithDetails(
+    @CurrentMembership() membership: Membership,
+    @Query() pagination: PaginationQueryDTO,
+  ): Promise<PaginatedResponse<ClassDetail>> {
+    return this.classesService.getByOrganizationWithDetails(
+      membership,
+      pagination,
+    );
+  }
+
   @Get(':slug/classes/:classId')
   @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN, RolesEnum.TEACHER)
   public async getById(

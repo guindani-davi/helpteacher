@@ -23,9 +23,11 @@ interface ExpandedLevel {
       title="Education Levels"
       subtitle="Manage education levels and their grade levels"
     >
-      <button class="btn btn-primary btn-sm" (click)="openCreateLevelModal()">
-        + Add Education Level
-      </button>
+      @if (orgContext.isAdmin()) {
+        <button class="btn btn-primary" (click)="openCreateLevelModal()">
+          + Add Education Level
+        </button>
+      }
     </app-page-header>
 
     @if (loading()) {
@@ -38,9 +40,11 @@ interface ExpandedLevel {
         title="No education levels yet"
         description="Create your first education level to organize grade levels."
       >
-        <button class="btn btn-primary" (click)="openCreateLevelModal()">
-          Add Education Level
-        </button>
+        @if (orgContext.isAdmin()) {
+          <button class="btn btn-primary" (click)="openCreateLevelModal()">
+            Add Education Level
+          </button>
+        }
       </app-empty-state>
     } @else {
       <div class="flex flex-col gap-2">
@@ -51,24 +55,38 @@ interface ExpandedLevel {
               (click)="toggleExpand(item)"
             >
               <div class="flex items-center gap-2">
-                <span class="transition-transform duration-200" [class.rotate-90]="item.expanded">
-                  ▶
-                </span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4 transition-transform duration-200"
+                  [class.rotate-90]="item.expanded"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
                 <span class="font-medium">{{ item.level.name }}</span>
               </div>
               <div class="flex items-center gap-1">
-                <button
-                  class="btn btn-ghost btn-xs"
-                  (click)="openEditLevelModal(item.level); $event.stopPropagation()"
-                >
-                  Edit
-                </button>
-                <button
-                  class="btn btn-ghost btn-xs text-error"
-                  (click)="confirmDeleteLevel(item.level); $event.stopPropagation()"
-                >
-                  Delete
-                </button>
+                @if (orgContext.isAdmin()) {
+                  <button
+                    class="btn btn-ghost"
+                    (click)="openEditLevelModal(item.level); $event.stopPropagation()"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    class="btn btn-ghost text-error"
+                    (click)="confirmDeleteLevel(item.level); $event.stopPropagation()"
+                  >
+                    Delete
+                  </button>
+                }
               </div>
             </div>
 
@@ -76,12 +94,14 @@ interface ExpandedLevel {
               <div class="border-t border-base-300 px-4 py-3">
                 <div class="flex items-center justify-between mb-3">
                   <span class="text-sm font-semibold text-base-content/70">Grade Levels</span>
-                  <button
-                    class="btn btn-outline btn-xs btn-primary"
-                    (click)="openCreateGradeModal(item.level)"
-                  >
-                    + Add Grade Level
-                  </button>
+                  @if (orgContext.isAdmin()) {
+                    <button
+                      class="btn btn-outline btn-primary"
+                      (click)="openCreateGradeModal(item.level)"
+                    >
+                      + Add Grade Level
+                    </button>
+                  }
                 </div>
 
                 @if (item.gradeLoading) {
@@ -94,7 +114,7 @@ interface ExpandedLevel {
                   </p>
                 } @else {
                   <div class="overflow-x-auto">
-                    <table class="table table-sm">
+                    <table class="table table">
                       <thead>
                         <tr>
                           <th>Name</th>
@@ -106,18 +126,20 @@ interface ExpandedLevel {
                           <tr>
                             <td>{{ grade.name }}</td>
                             <td class="text-right">
-                              <button
-                                class="btn btn-ghost btn-xs"
-                                (click)="openEditGradeModal(item.level, grade)"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                class="btn btn-ghost btn-xs text-error"
-                                (click)="confirmDeleteGrade(item.level, grade)"
-                              >
-                                Delete
-                              </button>
+                              @if (orgContext.isAdmin()) {
+                                <button
+                                  class="btn btn-ghost"
+                                  (click)="openEditGradeModal(item.level, grade)"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  class="btn btn-ghost text-error"
+                                  (click)="confirmDeleteGrade(item.level, grade)"
+                                >
+                                  Delete
+                                </button>
+                              }
                             </td>
                           </tr>
                         }
@@ -249,7 +271,7 @@ interface ExpandedLevel {
   `,
 })
 export default class EducationLevelListPage implements OnInit {
-  private readonly orgContext = inject(OrgContextService);
+  protected readonly orgContext = inject(OrgContextService);
   private readonly levelService = inject(EducationLevelService);
   private readonly gradeService = inject(GradeLevelService);
   private readonly toastService = inject(ToastService);

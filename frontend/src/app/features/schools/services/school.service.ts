@@ -1,11 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import type {
-  ApiResponse,
-  CreateSchoolBody,
-  PaginatedResponse,
-  School,
-  UpdateSchoolBody,
-} from '@help-teacher/shared';
+import type { ApiResponse, CreateSchoolBody, School, UpdateSchoolBody } from '@help-teacher/shared';
 import { ApiService } from '../../../core/services/api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -13,7 +7,7 @@ export class SchoolService {
   private readonly api = inject(ApiService);
 
   list(slug: string, page = 1, limit = 20) {
-    return this.api.get<PaginatedResponse<School>>(`/organizations/${slug}/schools`, {
+    return this.api.getPaginated<School>(`/organizations/${slug}/schools`, {
       page,
       limit,
     });

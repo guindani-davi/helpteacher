@@ -12,7 +12,9 @@ import { StudentService } from '../services/student.service';
   imports: [PageHeader, ConfirmDialog, Pagination, EmptyState, FormField],
   template: `
     <app-page-header title="Students" subtitle="Manage your students">
-      <button class="btn btn-primary btn-sm" (click)="openCreateModal()">+ Add Student</button>
+      @if (orgContext.isAdmin()) {
+        <button class="btn btn-primary" (click)="openCreateModal()">+ Add Student</button>
+      }
     </app-page-header>
 
     <!-- Search -->
@@ -36,7 +38,9 @@ import { StudentService } from '../services/student.service';
         title="No students yet"
         description="Create your first student to get started."
       >
-        <button class="btn btn-primary" (click)="openCreateModal()">Add Student</button>
+        @if (orgContext.isAdmin()) {
+          <button class="btn btn-primary" (click)="openCreateModal()">Add Student</button>
+        }
       </app-empty-state>
     } @else {
       <div class="card bg-base-100 shadow-sm border border-base-300">
@@ -52,22 +56,16 @@ import { StudentService } from '../services/student.service';
             <tbody>
               @for (student of filteredStudents(); track student.id) {
                 <tr>
-                  <td>
-                    <a class="link link-hover font-medium" (click)="goToDetail(student)">
-                      {{ student.name }}
-                    </a>
-                  </td>
+                  <td class="font-medium">{{ student.name }}</td>
                   <td>{{ student.surname }}</td>
                   <td class="text-right">
-                    <button class="btn btn-ghost btn-xs" (click)="openEditModal(student)">
-                      Edit
-                    </button>
-                    <button
-                      class="btn btn-ghost btn-xs text-error"
-                      (click)="confirmDelete(student)"
-                    >
-                      Delete
-                    </button>
+                    <button class="btn btn-ghost" (click)="goToDetail(student)">View</button>
+                    @if (orgContext.isAdmin()) {
+                      <button class="btn btn-ghost" (click)="openEditModal(student)">Edit</button>
+                      <button class="btn btn-ghost text-error" (click)="confirmDelete(student)">
+                        Delete
+                      </button>
+                    }
                   </td>
                 </tr>
               }
@@ -157,7 +155,7 @@ import { StudentService } from '../services/student.service';
   `,
 })
 export default class StudentListPage implements OnInit {
-  private readonly orgContext = inject(OrgContextService);
+  protected readonly orgContext = inject(OrgContextService);
   private readonly studentService = inject(StudentService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);

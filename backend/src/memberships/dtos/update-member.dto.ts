@@ -1,5 +1,6 @@
 import type { UpdateMemberBody } from '@help-teacher/shared';
 import {
+  ArrayNotEmpty,
   IsArray,
   IsEnum,
   IsNotEmpty,
@@ -22,6 +23,7 @@ export class UpdateMemberParamsDTO {
 
 export class UpdateMemberBodyDTO implements UpdateMemberBody {
   @IsArray()
+  @ArrayNotEmpty()
   @IsEnum(RolesEnum, { each: true })
   @IsOptional()
   public roles?: RolesEnum[];

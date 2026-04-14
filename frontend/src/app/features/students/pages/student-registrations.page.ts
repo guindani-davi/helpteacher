@@ -26,8 +26,8 @@ import { StudentService } from '../services/student.service';
       subtitle="Manage student registrations"
     >
       <div class="flex gap-2">
-        <button class="btn btn-sm" (click)="goBackToDetail()">← Back</button>
-        <button class="btn btn-primary btn-sm" (click)="openCreateModal()">
+        <button class="btn" (click)="goBackToDetail()">← Back</button>
+        <button class="btn btn-primary" (click)="openCreateModal()">
           + Add Registration
         </button>
       </div>
@@ -74,8 +74,8 @@ import { StudentService } from '../services/student.service';
                     }
                   </td>
                   <td class="text-right">
-                    <button class="btn btn-ghost btn-xs" (click)="openEditModal(reg)">Edit</button>
-                    <button class="btn btn-ghost btn-xs text-error" (click)="confirmDelete(reg)">
+                    <button class="btn btn-ghost" (click)="openEditModal(reg)">Edit</button>
+                    <button class="btn btn-ghost text-error" (click)="confirmDelete(reg)">
                       Delete
                     </button>
                   </td>

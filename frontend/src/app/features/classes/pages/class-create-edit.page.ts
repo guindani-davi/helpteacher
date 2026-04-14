@@ -1,7 +1,12 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { form, FormField, required, submit } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
-import type { Membership, Schedule, Student } from '@help-teacher/shared';
+import {
+  DayOfWeekEnum,
+  type MembershipWithUser,
+  type Schedule,
+  type Student,
+} from '@help-teacher/shared';
 import { ToastService } from '../../../core/services/toast.service';
 import { PageHeader } from '../../../shared';
 import { MembershipService } from '../../organizations/services/membership.service';
@@ -74,7 +79,9 @@ function capitalize(value: string): string {
                   <option value="">Select a teacher</option>
                   @for (member of members(); track member.id) {
                     <option [value]="member.userId">
-                      {{ member.userId.slice(0, 8) }}… ({{ member.roles.join(', ') }})
+                      {{ member.user.name }} {{ member.user.surname }} ({{
+                        member.roles.join(', ')
+                      }})
                     </option>
                   }
                 </select>
@@ -93,6 +100,16 @@ function capitalize(value: string): string {
                   class="input input-bordered w-full"
                   [formField]="classForm.date"
                 />
+                @if (selectedScheduleDay()) {
+                  <p class="label text-info text-sm">
+                    📅 The selected schedule is on
+                    <strong>{{ capitalize(selectedScheduleDay()!) }}</strong
+                    >s. Please pick a date that falls on that day.
+                  </p>
+                }
+                @if (dateWeekdayError()) {
+                  <p class="label text-error">{{ dateWeekdayError() }}</p>
+                }
                 @if (classForm.date().touched() && classForm.date().invalid()) {
                   <p class="label text-error">
                     @for (err of classForm.date().errors(); track err.kind) {
@@ -134,7 +151,7 @@ export default class ClassCreateEditPage implements OnInit {
 
   protected readonly schedules = signal<Schedule[]>([]);
   protected readonly students = signal<Student[]>([]);
-  protected readonly members = signal<Membership[]>([]);
+  protected readonly members = signal<MembershipWithUser[]>([]);
 
   protected readonly classModel = signal({
     scheduleId: '',
@@ -150,6 +167,37 @@ export default class ClassCreateEditPage implements OnInit {
   });
 
   protected capitalize = capitalize;
+
+  /** Day-of-week enum value for the currently selected schedule. */
+  protected readonly selectedScheduleDay = computed(() => {
+    const scheduleId = this.classModel().scheduleId;
+    if (!scheduleId) return null;
+    return this.schedules().find((s) => s.id === scheduleId)?.dayOfWeek ?? null;
+  });
+
+  /** Maps DayOfWeekEnum → JS Date.getUTCDay() (0=Sun … 6=Sat). */
+  private static readonly DAY_MAP: Record<string, number> = {
+    [DayOfWeekEnum.SUNDAY]: 0,
+    [DayOfWeekEnum.MONDAY]: 1,
+    [DayOfWeekEnum.TUESDAY]: 2,
+    [DayOfWeekEnum.WEDNESDAY]: 3,
+    [DayOfWeekEnum.THURSDAY]: 4,
+    [DayOfWeekEnum.FRIDAY]: 5,
+    [DayOfWeekEnum.SATURDAY]: 6,
+  };
+
+  /** Cross-field validation: date vs schedule day-of-week. */
+  protected readonly dateWeekdayError = computed(() => {
+    const day = this.selectedScheduleDay();
+    const date = this.classModel().date;
+    if (!day || !date) return null;
+    const jsDay = new Date(date + 'T00:00:00Z').getUTCDay();
+    const expectedDay = ClassCreateEditPage.DAY_MAP[day];
+    if (jsDay !== expectedDay) {
+      return `The selected date is not a ${capitalize(day)}. Please choose a ${capitalize(day)}.`;
+    }
+    return null;
+  });
 
   ngOnInit(): void {
     this.classId = this.route.snapshot.paramMap.get('classId') ?? '';
@@ -228,6 +276,10 @@ export default class ClassCreateEditPage implements OnInit {
 
   protected onSave(event: Event): void {
     event.preventDefault();
+    if (this.dateWeekdayError()) {
+      this.toastService.error(this.dateWeekdayError()!);
+      return;
+    }
     submit(this.classForm, async () => {
       const slug = this.orgContext.org()?.slug;
       if (!slug) return;

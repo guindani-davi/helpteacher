@@ -11,7 +11,9 @@ import { SchoolService } from '../services/school.service';
   imports: [PageHeader, ConfirmDialog, Pagination, EmptyState, FormField],
   template: `
     <app-page-header title="Schools" subtitle="Manage your schools">
-      <button class="btn btn-primary btn-sm" (click)="openCreateModal()">+ Add School</button>
+      @if (orgContext.isAdmin()) {
+        <button class="btn btn-primary" (click)="openCreateModal()">+ Add School</button>
+      }
     </app-page-header>
 
     @if (loading()) {
@@ -24,7 +26,9 @@ import { SchoolService } from '../services/school.service';
         title="No schools yet"
         description="Create your first school to get started."
       >
-        <button class="btn btn-primary" (click)="openCreateModal()">Add School</button>
+        @if (orgContext.isAdmin()) {
+          <button class="btn btn-primary" (click)="openCreateModal()">Add School</button>
+        }
       </app-empty-state>
     } @else {
       <div class="card bg-base-100 shadow-sm border border-base-300">
@@ -41,12 +45,12 @@ import { SchoolService } from '../services/school.service';
                 <tr>
                   <td class="font-medium">{{ school.name }}</td>
                   <td class="text-right">
-                    <button class="btn btn-ghost btn-xs" (click)="openEditModal(school)">
-                      Edit
-                    </button>
-                    <button class="btn btn-ghost btn-xs text-error" (click)="confirmDelete(school)">
-                      Delete
-                    </button>
+                    @if (orgContext.isAdmin()) {
+                      <button class="btn btn-ghost" (click)="openEditModal(school)">Edit</button>
+                      <button class="btn btn-ghost text-error" (click)="confirmDelete(school)">
+                        Delete
+                      </button>
+                    }
                   </td>
                 </tr>
               }
@@ -114,7 +118,7 @@ import { SchoolService } from '../services/school.service';
   `,
 })
 export default class SchoolListPage implements OnInit {
-  private readonly orgContext = inject(OrgContextService);
+  protected readonly orgContext = inject(OrgContextService);
   private readonly schoolService = inject(SchoolService);
   private readonly toastService = inject(ToastService);
 

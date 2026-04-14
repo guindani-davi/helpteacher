@@ -3,7 +3,6 @@ import type {
   ApiResponse,
   ClassDetail,
   CreateStudentBody,
-  PaginatedResponse,
   Student,
   StudentDetail,
   UpdateStudentBody,
@@ -15,7 +14,7 @@ export class StudentService {
   private readonly api = inject(ApiService);
 
   list(slug: string, page = 1, limit = 20) {
-    return this.api.get<PaginatedResponse<Student>>(`/organizations/${slug}/students`, {
+    return this.api.getPaginated<Student>(`/organizations/${slug}/students`, {
       page,
       limit,
     });
@@ -32,7 +31,7 @@ export class StudentService {
   }
 
   getClasses(slug: string, studentId: string, page = 1, limit = 20) {
-    return this.api.get<PaginatedResponse<ClassDetail>>(
+    return this.api.getPaginated<ClassDetail>(
       `/organizations/${slug}/students/${studentId}/classes`,
       { page, limit },
     );

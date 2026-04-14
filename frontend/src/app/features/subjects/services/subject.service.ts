@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import type {
   ApiResponse,
   CreateSubjectBody,
-  PaginatedResponse,
   Subject,
   UpdateSubjectBody,
 } from '@help-teacher/shared';
@@ -13,7 +12,7 @@ export class SubjectService {
   private readonly api = inject(ApiService);
 
   list(slug: string, page = 1, limit = 20) {
-    return this.api.get<PaginatedResponse<Subject>>(`/organizations/${slug}/subjects`, {
+    return this.api.getPaginated<Subject>(`/organizations/${slug}/subjects`, {
       page,
       limit,
     });

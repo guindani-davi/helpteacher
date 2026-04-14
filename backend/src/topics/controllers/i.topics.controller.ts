@@ -1,10 +1,10 @@
 import type { JwtPayload } from '../../auth/models/jwt.model';
-import { PaginationQueryDTO } from '../../common/dtos/pagination-query.dto';
 import { PaginatedResponse } from '../../common/models/paginated-response.model';
 import type { Membership } from '../../memberships/models/membership.model';
 import { CreateTopicBodyDTO } from '../dtos/create-topic.dto';
 import { DeleteTopicParamsDTO } from '../dtos/delete-topic.dto';
 import { GetTopicParamsDTO } from '../dtos/get-topic.dto';
+import { GetTopicsQueryDTO } from '../dtos/get-topics-query.dto';
 import {
   UpdateTopicBodyDTO,
   UpdateTopicParamsDTO,
@@ -30,7 +30,7 @@ export abstract class ITopicsController {
   ): Promise<Topic>;
   public abstract getByOrganization(
     membership: Membership,
-    pagination: PaginationQueryDTO,
+    query: GetTopicsQueryDTO,
   ): Promise<PaginatedResponse<Topic>>;
   public abstract update(
     params: UpdateTopicParamsDTO,

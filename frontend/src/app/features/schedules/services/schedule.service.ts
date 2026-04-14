@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import type {
   ApiResponse,
   CreateScheduleBody,
-  PaginatedResponse,
   Schedule,
   UpdateScheduleBody,
 } from '@help-teacher/shared';
@@ -13,7 +12,7 @@ export class ScheduleService {
   private readonly api = inject(ApiService);
 
   list(slug: string, page = 1, limit = 20) {
-    return this.api.get<PaginatedResponse<Schedule>>(`/organizations/${slug}/schedules`, {
+    return this.api.getPaginated<Schedule>(`/organizations/${slug}/schedules`, {
       page,
       limit,
     });

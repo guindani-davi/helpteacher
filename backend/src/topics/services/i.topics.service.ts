@@ -4,13 +4,13 @@ import { IReportCacheService } from '../../reports/services/i.report-cache.servi
 import { ISubjectsService } from '../../subjects/services/i.subjects.service';
 
 import type { JwtPayload } from '../../auth/models/jwt.model';
-import { PaginationQueryDTO } from '../../common/dtos/pagination-query.dto';
 import { PaginatedResponse } from '../../common/models/paginated-response.model';
 import { IHelpersService } from '../../helpers/services/i.helpers.service';
 import type { Membership } from '../../memberships/models/membership.model';
 import { CreateTopicBodyDTO } from '../dtos/create-topic.dto';
 import { DeleteTopicParamsDTO } from '../dtos/delete-topic.dto';
 import { GetTopicParamsDTO } from '../dtos/get-topic.dto';
+import { GetTopicsQueryDTO } from '../dtos/get-topics-query.dto';
 import {
   UpdateTopicBodyDTO,
   UpdateTopicParamsDTO,
@@ -51,7 +51,7 @@ export abstract class ITopicsService {
   ): Promise<Topic>;
   public abstract getByOrganization(
     membership: Membership,
-    pagination: PaginationQueryDTO,
+    query: GetTopicsQueryDTO,
   ): Promise<PaginatedResponse<Topic>>;
   public abstract update(
     params: UpdateTopicParamsDTO,

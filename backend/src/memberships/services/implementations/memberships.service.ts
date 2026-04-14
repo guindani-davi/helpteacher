@@ -14,6 +14,7 @@ import {
 } from '../../dtos/update-member.dto';
 import { ForbiddenOperationException } from '../../exceptions/forbidden-operation.exception';
 import { MembershipWithOrg } from '../../models/membership-with-org.model';
+import { MembershipWithUser } from '../../models/membership-with-user.model';
 import { Membership } from '../../models/membership.model';
 import { IMembershipsRepository } from '../../repositories/i.memberships.repository';
 import { IMembershipsService } from '../i.memberships.service';
@@ -49,7 +50,7 @@ export class MembershipsService extends IMembershipsService {
   public async getMembers(
     params: GetMembersParamsDTO,
     pagination: PaginationQueryDTO,
-  ): Promise<PaginatedResponse<Membership>> {
+  ): Promise<PaginatedResponse<MembershipWithUser>> {
     const organization =
       await this.organizationsService.getOrganizationBySlug(params);
 

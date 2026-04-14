@@ -17,9 +17,9 @@ import { SubscriptionService } from '../../core/services/subscription.service';
         </div>
         <div class="flex-none">
           @if (isAuthenticated()) {
-            <a routerLink="/subscription" class="btn btn-ghost btn-sm">My Subscription</a>
+            <a routerLink="/subscription" class="btn btn-ghost">My Subscription</a>
           } @else {
-            <a routerLink="/login" class="btn btn-ghost btn-sm">Login</a>
+            <a routerLink="/login" class="btn btn-ghost">Login</a>
           }
         </div>
       </header>

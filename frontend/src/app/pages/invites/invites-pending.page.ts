@@ -40,15 +40,13 @@ import { EmptyState, ToastContainer } from '../../shared';
                     <p class="text-sm text-base-content/60">
                       Roles:
                       @for (role of invite.roles; track role) {
-                        <span class="badge badge-xs badge-outline mr-1">{{ role }}</span>
+                        <span class="badge badge-primary badge-outline mr-1">{{ role }}</span>
                       }
                     </p>
                   </div>
                   <div class="flex gap-2">
-                    <button class="btn btn-primary btn-sm" (click)="accept(invite.id)">
-                      Accept
-                    </button>
-                    <button class="btn btn-ghost btn-sm" (click)="reject(invite.id)">Reject</button>
+                    <button class="btn btn-primary" (click)="accept(invite.id)">Accept</button>
+                    <button class="btn btn-ghost" (click)="reject(invite.id)">Reject</button>
                   </div>
                 </div>
               </div>

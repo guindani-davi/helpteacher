@@ -12,9 +12,7 @@ import { OrgContextService } from '../../state/org-context.service';
   imports: [PageHeader, ConfirmDialog, Pagination, EmptyState, FormField],
   template: `
     <app-page-header title="Invites" subtitle="Invite people to join your organization">
-      <button class="btn btn-primary btn-sm" (click)="showCreateModal.set(true)">
-        + Send Invite
-      </button>
+      <button class="btn btn-primary" (click)="showCreateModal.set(true)">+ Send Invite</button>
     </app-page-header>
 
     @if (loading()) {
@@ -47,7 +45,7 @@ import { OrgContextService } from '../../state/org-context.service';
                   <td>{{ invite.email }}</td>
                   <td>
                     @for (role of invite.roles; track role) {
-                      <span class="badge badge-sm badge-outline mr-1">{{ role }}</span>
+                      <span class="badge badge-primary badge-outline mr-1">{{ role }}</span>
                     }
                   </td>
                   <td>
@@ -64,10 +62,7 @@ import { OrgContextService } from '../../state/org-context.service';
                   </td>
                   <td class="text-right">
                     @if (invite.status === 'pending') {
-                      <button
-                        class="btn btn-ghost btn-xs text-error"
-                        (click)="confirmRevoke(invite)"
-                      >
+                      <button class="btn btn-ghost text-error" (click)="confirmRevoke(invite)">
                         Revoke
                       </button>
                     }
