@@ -1,12 +1,13 @@
 import { Routes } from '@angular/router';
 import { adminGuard } from './guards/admin.guard';
 import { orgResolver } from './guards/org.resolver';
-import { staffGuard } from './guards/staff.guard';
+import { responsibleChildGuard, staffGuard } from './guards/staff.guard';
 
 export const orgRoutes: Routes = [
   {
     path: '',
     resolve: { org: orgResolver },
+    canActivateChild: [responsibleChildGuard],
     loadComponent: () => import('./layout/org-layout'),
     children: [
       {
