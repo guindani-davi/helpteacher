@@ -43,6 +43,8 @@ export class RolesGuard implements CanActivate {
     );
 
     if (!hasRequiredRole) {
+      console.log(requiredRoles);
+      console.log(membership.roles);
       throw new ForbiddenException({
         message: 'You do not have the required role to perform this action',
         messageKey: 'errors.insufficientRole',

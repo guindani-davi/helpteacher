@@ -76,12 +76,18 @@ export class StudentsController extends IStudentsController {
   }
 
   @Get(':slug/students/:studentId/details')
-  @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN, RolesEnum.TEACHER)
+  @AllowedRoles(
+    RolesEnum.OWNER,
+    RolesEnum.ADMIN,
+    RolesEnum.TEACHER,
+    RolesEnum.RESPONSIBLE,
+  )
   public async getDetails(
     @Param() params: GetStudentParamsDTO,
     @CurrentMembership() membership: Membership,
+    @CurrentUser() user: JwtPayload,
   ): Promise<StudentDetail> {
-    return this.studentsService.getDetails(params, membership);
+    return this.studentsService.getDetails(params, membership, user);
   }
 
   @Get(':slug/students/:studentId/classes')

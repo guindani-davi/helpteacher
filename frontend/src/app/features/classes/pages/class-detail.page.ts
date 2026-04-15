@@ -1,10 +1,17 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { form, FormField, required, submit } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
-import type { ClassDetail, ClassTopicDetail, PaginatedResponse, Topic } from '@help-teacher/shared';
+import type {
+    ClassDetail,
+    ClassTopicDetail,
+    PaginatedResponse,
+    Subject,
+    Topic,
+} from '@help-teacher/shared';
 import { ToastService } from '../../../core/services/toast.service';
 import { ConfirmDialog, PageHeader } from '../../../shared';
 import { OrgContextService } from '../../organizations/state/org-context.service';
+import { SubjectService } from '../../subjects/services/subject.service';
 import { TopicService } from '../../subjects/services/topic.service';
 import { ClassTopicService } from '../services/class-topic.service';
 import { ClassService } from '../services/class.service';
@@ -72,12 +79,10 @@ function capitalize(value: string): string {
               <h2 class="card-title text-base">
                 Topics
                 @if (topics().length > 0) {
-                  <span class="badge badge-sm">{{ topics().length }}</span>
+                  <span class="badge badge-primary">{{ topics().length }}</span>
                 }
               </h2>
-              <button class="btn btn-primary" (click)="openAddTopicModal()">
-                + Add Topic
-              </button>
+              <button class="btn btn-primary" (click)="openAddTopicModal()">+ Add Topic</button>
             </div>
             @if (loadingTopics()) {
               <div class="flex justify-center py-4">
@@ -124,6 +129,19 @@ function capitalize(value: string): string {
       <div class="modal-box">
         <h3 class="font-bold text-lg">Add Topic</h3>
         <form (submit)="onAddTopic($event)">
+          <fieldset class="fieldset mt-4">
+            <legend class="fieldset-legend">Filter by Subject</legend>
+            <select
+              class="select select-bordered w-full"
+              [value]="selectedSubjectId()"
+              (change)="onSubjectFilterChange($any($event.target).value)"
+            >
+              <option value="">All subjects</option>
+              @for (subject of subjects(); track subject.id) {
+                <option [value]="subject.id">{{ subject.name }}</option>
+              }
+            </select>
+          </fieldset>
           <fieldset class="fieldset mt-4">
             <legend class="fieldset-legend">Topic</legend>
             <select class="select select-bordered w-full" [formField]="topicForm.topicId">
@@ -174,19 +192,29 @@ export default class ClassDetailPage implements OnInit {
   private readonly classService = inject(ClassService);
   private readonly classTopicService = inject(ClassTopicService);
   private readonly topicService = inject(TopicService);
+  private readonly subjectService = inject(SubjectService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
   protected readonly detail = signal<ClassDetail | null>(null);
   protected readonly topics = signal<ClassTopicDetail[]>([]);
-  protected readonly availableTopics = signal<Topic[]>([]);
+  private readonly allTopics = signal<Topic[]>([]);
+  protected readonly subjects = signal<Subject[]>([]);
+  protected readonly selectedSubjectId = signal('');
   protected readonly loading = signal(true);
   protected readonly loadingTopics = signal(true);
   protected readonly savingTopic = signal(false);
   protected readonly showTopicModal = signal(false);
   protected readonly showRemoveConfirm = signal(false);
   protected readonly removeTarget = signal<ClassTopicDetail | null>(null);
+
+  protected readonly availableTopics = computed(() => {
+    const topics = this.allTopics();
+    const subjectId = this.selectedSubjectId();
+    const attached = new Set(this.topics().map((t) => t.topicId));
+    return topics.filter((t) => !attached.has(t.id) && (!subjectId || t.subjectId === subjectId));
+  });
 
   private classId = '';
 
@@ -238,12 +266,19 @@ export default class ClassDetailPage implements OnInit {
 
   protected openAddTopicModal(): void {
     this.topicModel.set({ topicId: '' });
+    this.selectedSubjectId.set('');
     this.loadAvailableTopics();
+    this.loadSubjects();
     this.showTopicModal.set(true);
   }
 
   protected closeTopicModal(): void {
     this.showTopicModal.set(false);
+  }
+
+  protected onSubjectFilterChange(subjectId: string): void {
+    this.selectedSubjectId.set(subjectId);
+    this.topicModel.set({ topicId: '' });
   }
 
   private loadAvailableTopics(): void {
@@ -252,9 +287,19 @@ export default class ClassDetailPage implements OnInit {
 
     this.topicService.list(slug, 1, 100).subscribe({
       next: (res: PaginatedResponse<Topic>) => {
-        this.availableTopics.set(res.items);
+        this.allTopics.set(res.items);
       },
       error: () => this.toastService.error('Failed to load available topics'),
+    });
+  }
+
+  private loadSubjects(): void {
+    const slug = this.orgContext.org()?.slug;
+    if (!slug) return;
+
+    this.subjectService.list(slug, 1, 100).subscribe({
+      next: (res: PaginatedResponse<Subject>) => this.subjects.set(res.items),
+      error: () => this.toastService.error('Failed to load subjects'),
     });
   }
 

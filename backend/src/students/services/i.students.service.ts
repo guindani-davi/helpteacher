@@ -60,6 +60,7 @@ export abstract class IStudentsService {
   public abstract getDetails(
     params: GetStudentParamsDTO,
     membership: Membership,
+    user: JwtPayload,
   ): Promise<StudentDetail>;
   public abstract getByOrganization(
     membership: Membership,

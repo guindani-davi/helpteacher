@@ -57,3 +57,7 @@ export interface StudentUser {
   createdAt: string;
   updatedAt: string | null;
 }
+
+export interface StudentUserWithUser extends StudentUser {
+  user: Pick<import("./user").SafeUser, "id" | "name" | "surname" | "email">;
+}

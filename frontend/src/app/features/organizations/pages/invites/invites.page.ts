@@ -50,7 +50,7 @@ import { OrgContextService } from '../../state/org-context.service';
                   </td>
                   <td>
                     <span
-                      class="badge badge-sm"
+                      class="badge"
                       [class.badge-warning]="invite.status === 'pending'"
                       [class.badge-success]="invite.status === 'accepted'"
                       [class.badge-error]="

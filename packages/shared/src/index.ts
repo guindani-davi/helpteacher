@@ -48,6 +48,7 @@ export type {
   StudentDetail,
   StudentReport,
   StudentUser,
+  StudentUserWithUser,
   Subject,
   SubscriptionPlanResponse,
   Topic,

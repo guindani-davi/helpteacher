@@ -247,6 +247,31 @@ export class MembershipsRepository extends IMembershipsRepository {
     roles: RolesEnum[],
     createdBy: string,
   ): Promise<void> {
+    const existing = await this.databaseService
+      .from('memberships')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('organization_id', organizationId)
+      .eq('is_active', false)
+      .single();
+
+    if (existing.data) {
+      const reactivate = await this.databaseService
+        .from('memberships')
+        .update({
+          is_active: true,
+          roles,
+          updated_by: createdBy,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', existing.data.id);
+
+      if (reactivate.error) {
+        throw new DatabaseException();
+      }
+      return;
+    }
+
     const result = await this.databaseService.from('memberships').insert({
       user_id: userId,
       organization_id: organizationId,

@@ -33,9 +33,9 @@ import { StudentUserService } from '../services/student-user.service';
               <h3 class="card-title text-base">{{ student.name }} {{ student.surname }}</h3>
               <div class="flex items-center gap-2 mt-1">
                 @if (student.isActive) {
-                  <span class="badge badge-success badge-sm">Active</span>
+                  <span class="badge badge-success">Active</span>
                 } @else {
-                  <span class="badge badge-ghost badge-sm">Inactive</span>
+                  <span class="badge badge-primary badge-outline">Inactive</span>
                 }
               </div>
               <div class="card-actions justify-end mt-2">

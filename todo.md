@@ -1,7 +1,12 @@
-- add um member, removi e invitei de novo, deu erro
-- erro download pdf
+BUGS:
+
+MELHORIAS:
+
+- tamanho badges
+- cor badges
+- ordenar listas
 - tem que conseguir ver plano atual e conseguir ver uma tela pra mudar
 - erros
 - linguas
-- logo
+- id visual de emails e pdf
 - documentação

@@ -115,7 +115,7 @@ import { OrgContextService } from '../../state/org-context.service';
             <h2 class="card-title text-base-content">Your Role</h2>
             <div class="flex flex-wrap gap-2 mt-2">
               @for (role of roles(); track role) {
-                <span class="badge badge-primary badge-lg">{{ role }}</span>
+                <span class="badge badge-primary">{{ role }}</span>
               }
             </div>
           </div>

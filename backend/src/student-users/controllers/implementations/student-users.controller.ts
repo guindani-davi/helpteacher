@@ -25,6 +25,7 @@ import { Student } from '../../../students/models/student.model';
 import { ActiveSubscriptionGuard } from '../../../subscriptions/guards/active-subscription.guard';
 import { LinkStudentUserBodyDTO } from '../../dtos/link-student-user.dto';
 import { UnlinkStudentUserParamsDTO } from '../../dtos/unlink-student-user.dto';
+import { StudentUserWithUser } from '../../models/student-user-with-user.model';
 import { StudentUser } from '../../models/student-user.model';
 import { IStudentUsersService } from '../../services/i.student-users.service';
 import { IStudentUsersController } from '../i.student-users.controller';
@@ -39,7 +40,7 @@ export class StudentUsersController extends IStudentUsersController {
     super(studentUsersService);
   }
 
-  @Get(':slug/students/my-students')
+  @Get(':slug/my-students')
   @AllowedRoles(RolesEnum.RESPONSIBLE)
   public async getByUser(
     @CurrentMembership() membership: Membership,
@@ -47,6 +48,17 @@ export class StudentUsersController extends IStudentUsersController {
     @CurrentUser() user: JwtPayload,
   ): Promise<PaginatedResponse<Student>> {
     return this.studentUsersService.getByUser(membership, pagination, user);
+  }
+
+  @Get(':slug/students/:studentId/users')
+  public async getLinkedUsers(
+    @Param('studentId') studentId: string,
+    @CurrentMembership() membership: Membership,
+  ): Promise<StudentUserWithUser[]> {
+    return this.studentUsersService.getLinkedUsersForStudent(
+      studentId,
+      membership,
+    );
   }
 
   @Post(':slug/students/:studentId/users')

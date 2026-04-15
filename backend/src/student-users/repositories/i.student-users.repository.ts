@@ -3,6 +3,7 @@ import { PaginatedResponse } from '../../common/models/paginated-response.model'
 import { IDatabaseService } from '../../database/services/i.database.service';
 import { IHelpersService } from '../../helpers/services/i.helpers.service';
 import { Student } from '../../students/models/student.model';
+import { StudentUserWithUser } from '../models/student-user-with-user.model';
 import { StudentUser } from '../models/student-user.model';
 
 export abstract class IStudentUsersRepository {
@@ -44,4 +45,7 @@ export abstract class IStudentUsersRepository {
   public abstract getActiveUserIdsForStudent(
     studentId: string,
   ): Promise<string[]>;
+  public abstract getLinkedUsersForStudent(
+    studentId: string,
+  ): Promise<StudentUserWithUser[]>;
 }

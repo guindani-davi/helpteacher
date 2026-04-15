@@ -29,6 +29,7 @@ export type {
   Student,
   StudentDetail,
   StudentUser,
+  StudentUserWithUser,
 } from "./student";
 export type { Subject } from "./subject";
 export type {

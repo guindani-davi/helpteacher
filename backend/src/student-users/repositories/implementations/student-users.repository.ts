@@ -9,6 +9,7 @@ import { IDatabaseService } from '../../../database/services/i.database.service'
 import { Database } from '../../../database/types';
 import { IHelpersService } from '../../../helpers/services/i.helpers.service';
 import { Student } from '../../../students/models/student.model';
+import { StudentUserWithUser } from '../../models/student-user-with-user.model';
 import { StudentUser } from '../../models/student-user.model';
 import { IStudentUsersRepository } from '../i.student-users.repository';
 
@@ -26,6 +27,32 @@ export class StudentUsersRepository extends IStudentUsersRepository {
     userId: string,
     createdBy: string,
   ): Promise<StudentUser> {
+    const existing = await this.databaseService
+      .from('student_users')
+      .select()
+      .eq('student_id', studentId)
+      .eq('user_id', userId)
+      .eq('is_active', false)
+      .single();
+
+    if (existing.data) {
+      const reactivate = await this.databaseService
+        .from('student_users')
+        .update({
+          is_active: true,
+          updated_by: createdBy,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', existing.data.id)
+        .select()
+        .single();
+
+      if (reactivate.error || !reactivate.data) {
+        throw new DatabaseException();
+      }
+      return this.mapToEntity(reactivate.data);
+    }
+
     const data: Database['public']['Tables']['student_users']['Insert'] = {
       student_id: studentId,
       user_id: userId,
@@ -185,6 +212,31 @@ export class StudentUsersRepository extends IStudentUsersRepository {
       .eq('is_active', true);
 
     return result.data?.map((row) => row.user_id) ?? [];
+  }
+
+  public async getLinkedUsersForStudent(
+    studentId: string,
+  ): Promise<StudentUserWithUser[]> {
+    const result = await this.databaseService
+      .from('student_users')
+      .select('*, users!student_users_user_id_fkey(id, name, surname, email)')
+      .eq('student_id', studentId)
+      .eq('is_active', true)
+      .order('created_at', { ascending: true });
+
+    if (result.error) {
+      throw new DatabaseException();
+    }
+
+    return (result.data ?? []).map((row: any) => {
+      const base = this.mapToEntity(row);
+      return new StudentUserWithUser(base, {
+        id: row.users.id,
+        name: row.users.name,
+        surname: row.users.surname,
+        email: row.users.email,
+      });
+    });
   }
 
   private mapToEntity(

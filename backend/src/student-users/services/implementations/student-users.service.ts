@@ -10,6 +10,7 @@ import { Student } from '../../../students/models/student.model';
 import { IStudentsService } from '../../../students/services/i.students.service';
 import { LinkStudentUserBodyDTO } from '../../dtos/link-student-user.dto';
 import { UnlinkStudentUserParamsDTO } from '../../dtos/unlink-student-user.dto';
+import { StudentUserWithUser } from '../../models/student-user-with-user.model';
 import { StudentUser } from '../../models/student-user.model';
 import { IStudentUsersRepository } from '../../repositories/i.student-users.repository';
 import { IStudentUsersService } from '../i.student-users.service';
@@ -119,6 +120,14 @@ export class StudentUsersService extends IStudentUsersService {
     studentId: string,
   ): Promise<string[]> {
     return this.studentUsersRepository.getActiveUserIdsForStudent(studentId);
+  }
+
+  public async getLinkedUsersForStudent(
+    studentId: string,
+    membership: Membership,
+  ): Promise<StudentUserWithUser[]> {
+    await this.studentsService.getById(studentId, membership.organizationId);
+    return this.studentUsersRepository.getLinkedUsersForStudent(studentId);
   }
 
   public async handleOrphanedRole(

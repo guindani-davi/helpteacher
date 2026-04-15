@@ -119,7 +119,7 @@ import { StudentService } from '../services/student.service';
             <h2 class="card-title text-base">
               Classes
               @if (detail()!.totalClasses > 0) {
-                <span class="badge badge-sm">{{ detail()!.totalClasses }}</span>
+                <span class="badge badge-primary">{{ detail()!.totalClasses }}</span>
               }
             </h2>
             @if (detail()!.classes.length === 0) {
@@ -147,7 +147,7 @@ import { StudentService } from '../services/student.service';
                         <td>{{ cls.teacher.name }} {{ cls.teacher.surname }}</td>
                         <td>
                           @for (topic of cls.topics; track topic.id) {
-                            <span class="badge badge-sm badge-outline mr-1">{{ topic.name }}</span>
+                            <span class="badge badge-primary badge-outline mr-1">{{ topic.name }}</span>
                           }
                         </td>
                       </tr>
@@ -199,7 +199,7 @@ export default class StudentProgressPage implements OnInit {
   protected goToReport(): void {
     const slug = this.orgContext.org()?.slug;
     if (!slug) return;
-    this.router.navigate(['/orgs', slug, 'students', this.studentId, 'report']);
+    this.router.navigate(['/orgs', slug, 'my-students', this.studentId, 'report']);
   }
 
   protected goBack(): void {

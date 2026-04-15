@@ -48,15 +48,14 @@ import { SubscriptionService } from '../../core/services/subscription.service';
               >
                 @if (isPro(plan)) {
                   <div class="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span class="badge badge-primary badge-sm">Recommended</span>
+                    <span class="badge badge-primary">Recommended</span>
                   </div>
                 }
                 <div class="card-body items-center text-center">
                   <h2 class="card-title text-2xl">{{ plan.name }}</h2>
                   <span
-                    class="badge mt-1"
-                    [class.badge-primary]="isPro(plan)"
-                    [class.badge-neutral]="!isPro(plan)"
+                    class="badge badge-primary mt-1"
+                    [class.badge-outline]="!isPro(plan)"
                   >
                     {{ plan.tier | uppercase }}
                   </span>

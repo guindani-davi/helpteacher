@@ -2,11 +2,11 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { form, FormField, required, submit } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 import type {
-  EducationLevel,
-  GradeLevel,
-  PaginatedResponse,
-  Registration,
-  School,
+    EducationLevel,
+    GradeLevel,
+    PaginatedResponse,
+    Registration,
+    School,
 } from '@help-teacher/shared';
 import { ToastService } from '../../../core/services/toast.service';
 import { ConfirmDialog, EmptyState, PageHeader, Pagination } from '../../../shared';
@@ -68,9 +68,9 @@ import { StudentService } from '../services/student.service';
                   <td>{{ reg.endDate ?? 'Ongoing' }}</td>
                   <td>
                     @if (reg.isActive) {
-                      <span class="badge badge-success badge-sm">Active</span>
+                      <span class="badge badge-success">Active</span>
                     } @else {
-                      <span class="badge badge-sm">Inactive</span>
+                      <span class="badge badge-primary badge-outline">Inactive</span>
                     }
                   </td>
                   <td class="text-right">

@@ -5,6 +5,7 @@ import type { Membership } from '../../memberships/models/membership.model';
 import { Student } from '../../students/models/student.model';
 import { LinkStudentUserBodyDTO } from '../dtos/link-student-user.dto';
 import { UnlinkStudentUserParamsDTO } from '../dtos/unlink-student-user.dto';
+import { StudentUserWithUser } from '../models/student-user-with-user.model';
 import { StudentUser } from '../models/student-user.model';
 import { IStudentUsersService } from '../services/i.student-users.service';
 
@@ -31,4 +32,8 @@ export abstract class IStudentUsersController {
     pagination: PaginationQueryDTO,
     user: JwtPayload,
   ): Promise<PaginatedResponse<Student>>;
+  public abstract getLinkedUsers(
+    studentId: string,
+    membership: Membership,
+  ): Promise<StudentUserWithUser[]>;
 }

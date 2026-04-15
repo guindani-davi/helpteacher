@@ -39,6 +39,7 @@ export abstract class IStudentsController {
   public abstract getDetails(
     params: GetStudentParamsDTO,
     membership: Membership,
+    user: JwtPayload,
   ): Promise<StudentDetail>;
   public abstract getStudentClasses(
     params: GetStudentParamsDTO,

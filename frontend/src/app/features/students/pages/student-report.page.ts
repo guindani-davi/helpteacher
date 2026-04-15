@@ -95,7 +95,7 @@ import { ReportService } from '../services/report.service';
             <h2 class="card-title text-base">
               Classes
               @if (r.classes.length > 0) {
-                <span class="badge badge-sm">{{ r.classes.length }}</span>
+                <span class="badge badge-primary">{{ r.classes.length }}</span>
               }
             </h2>
             @if (r.classes.length === 0) {
@@ -123,7 +123,7 @@ import { ReportService } from '../services/report.service';
                         <td>
                           @for (topic of cls.topics; track topic.id; let i = $index) {
                             @if (i === 0 || cls.topics[i - 1].subjectName !== topic.subjectName) {
-                              <span class="badge badge-sm badge-primary badge-outline mr-1">
+                              <span class="badge badge-primary badge-outline mr-1">
                                 {{ topic.subjectName }}
                               </span>
                             }
@@ -131,7 +131,7 @@ import { ReportService } from '../services/report.service';
                         </td>
                         <td>
                           @for (topic of cls.topics; track topic.id) {
-                            <span class="badge badge-sm badge-outline mr-1">
+                            <span class="badge badge-primary badge-outline mr-1">
                               {{ topic.name }}
                             </span>
                           }
@@ -218,6 +218,10 @@ export default class StudentReportPage implements OnInit {
   protected goBack(): void {
     const slug = this.orgContext.org()?.slug;
     if (!slug) return;
-    this.router.navigate(['/orgs', slug, 'students', this.studentId]);
+    if (this.orgContext.isOnlyResponsible()) {
+      this.router.navigate(['/orgs', slug, 'my-students', this.studentId]);
+    } else {
+      this.router.navigate(['/orgs', slug, 'students', this.studentId]);
+    }
   }
 }

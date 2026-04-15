@@ -1,12 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import chromium from '@sparticuz/chromium';
+import { existsSync } from 'fs';
 import puppeteer from 'puppeteer-core';
 import { LocaleEnum } from '../../../i18n/enums/locale.enum';
 import { II18nService } from '../../../i18n/services/i.i18n.service';
 import { StudentReport } from '../../models/student-report.model';
 import {
-  type ReportLabels,
-  buildStudentReportHtml,
+    type ReportLabels,
+    buildStudentReportHtml,
 } from '../../templates/student-report.template';
 import { IReportPdfService } from '../i.report-pdf.service';
 
@@ -26,9 +27,25 @@ export class ReportPdfService extends IReportPdfService {
     const isServerless =
       !!process.env.AWS_LAMBDA_FUNCTION_NAME || !!process.env.VERCEL;
 
-    const executablePath = isServerless
-      ? await chromium.executablePath()
-      : (process.env.CHROME_EXECUTABLE_PATH ?? undefined);
+    let executablePath: string | undefined;
+    if (isServerless) {
+      executablePath = await chromium.executablePath();
+    } else if (process.env.CHROME_EXECUTABLE_PATH) {
+      executablePath = process.env.CHROME_EXECUTABLE_PATH;
+    } else {
+      // Try to find Edge on Windows (pre-installed on Windows 10/11)
+      const edgePaths = [
+        'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+        'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+      ];
+      executablePath = edgePaths.find((p) => existsSync(p));
+    }
+
+    if (!executablePath) {
+      throw new Error(
+        'No browser found. Install Chrome/Edge or set CHROME_EXECUTABLE_PATH.',
+      );
+    }
 
     const browser = await puppeteer.launch({
       args: isServerless

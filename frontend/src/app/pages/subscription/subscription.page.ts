@@ -45,7 +45,7 @@ import { ConfirmDialog, EmptyState, ToastContainer } from '../../shared';
                   <div>
                     <h2 class="card-title">{{ subscription()!.plan.name }}</h2>
                     <div class="flex items-center gap-2 mt-1">
-                      <span class="badge badge-neutral">
+                      <span class="badge badge-primary badge-outline">
                         {{ subscription()!.plan.tier | uppercase }}
                       </span>
                       <span [class]="statusBadgeClass(subscription()!.status)">

@@ -35,7 +35,7 @@ import { OrgContextService } from '../../state/org-context.service';
                   <td class="font-medium">
                     {{ member.user.name }} {{ member.user.surname }}
                     @if (isMe(member)) {
-                      <span class="badge badge-ghost ml-1">you</span>
+                      <span class="badge badge-primary badge-outline ml-1">you</span>
                     }
                   </td>
                   <td class="text-base-content/60 text-sm">{{ member.user.email }}</td>

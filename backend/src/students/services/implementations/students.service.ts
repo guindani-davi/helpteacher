@@ -1,10 +1,12 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { RolesEnum } from '../../../auth/enums/roles.enum';
 import type { JwtPayload } from '../../../auth/models/jwt.model';
 import { IClassTopicsService } from '../../../class-topics/services/i.class-topics.service';
 import { IClassesService } from '../../../classes/services/i.classes.service';
 import { PaginationQueryDTO } from '../../../common/dtos/pagination-query.dto';
 import { PaginatedResponse } from '../../../common/models/paginated-response.model';
 import { IHelpersService } from '../../../helpers/services/i.helpers.service';
+import { ForbiddenOperationException } from '../../../memberships/exceptions/forbidden-operation.exception';
 import type { Membership } from '../../../memberships/models/membership.model';
 import { IRegistrationsService } from '../../../registrations/services/i.registrations.service';
 import { IReportCacheService } from '../../../reports/services/i.report-cache.service';
@@ -73,7 +75,10 @@ export class StudentsService extends IStudentsService {
   public async getDetails(
     params: GetStudentParamsDTO,
     membership: Membership,
+    user: JwtPayload,
   ): Promise<StudentDetail> {
+    await this.authorizeStudentAccess(params.studentId, membership, user);
+
     return this.studentsRepository.getDetailById(
       params.studentId,
       membership.organizationId,
@@ -162,5 +167,32 @@ export class StudentsService extends IStudentsService {
       membership.organizationId,
       params.studentId,
     );
+  }
+
+  private async authorizeStudentAccess(
+    studentId: string,
+    membership: Membership,
+    user: JwtPayload,
+  ): Promise<void> {
+    const hasFullAccess = membership.roles.some(
+      (role) =>
+        role === RolesEnum.OWNER ||
+        role === RolesEnum.ADMIN ||
+        role === RolesEnum.TEACHER,
+    );
+
+    if (hasFullAccess) {
+      return;
+    }
+
+    const linkedUserIds =
+      await this.studentUsersService.getActiveUserIdsForStudent(studentId);
+
+    if (!linkedUserIds.includes(user.sub)) {
+      throw new ForbiddenOperationException(
+        'You do not have access to this student',
+        'errors.noAccessToStudent',
+      );
+    }
   }
 }

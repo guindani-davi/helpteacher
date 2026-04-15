@@ -23,6 +23,32 @@ export class ClassTopicsRepository extends IClassTopicsRepository {
     topicId: string,
     createdBy: string,
   ): Promise<ClassTopic> {
+    const existing = await this.databaseService
+      .from('class_topics')
+      .select()
+      .eq('class_id', classId)
+      .eq('topic_id', topicId)
+      .eq('is_active', false)
+      .single();
+
+    if (existing.data) {
+      const reactivate = await this.databaseService
+        .from('class_topics')
+        .update({
+          is_active: true,
+          updated_by: createdBy,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', existing.data.id)
+        .select()
+        .single();
+
+      if (reactivate.error || !reactivate.data) {
+        throw new DatabaseException();
+      }
+      return this.mapToEntity(reactivate.data);
+    }
+
     const data: Database['public']['Tables']['class_topics']['Insert'] = {
       class_id: classId,
       topic_id: topicId,
