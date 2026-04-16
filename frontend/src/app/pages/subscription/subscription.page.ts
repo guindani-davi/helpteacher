@@ -143,6 +143,10 @@ import { ConfirmDialog, EmptyState, ToastContainer } from '../../shared';
                   Reactivate Subscription
                 </button>
               }
+
+              @if (subscription()!.status === statusEnum.CANCELED) {
+                <a routerLink="/plans" class="btn btn-primary">Subscribe Again</a>
+              }
             </div>
           </div>
         }

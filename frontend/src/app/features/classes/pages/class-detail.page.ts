@@ -2,11 +2,11 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { form, FormField, required, submit } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 import type {
-    ClassDetail,
-    ClassTopicDetail,
-    PaginatedResponse,
-    Subject,
-    Topic,
+  ClassDetail,
+  ClassTopicDetail,
+  PaginatedResponse,
+  Subject,
+  Topic,
 } from '@help-teacher/shared';
 import { ToastService } from '../../../core/services/toast.service';
 import { ConfirmDialog, PageHeader } from '../../../shared';

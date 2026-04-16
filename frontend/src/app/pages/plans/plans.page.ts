@@ -17,7 +17,25 @@ import { SubscriptionService } from '../../core/services/subscription.service';
         </div>
         <div class="flex-none">
           @if (isAuthenticated()) {
-            <a routerLink="/subscription" class="btn btn-ghost">My Subscription</a>
+            <div class="dropdown dropdown-end">
+              <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar placeholder">
+                <div
+                  class="bg-primary text-primary-content rounded-full w-10 h-10 flex items-center justify-center"
+                >
+                  <span class="text-sm">{{ userInitials() }}</span>
+                </div>
+              </div>
+              <ul
+                tabindex="0"
+                class="menu dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow border border-base-300"
+              >
+                <li><a routerLink="/orgs">My Organizations</a></li>
+                <li><a routerLink="/subscription">My Subscription</a></li>
+                <li><a routerLink="/profile">My Profile</a></li>
+                <li><a routerLink="/invites">Pending Invites</a></li>
+                <li><button (click)="logout()">Logout</button></li>
+              </ul>
+            </div>
           } @else {
             <a routerLink="/login" class="btn btn-ghost">Login</a>
           }
@@ -53,10 +71,7 @@ import { SubscriptionService } from '../../core/services/subscription.service';
                 }
                 <div class="card-body items-center text-center">
                   <h2 class="card-title text-2xl">{{ plan.name }}</h2>
-                  <span
-                    class="badge badge-primary mt-1"
-                    [class.badge-outline]="!isPro(plan)"
-                  >
+                  <span class="badge badge-primary mt-1" [class.badge-outline]="!isPro(plan)">
                     {{ plan.tier | uppercase }}
                   </span>
 
@@ -110,6 +125,11 @@ export default class PlansPage implements OnInit {
   protected readonly plans = signal<SubscriptionPlanResponse[]>([]);
   protected readonly loading = signal(true);
   protected readonly isAuthenticated = computed(() => this.authService.isAuthenticated());
+  protected readonly userInitials = computed(() => {
+    const user = this.authService.user();
+    if (!user) return '?';
+    return (user.name?.[0] ?? user.email[0] ?? '?').toUpperCase();
+  });
 
   ngOnInit(): void {
     this.loadPlans();
@@ -142,5 +162,9 @@ export default class PlansPage implements OnInit {
         this.loading.set(false);
       },
     });
+  }
+
+  protected logout(): void {
+    this.authService.logout();
   }
 }

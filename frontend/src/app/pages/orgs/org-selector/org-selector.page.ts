@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { form, FormField, required, submit } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import type { Invite, MembershipWithOrg, PaginatedResponse } from '@help-teacher/shared';
@@ -22,10 +22,25 @@ import { EmptyState, ToastContainer } from '../../../shared';
         <div class="flex-1">
           <span class="text-xl font-bold text-primary">Help Teacher</span>
         </div>
-        <div class="flex-none gap-2">
-          <a routerLink="/invites" class="btn btn-ghost">Pending Invites</a>
-          <a routerLink="/profile" class="btn btn-ghost">Profile</a>
-          <button class="btn btn-ghost" (click)="logout()">Logout</button>
+        <div class="flex-none">
+          <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar placeholder">
+              <div
+                class="bg-primary text-primary-content rounded-full w-10 h-10 flex items-center justify-center"
+              >
+                <span class="text-sm">{{ userInitials() }}</span>
+              </div>
+            </div>
+            <ul
+              tabindex="0"
+              class="menu dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow border border-base-300"
+            >
+              <li><a routerLink="/subscription">My Subscription</a></li>
+              <li><a routerLink="/profile">My Profile</a></li>
+              <li><a routerLink="/invites">Pending Invites</a></li>
+              <li><button (click)="logout()">Logout</button></li>
+            </ul>
+          </div>
         </div>
       </header>
 
@@ -161,6 +176,12 @@ export default class OrgSelectorPage implements OnInit {
   protected readonly loading = signal(true);
   protected readonly creating = signal(false);
   protected readonly showCreateModal = signal(false);
+
+  protected readonly userInitials = computed(() => {
+    const user = this.authService.user();
+    if (!user) return '?';
+    return (user.name?.[0] ?? user.email[0] ?? '?').toUpperCase();
+  });
 
   // Create org form
   protected readonly createModel = signal({ name: '' });

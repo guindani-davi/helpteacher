@@ -50,6 +50,7 @@ import { OrgContextService } from '../state/org-context.service';
                 class="menu menu dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow border border-base-300"
               >
                 <li><a routerLink="/orgs">Switch Organization</a></li>
+                <li><a routerLink="/subscription">My Subscription</a></li>
                 <li><a routerLink="/profile">My Profile</a></li>
                 <li><a routerLink="/invites">Pending Invites</a></li>
                 <li><button (click)="logout()">Logout</button></li>
