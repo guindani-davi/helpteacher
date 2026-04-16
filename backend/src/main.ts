@@ -15,8 +15,13 @@ async function bootstrap() {
 
   app.use(helmet());
 
+  const frontendUrls = configService
+    .getOrThrow<string>('FRONTEND_URL')
+    .split(',')
+    .map((url) => url.trim().replace(/\/$/, ''));
+
   app.enableCors({
-    origin: [configService.getOrThrow<string>('FRONTEND_URL')],
+    origin: frontendUrls,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
   });
