@@ -8,6 +8,7 @@ import {
   Matches,
   MaxLength,
 } from 'class-validator';
+import { StartTimeBeforeEndTime } from '../../common/validators/time-range.validator';
 import { DayOfWeekEnum } from '../enums/day-of-week.enum';
 
 export class UpdateScheduleParamsDTO {
@@ -20,6 +21,7 @@ export class UpdateScheduleParamsDTO {
   public scheduleId: string;
 }
 
+@StartTimeBeforeEndTime('startTime', 'endTime')
 export class UpdateScheduleBodyDTO implements UpdateScheduleBody {
   @IsEnum(DayOfWeekEnum)
   @IsOptional()

@@ -138,10 +138,13 @@ function capitalize(value: string): string {
                 }
               </p>
             }
+            @if (timeRangeError()) {
+              <p class="label text-error">{{ timeRangeError() }}</p>
+            }
           </fieldset>
           <div class="modal-action">
             <button type="button" class="btn" (click)="closeModal()">Cancel</button>
-            <button type="submit" class="btn btn-primary" [disabled]="saving()">
+            <button type="submit" class="btn btn-primary" [disabled]="saving() || timeRangeError()">
               @if (saving()) {
                 <span class="loading loading-spinner loading-sm"></span>
               }
@@ -212,6 +215,15 @@ export default class ScheduleListPage implements OnInit {
     required(s.endTime, { message: 'End time is required' });
   });
 
+  protected readonly timeRangeError = computed(() => {
+    const { startTime, endTime } = this.scheduleModel();
+    if (!startTime || !endTime) return null;
+    if (startTime >= endTime) {
+      return 'Start time must be before end time';
+    }
+    return null;
+  });
+
   protected capitalize = capitalize;
 
   protected formatTime(time: string): string {
@@ -251,8 +263,8 @@ export default class ScheduleListPage implements OnInit {
     this.editingSchedule.set(schedule);
     this.scheduleModel.set({
       dayOfWeek: schedule.dayOfWeek,
-      startTime: schedule.startTime,
-      endTime: schedule.endTime,
+      startTime: this.formatTime(schedule.startTime),
+      endTime: this.formatTime(schedule.endTime),
     });
     this.showModal.set(true);
   }

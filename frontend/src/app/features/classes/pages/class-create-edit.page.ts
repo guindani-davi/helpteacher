@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   DayOfWeekEnum,
   type MembershipWithUser,
+  RolesEnum,
   type Schedule,
   type Student,
 } from '@help-teacher/shared';
@@ -245,7 +246,8 @@ export default class ClassCreateEditPage implements OnInit {
 
     this.membershipService.listMembers(slug, 1, 100).subscribe({
       next: (res) => {
-        this.members.set(res.items);
+        const teachers = res.items.filter((m) => m.roles.includes(RolesEnum.TEACHER));
+        this.members.set(teachers);
         checkDone();
       },
       error: () => {

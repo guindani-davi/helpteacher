@@ -29,23 +29,30 @@ import { StudentUserService } from '../services/student-user.service';
             class="card bg-base-100 shadow-sm border border-base-300 cursor-pointer hover:shadow-md transition-shadow"
             (click)="goToProgress(student.id)"
           >
-            <div class="card-body">
-              <h3 class="card-title text-base">{{ student.name }} {{ student.surname }}</h3>
-              <div class="flex items-center gap-2 mt-1">
-                @if (student.isActive) {
-                  <span class="badge badge-success">Active</span>
-                } @else {
-                  <span class="badge badge-primary badge-outline">Inactive</span>
-                }
-              </div>
-              <div class="card-actions justify-end mt-2">
-                <button
-                  class="btn btn-primary"
-                  (click)="goToProgress(student.id); $event.stopPropagation()"
+            <div class="card-body items-center text-center">
+              <div class="text-primary mb-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-12 w-12"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                 >
-                  View Progress →
-                </button>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
               </div>
+              <h3 class="card-title text-base">{{ student.name }} {{ student.surname }}</h3>
+              <button
+                class="btn btn-primary btn-block mt-4"
+                (click)="goToProgress(student.id); $event.stopPropagation()"
+              >
+                View Progress →
+              </button>
             </div>
           </div>
         }

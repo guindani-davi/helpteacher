@@ -23,6 +23,7 @@
     "notOrgMember": "Você não é membro desta organização",
     "insufficientRole": "Você não possui a função necessária para realizar esta ação",
     "validationError": "Um ou mais erros de validação ocorreram",
+    "startTimeBeforeEndTime": "O horário de início deve ser anterior ao horário de término",
     "internalServerError": "Ocorreu um erro inesperado",
     "cannotAssignOwnerRole": "Não é possível atribuir a função de proprietário diretamente",
     "cannotUpdateOwner": "Você não tem permissão para atualizar este membro",

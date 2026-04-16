@@ -23,6 +23,7 @@
     "notOrgMember": "You are not a member of this organization",
     "insufficientRole": "You do not have the required role to perform this action",
     "validationError": "One or more validation errors occurred",
+    "startTimeBeforeEndTime": "Start time must be before end time",
     "internalServerError": "An unexpected error occurred",
     "cannotAssignOwnerRole": "Cannot assign owner role directly",
     "cannotUpdateOwner": "You do not have permission to update this member",

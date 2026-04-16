@@ -3,6 +3,7 @@ import type { JwtPayload } from '../../../auth/models/jwt.model';
 import { IClassTopicsService } from '../../../class-topics/services/i.class-topics.service';
 import { IClassesService } from '../../../classes/services/i.classes.service';
 import { PaginationQueryDTO } from '../../../common/dtos/pagination-query.dto';
+import { ValidationException } from '../../../common/exceptions/validation.exception';
 import { PaginatedResponse } from '../../../common/models/paginated-response.model';
 import { IHelpersService } from '../../../helpers/services/i.helpers.service';
 import type { Membership } from '../../../memberships/models/membership.model';
@@ -78,10 +79,20 @@ export class SchedulesService extends ISchedulesService {
     membership: Membership,
     user: JwtPayload,
   ): Promise<Schedule> {
-    await this.schedulesRepository.getById(
+    const existing = await this.schedulesRepository.getById(
       params.scheduleId,
       membership.organizationId,
     );
+
+    const startTime = body.startTime ?? existing.startTime;
+    const endTime = body.endTime ?? existing.endTime;
+
+    if (startTime >= endTime) {
+      throw new ValidationException(
+        'Start time must be before end time',
+        'errors.startTimeBeforeEndTime',
+      );
+    }
 
     const result = await this.schedulesRepository.update(
       params.scheduleId,
