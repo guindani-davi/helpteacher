@@ -1,4 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "outputDirectory": "dist/frontend/browser"
+  "outputDirectory": "dist/frontend/browser",
+  "buildCommand": "cd ../packages/shared && npm run build && cd ../../frontend && npm run build"
 }
