@@ -15,7 +15,7 @@ import { RouterLink, RouterOutlet } from '@angular/router';
         <div class="text-center text-primary-content">
           <h1 class="text-4xl font-bold mb-4">Help Teacher</h1>
           <p class="text-lg opacity-90">
-            Manage your students, classes, and curriculum — all in one place.
+            Gerencie seus alunos, aulas e currículo — tudo em um só lugar.
           </p>
         </div>
       </div>
