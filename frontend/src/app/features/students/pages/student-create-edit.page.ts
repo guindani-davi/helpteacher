@@ -11,8 +11,8 @@ import { StudentService } from '../services/student.service';
   imports: [PageHeader, FormField],
   template: `
     <app-page-header
-      [title]="isEditing() ? 'Edit Student' : 'New Student'"
-      [subtitle]="isEditing() ? 'Update student information' : 'Create a new student'"
+      [title]="isEditing() ? 'Editar Aluno' : 'Novo Aluno'"
+      [subtitle]="isEditing() ? 'Atualizar informações do aluno' : 'Criar um novo aluno'"
     />
 
     @if (loadingStudent()) {
@@ -25,11 +25,11 @@ import { StudentService } from '../services/student.service';
           <div class="card-body">
             <form (submit)="onSave($event)">
               <fieldset class="fieldset mb-4">
-                <legend class="fieldset-legend">Name</legend>
+                <legend class="fieldset-legend">Nome</legend>
                 <input
                   type="text"
                   class="input input-bordered w-full"
-                  placeholder="First name"
+                  placeholder="Nome"
                   [formField]="studentForm.name"
                 />
                 @if (studentForm.name().touched() && studentForm.name().invalid()) {
@@ -41,11 +41,11 @@ import { StudentService } from '../services/student.service';
                 }
               </fieldset>
               <fieldset class="fieldset mb-4">
-                <legend class="fieldset-legend">Surname</legend>
+                <legend class="fieldset-legend">Sobrenome</legend>
                 <input
                   type="text"
                   class="input input-bordered w-full"
-                  placeholder="Last name"
+                  placeholder="Sobrenome"
                   [formField]="studentForm.surname"
                 />
                 @if (studentForm.surname().touched() && studentForm.surname().invalid()) {
@@ -57,12 +57,12 @@ import { StudentService } from '../services/student.service';
                 }
               </fieldset>
               <div class="flex justify-end gap-2 mt-6">
-                <button type="button" class="btn" (click)="goBack()">Cancel</button>
+                <button type="button" class="btn" (click)="goBack()">Cancelar</button>
                 <button type="submit" class="btn btn-primary" [disabled]="saving()">
                   @if (saving()) {
                     <span class="loading loading-spinner loading-sm"></span>
                   }
-                  {{ isEditing() ? 'Save Changes' : 'Create Student' }}
+                  {{ isEditing() ? 'Salvar Alterações' : 'Criar Aluno' }}
                 </button>
               </div>
             </form>
@@ -86,8 +86,8 @@ export default class StudentCreateEditPage implements OnInit {
 
   protected readonly studentModel = signal({ name: '', surname: '' });
   protected readonly studentForm = form(this.studentModel, (s) => {
-    required(s.name, { message: 'Name is required' });
-    required(s.surname, { message: 'Surname is required' });
+    required(s.name, { message: 'Nome é obrigatório' });
+    required(s.surname, { message: 'Sobrenome é obrigatório' });
   });
 
   ngOnInit(): void {
@@ -109,7 +109,7 @@ export default class StudentCreateEditPage implements OnInit {
         this.loadingStudent.set(false);
       },
       error: () => {
-        this.toastService.error('Failed to load student');
+        this.toastService.error('Falha ao carregar aluno');
         this.loadingStudent.set(false);
         this.goBack();
       },
@@ -134,7 +134,7 @@ export default class StudentCreateEditPage implements OnInit {
           obs.subscribe({ next: () => resolve(), error: reject });
         });
 
-        this.toastService.success(this.isEditing() ? 'Student updated!' : 'Student created!');
+        this.toastService.success(this.isEditing() ? 'Aluno atualizado!' : 'Aluno criado!');
 
         if (this.isEditing()) {
           this.router.navigate(['/orgs', slug, 'students', this.studentId]);
@@ -142,7 +142,7 @@ export default class StudentCreateEditPage implements OnInit {
           this.router.navigate(['/orgs', slug, 'students']);
         }
       } catch {
-        this.toastService.error('Failed to save student');
+        this.toastService.error('Falha ao salvar aluno');
       } finally {
         this.saving.set(false);
       }

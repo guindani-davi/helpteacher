@@ -2,13 +2,13 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { form, FormField, required, submit } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 import type {
-    EducationLevel,
-    GradeLevel,
-    MembershipWithUser,
-    PaginatedResponse,
-    School,
-    StudentDetail,
-    StudentUserWithUser,
+  EducationLevel,
+  GradeLevel,
+  MembershipWithUser,
+  PaginatedResponse,
+  School,
+  StudentDetail,
+  StudentUserWithUser,
 } from '@help-teacher/shared';
 import { ToastService } from '../../../core/services/toast.service';
 import { ConfirmDialog, PageHeader } from '../../../shared';
@@ -21,21 +21,31 @@ import { RegistrationService } from '../services/registration.service';
 import { StudentUserService } from '../services/student-user.service';
 import { StudentService } from '../services/student.service';
 
+const DAY_LABELS: Record<string, string> = {
+  monday: 'Segunda-feira',
+  tuesday: 'Terça-feira',
+  wednesday: 'Quarta-feira',
+  thursday: 'Quinta-feira',
+  friday: 'Sexta-feira',
+  saturday: 'Sábado',
+  sunday: 'Domingo',
+};
+
 @Component({
   selector: 'app-student-detail-page',
   imports: [PageHeader, FormField, ConfirmDialog],
   template: `
     <app-page-header
       [title]="detail()?.student?.name + ' ' + detail()?.student?.surname"
-      subtitle="Student details"
+      subtitle="Detalhes do aluno"
     >
       <div class="flex gap-2">
         @if (orgContext.isAdmin()) {
-          <button class="btn" (click)="goToEdit()">Edit Student</button>
+          <button class="btn" (click)="goToEdit()">Editar Aluno</button>
         }
-        <button class="btn btn-accent" (click)="goToReport()">📊 View Report</button>
+        <button class="btn btn-accent" (click)="goToReport()">📊 Ver Relatório</button>
         <button class="btn btn-primary" (click)="openRegistrationModal()">
-          + Add Registration
+          + Adicionar Matrícula
         </button>
       </div>
     </app-page-header>
@@ -49,14 +59,14 @@ import { StudentService } from '../services/student.service';
         <!-- Student Info Card -->
         <div class="card bg-base-100 shadow-sm border border-base-300">
           <div class="card-body">
-            <h2 class="card-title text-base">Student Information</h2>
+            <h2 class="card-title text-base">Informações do Aluno</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
               <div>
-                <p class="text-sm text-base-content/60">Name</p>
+                <p class="text-sm text-base-content/60">Nome</p>
                 <p class="font-medium">{{ detail()?.student?.name }}</p>
               </div>
               <div>
-                <p class="text-sm text-base-content/60">Surname</p>
+                <p class="text-sm text-base-content/60">Sobrenome</p>
                 <p class="font-medium">{{ detail()?.student?.surname }}</p>
               </div>
             </div>
@@ -68,25 +78,25 @@ import { StudentService } from '../services/student.service';
           <div class="card bg-base-100 shadow-sm border border-base-300">
             <div class="card-body">
               <div class="flex items-center justify-between">
-                <h2 class="card-title text-base">Linked Responsibles</h2>
-                <button class="btn btn-primary" (click)="openLinkModal()">+ Link User</button>
+                <h2 class="card-title text-base">Responsáveis Vinculados</h2>
+                <button class="btn btn-primary" (click)="openLinkModal()">
+                  + Vincular Usuário
+                </button>
               </div>
               @if (linkedUsersLoading()) {
                 <div class="flex justify-center py-4">
                   <span class="loading loading-spinner loading-sm text-primary"></span>
                 </div>
               } @else if (linkedUsers().length === 0) {
-                <p class="text-base-content/60 mt-2">
-                  No responsible users linked to this student.
-                </p>
+                <p class="text-base-content/60 mt-2">Nenhum responsável vinculado a este aluno.</p>
               } @else {
                 <div class="overflow-x-auto mt-2">
                   <table class="table">
                     <thead>
                       <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th class="text-right">Actions</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th class="text-right">Ações</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -96,7 +106,7 @@ import { StudentService } from '../services/student.service';
                           <td class="text-base-content/60 text-sm">{{ link.user.email }}</td>
                           <td class="text-right">
                             <button class="btn btn-ghost text-error" (click)="confirmUnlink(link)">
-                              Unlink
+                              Desvincular
                             </button>
                           </td>
                         </tr>
@@ -112,32 +122,32 @@ import { StudentService } from '../services/student.service';
         <!-- Current Registration -->
         <div class="card bg-base-100 shadow-sm border border-base-300">
           <div class="card-body">
-            <h2 class="card-title text-base">Current Registration</h2>
+            <h2 class="card-title text-base">Matrícula Atual</h2>
             @if (detail()?.currentRegistration; as reg) {
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
                 <div>
-                  <p class="text-sm text-base-content/60">School</p>
+                  <p class="text-sm text-base-content/60">Escola</p>
                   <p class="font-medium">{{ reg.school.name }}</p>
                 </div>
                 <div>
-                  <p class="text-sm text-base-content/60">Grade Level</p>
+                  <p class="text-sm text-base-content/60">Série</p>
                   <p class="font-medium">{{ reg.gradeLevel.name }}</p>
                 </div>
                 <div>
-                  <p class="text-sm text-base-content/60">Education Level</p>
+                  <p class="text-sm text-base-content/60">Nível de Ensino</p>
                   <p class="font-medium">{{ reg.gradeLevel.educationLevel.name }}</p>
                 </div>
                 <div>
-                  <p class="text-sm text-base-content/60">Start Date</p>
+                  <p class="text-sm text-base-content/60">Data de Início</p>
                   <p class="font-medium">{{ reg.startDate }}</p>
                 </div>
                 <div>
-                  <p class="text-sm text-base-content/60">End Date</p>
-                  <p class="font-medium">{{ reg.endDate ?? 'Ongoing' }}</p>
+                  <p class="text-sm text-base-content/60">Data de Término</p>
+                  <p class="font-medium">{{ reg.endDate ?? 'Em andamento' }}</p>
                 </div>
               </div>
             } @else {
-              <p class="text-base-content/60 mt-2">No active registration.</p>
+              <p class="text-base-content/60 mt-2">Nenhuma matrícula ativa.</p>
             }
           </div>
         </div>
@@ -146,20 +156,20 @@ import { StudentService } from '../services/student.service';
         <div class="card bg-base-100 shadow-sm border border-base-300">
           <div class="card-body">
             <div class="flex items-center justify-between">
-              <h2 class="card-title text-base">Registration History</h2>
-              <button class="btn btn-ghost" (click)="goToRegistrations()">View All</button>
+              <h2 class="card-title text-base">Histórico de Matrículas</h2>
+              <button class="btn btn-ghost" (click)="goToRegistrations()">Ver Todas</button>
             </div>
             @if (detail()!.registrations.length === 0) {
-              <p class="text-base-content/60 mt-2">No registrations found.</p>
+              <p class="text-base-content/60 mt-2">Nenhuma matrícula encontrada.</p>
             } @else {
               <div class="overflow-x-auto mt-2">
                 <table class="table table">
                   <thead>
                     <tr>
-                      <th>School</th>
-                      <th>Grade Level</th>
-                      <th>Start Date</th>
-                      <th>End Date</th>
+                      <th>Escola</th>
+                      <th>Série</th>
+                      <th>Data de Início</th>
+                      <th>Data de Término</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -170,7 +180,7 @@ import { StudentService } from '../services/student.service';
                           {{ reg.gradeLevel.name }} ({{ reg.gradeLevel.educationLevel.name }})
                         </td>
                         <td>{{ reg.startDate }}</td>
-                        <td>{{ reg.endDate ?? 'Ongoing' }}</td>
+                        <td>{{ reg.endDate ?? 'Em andamento' }}</td>
                       </tr>
                     }
                   </tbody>
@@ -184,22 +194,22 @@ import { StudentService } from '../services/student.service';
         <div class="card bg-base-100 shadow-sm border border-base-300">
           <div class="card-body">
             <h2 class="card-title text-base">
-              Recent Classes
+              Aulas Recentes
               @if (detail()!.totalClasses > 0) {
                 <span class="badge badge-primary">{{ detail()!.totalClasses }}</span>
               }
             </h2>
             @if (detail()!.classes.length === 0) {
-              <p class="text-base-content/60 mt-2">No classes found.</p>
+              <p class="text-base-content/60 mt-2">Nenhuma aula encontrada.</p>
             } @else {
               <div class="overflow-x-auto mt-2">
                 <table class="table table">
                   <thead>
                     <tr>
-                      <th>Date</th>
-                      <th>Schedule</th>
-                      <th>Teacher</th>
-                      <th>Topics</th>
+                      <th>Data</th>
+                      <th>Horário</th>
+                      <th>Professor</th>
+                      <th>Tópicos</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -207,14 +217,16 @@ import { StudentService } from '../services/student.service';
                       <tr>
                         <td>{{ cls.date }}</td>
                         <td>
-                          {{ cls.schedule.dayOfWeek }} {{ cls.schedule.startTime }}–{{
+                          {{ translateDay(cls.schedule.dayOfWeek) }} {{ cls.schedule.startTime }}–{{
                             cls.schedule.endTime
                           }}
                         </td>
                         <td>{{ cls.teacher.name }} {{ cls.teacher.surname }}</td>
                         <td>
                           @for (topic of cls.topics; track topic.id) {
-                            <span class="badge badge-primary badge-outline mr-1">{{ topic.name }}</span>
+                            <span class="badge badge-primary badge-outline mr-1">{{
+                              topic.name
+                            }}</span>
                           }
                         </td>
                       </tr>
@@ -231,67 +243,67 @@ import { StudentService } from '../services/student.service';
     <!-- Add Registration modal -->
     <dialog class="modal" [class.modal-open]="showRegModal()">
       <div class="modal-box">
-        <h3 class="font-bold text-lg">Add Registration</h3>
+        <h3 class="font-bold text-lg">Adicionar Matrícula</h3>
         <form (submit)="onSubmitRegistration($event)">
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">School</legend>
+            <legend class="fieldset-legend">Escola</legend>
             <select class="select select-bordered w-full" [formField]="regForm.schoolId">
-              <option value="">Select a school</option>
+              <option value="">Selecione uma escola</option>
               @for (school of schools(); track school.id) {
                 <option [value]="school.id">{{ school.name }}</option>
               }
             </select>
             @if (regForm.schoolId().touched() && regForm.schoolId().invalid()) {
-              <p class="label text-error">School is required</p>
+              <p class="label text-error">Escola é obrigatória</p>
             }
           </fieldset>
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Education Level</legend>
+            <legend class="fieldset-legend">Nível de Ensino</legend>
             <select
               class="select select-bordered w-full"
               [value]="selectedEducationLevelId()"
               (change)="onEducationLevelChange($event)"
             >
-              <option value="">Select an education level</option>
+              <option value="">Selecione um nível de ensino</option>
               @for (el of educationLevels(); track el.id) {
                 <option [value]="el.id">{{ el.name }}</option>
               }
             </select>
           </fieldset>
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Grade Level</legend>
+            <legend class="fieldset-legend">Série</legend>
             <select class="select select-bordered w-full" [formField]="regForm.gradeLevelId">
-              <option value="">Select a grade level</option>
+              <option value="">Selecione uma série</option>
               @for (gl of gradeLevels(); track gl.id) {
                 <option [value]="gl.id">{{ gl.name }}</option>
               }
             </select>
             @if (regForm.gradeLevelId().touched() && regForm.gradeLevelId().invalid()) {
-              <p class="label text-error">Grade level is required</p>
+              <p class="label text-error">Série é obrigatória</p>
             }
           </fieldset>
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Start Date</legend>
+            <legend class="fieldset-legend">Data de Início</legend>
             <input
               type="date"
               class="input input-bordered w-full"
               [formField]="regForm.startDate"
             />
             @if (regForm.startDate().touched() && regForm.startDate().invalid()) {
-              <p class="label text-error">Start date is required</p>
+              <p class="label text-error">Data de início é obrigatória</p>
             }
           </fieldset>
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">End Date (optional)</legend>
+            <legend class="fieldset-legend">Data de Término (opcional)</legend>
             <input type="date" class="input input-bordered w-full" [formField]="regForm.endDate" />
           </fieldset>
           <div class="modal-action">
-            <button type="button" class="btn" (click)="closeRegModal()">Cancel</button>
+            <button type="button" class="btn" (click)="closeRegModal()">Cancelar</button>
             <button type="submit" class="btn btn-primary" [disabled]="savingReg()">
               @if (savingReg()) {
                 <span class="loading loading-spinner loading-sm"></span>
               }
-              Create
+              Criar
             </button>
           </div>
         </form>
@@ -304,18 +316,18 @@ import { StudentService } from '../services/student.service';
     <!-- Link User modal -->
     <dialog class="modal" [class.modal-open]="showLinkModal()">
       <div class="modal-box">
-        <h3 class="font-bold text-lg">Link Responsible User</h3>
+        <h3 class="font-bold text-lg">Vincular Responsável</h3>
         <p class="text-sm text-base-content/60 mt-1">
-          Select an organization member to link as responsible for this student.
+          Selecione um membro da organização para vincular como responsável por este aluno.
         </p>
         <fieldset class="fieldset mt-4">
-          <legend class="fieldset-legend">Member</legend>
+          <legend class="fieldset-legend">Membro</legend>
           <select
             class="select select-bordered w-full"
             [value]="selectedLinkUserId()"
             (change)="selectedLinkUserId.set($any($event.target).value)"
           >
-            <option value="">Select a member</option>
+            <option value="">Selecione um membro</option>
             @for (member of availableMembers(); track member.userId) {
               <option [value]="member.userId">
                 {{ member.user.name }} {{ member.user.surname }} ({{ member.user.email }})
@@ -324,7 +336,7 @@ import { StudentService } from '../services/student.service';
           </select>
         </fieldset>
         <div class="modal-action">
-          <button class="btn" (click)="closeLinkModal()">Cancel</button>
+          <button class="btn" (click)="closeLinkModal()">Cancelar</button>
           <button
             class="btn btn-primary"
             [disabled]="linkingUser() || !selectedLinkUserId()"
@@ -333,7 +345,7 @@ import { StudentService } from '../services/student.service';
             @if (linkingUser()) {
               <span class="loading loading-spinner loading-sm"></span>
             }
-            Link
+            Vincular
           </button>
         </div>
       </div>
@@ -344,15 +356,15 @@ import { StudentService } from '../services/student.service';
 
     <app-confirm-dialog
       [open]="showUnlinkConfirm()"
-      title="Unlink Responsible"
+      title="Desvincular Responsável"
       [message]="
-        'Remove ' +
+        'Remover ' +
         (unlinkTarget()?.user?.name ?? '') +
         ' ' +
         (unlinkTarget()?.user?.surname ?? '') +
-        ' as a responsible for this student?'
+        ' como responsável por este aluno?'
       "
-      confirmLabel="Unlink"
+      confirmLabel="Desvincular"
       variant="danger"
       (confirmed)="unlinkUser()"
       (cancelled)="showUnlinkConfirm.set(false)"
@@ -407,9 +419,9 @@ export default class StudentDetailPage implements OnInit {
     endDate: '',
   });
   protected readonly regForm = form(this.regModel, (s) => {
-    required(s.schoolId, { message: 'School is required' });
-    required(s.gradeLevelId, { message: 'Grade level is required' });
-    required(s.startDate, { message: 'Start date is required' });
+    required(s.schoolId, { message: 'Escola é obrigatória' });
+    required(s.gradeLevelId, { message: 'Série é obrigatória' });
+    required(s.startDate, { message: 'Data de início é obrigatória' });
   });
 
   ngOnInit(): void {
@@ -431,10 +443,14 @@ export default class StudentDetailPage implements OnInit {
         }
       },
       error: () => {
-        this.toastService.error('Failed to load student details');
+        this.toastService.error('Falha ao carregar detalhes do aluno');
         this.loading.set(false);
       },
     });
+  }
+
+  protected translateDay(day: string): string {
+    return DAY_LABELS[day.toLowerCase()] ?? day;
   }
 
   protected goToReport(): void {
@@ -473,7 +489,7 @@ export default class StudentDetailPage implements OnInit {
     if (!slug) return;
     this.schoolService.list(slug, 1, 100).subscribe({
       next: (res: PaginatedResponse<School>) => this.schools.set(res.items),
-      error: () => this.toastService.error('Failed to load schools'),
+      error: () => this.toastService.error('Falha ao carregar escolas'),
     });
   }
 
@@ -482,7 +498,7 @@ export default class StudentDetailPage implements OnInit {
     if (!slug) return;
     this.educationLevelService.list(slug, 1, 100).subscribe({
       next: (res: PaginatedResponse<EducationLevel>) => this.educationLevels.set(res.items),
-      error: () => this.toastService.error('Failed to load education levels'),
+      error: () => this.toastService.error('Falha ao carregar níveis de ensino'),
     });
   }
 
@@ -498,7 +514,7 @@ export default class StudentDetailPage implements OnInit {
 
     this.gradeLevelService.list(slug, id, 1, 100).subscribe({
       next: (res: PaginatedResponse<GradeLevel>) => this.gradeLevels.set(res.items),
-      error: () => this.toastService.error('Failed to load grade levels'),
+      error: () => this.toastService.error('Falha ao carregar séries'),
     });
   }
 
@@ -524,10 +540,10 @@ export default class StudentDetailPage implements OnInit {
         });
 
         this.closeRegModal();
-        this.toastService.success('Registration created!');
+        this.toastService.success('Matrícula criada!');
         this.loadDetail();
       } catch {
-        this.toastService.error('Failed to create registration');
+        this.toastService.error('Falha ao criar matrícula');
       } finally {
         this.savingReg.set(false);
       }
@@ -547,7 +563,7 @@ export default class StudentDetailPage implements OnInit {
         this.linkedUsersLoading.set(false);
       },
       error: () => {
-        this.toastService.error('Failed to load linked users');
+        this.toastService.error('Falha ao carregar usuários vinculados');
         this.linkedUsersLoading.set(false);
       },
     });
@@ -569,7 +585,7 @@ export default class StudentDetailPage implements OnInit {
 
     this.membershipService.listMembers(slug, 1, 100).subscribe({
       next: (res) => this.orgMembers.set(res.items),
-      error: () => this.toastService.error('Failed to load members'),
+      error: () => this.toastService.error('Falha ao carregar membros'),
     });
   }
 
@@ -581,13 +597,13 @@ export default class StudentDetailPage implements OnInit {
 
     this.studentUserService.link(slug, this.studentId, userId).subscribe({
       next: () => {
-        this.toastService.success('User linked successfully!');
+        this.toastService.success('Usuário vinculado com sucesso!');
         this.closeLinkModal();
         this.loadLinkedUsers();
         this.linkingUser.set(false);
       },
       error: () => {
-        this.toastService.error('Failed to link user');
+        this.toastService.error('Falha ao vincular usuário');
         this.linkingUser.set(false);
       },
     });
@@ -605,13 +621,13 @@ export default class StudentDetailPage implements OnInit {
 
     this.studentUserService.unlink(slug, this.studentId, target.id).subscribe({
       next: () => {
-        this.toastService.success('User unlinked successfully!');
+        this.toastService.success('Usuário desvinculado com sucesso!');
         this.showUnlinkConfirm.set(false);
         this.unlinkTarget.set(null);
         this.loadLinkedUsers();
       },
       error: () => {
-        this.toastService.error('Failed to unlink user');
+        this.toastService.error('Falha ao desvincular usuário');
         this.showUnlinkConfirm.set(false);
       },
     });

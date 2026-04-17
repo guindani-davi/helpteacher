@@ -7,12 +7,26 @@ import { ConfirmDialog, EmptyState, PageHeader, Pagination } from '../../../../s
 import { InviteService } from '../../services/invite.service';
 import { OrgContextService } from '../../state/org-context.service';
 
+const ROLE_LABELS: Record<string, string> = {
+  owner: 'Proprietário',
+  admin: 'Admin',
+  teacher: 'Professor',
+  responsible: 'Responsável',
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  pending: 'Pendente',
+  accepted: 'Aceito',
+  rejected: 'Rejeitado',
+  revoked: 'Revogado',
+};
+
 @Component({
   selector: 'app-invites-page',
   imports: [PageHeader, ConfirmDialog, Pagination, EmptyState, FormField],
   template: `
-    <app-page-header title="Invites" subtitle="Invite people to join your organization">
-      <button class="btn btn-primary" (click)="showCreateModal.set(true)">+ Send Invite</button>
+    <app-page-header title="Convites" subtitle="Convide pessoas para se juntar à sua organização">
+      <button class="btn btn-primary" (click)="showCreateModal.set(true)">+ Enviar Convite</button>
     </app-page-header>
 
     @if (loading()) {
@@ -22,10 +36,10 @@ import { OrgContextService } from '../../state/org-context.service';
     } @else if (invites().length === 0) {
       <app-empty-state
         icon="✉️"
-        title="No invites sent"
-        description="Send invites to add people to your organization."
+        title="Nenhum convite enviado"
+        description="Envie convites para adicionar pessoas à sua organização."
       >
-        <button class="btn btn-primary" (click)="showCreateModal.set(true)">Send Invite</button>
+        <button class="btn btn-primary" (click)="showCreateModal.set(true)">Enviar Convite</button>
       </app-empty-state>
     } @else {
       <div class="card bg-base-100 shadow-sm border border-base-300">
@@ -33,10 +47,10 @@ import { OrgContextService } from '../../state/org-context.service';
           <table class="table">
             <thead>
               <tr>
-                <th>Email</th>
-                <th>Roles</th>
+                <th>E-mail</th>
+                <th>Funções</th>
                 <th>Status</th>
-                <th class="text-right">Actions</th>
+                <th class="text-right">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -45,7 +59,9 @@ import { OrgContextService } from '../../state/org-context.service';
                   <td>{{ invite.email }}</td>
                   <td>
                     @for (role of invite.roles; track role) {
-                      <span class="badge badge-primary badge-outline mr-1">{{ role }}</span>
+                      <span class="badge badge-primary badge-outline mr-1">{{
+                        translateRole(role)
+                      }}</span>
                     }
                   </td>
                   <td>
@@ -57,13 +73,13 @@ import { OrgContextService } from '../../state/org-context.service';
                         invite.status === 'rejected' || invite.status === 'revoked'
                       "
                     >
-                      {{ invite.status }}
+                      {{ translateStatus(invite.status) }}
                     </span>
                   </td>
                   <td class="text-right">
                     @if (invite.status === 'pending') {
                       <button class="btn btn-ghost text-error" (click)="confirmRevoke(invite)">
-                        Revoke
+                        Revogar
                       </button>
                     }
                   </td>
@@ -85,14 +101,14 @@ import { OrgContextService } from '../../state/org-context.service';
     <!-- Create invite modal -->
     <dialog class="modal" [class.modal-open]="showCreateModal()">
       <div class="modal-box">
-        <h3 class="font-bold text-lg">Send Invite</h3>
+        <h3 class="font-bold text-lg">Enviar Convite</h3>
         <form (submit)="onSendInvite($event)">
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Email</legend>
+            <legend class="fieldset-legend">E-mail</legend>
             <input
               type="email"
               class="input input-bordered w-full"
-              placeholder="user&#64;example.com"
+              placeholder="usuario&#64;exemplo.com"
               [formField]="inviteForm.email"
             />
             @if (inviteForm.email().touched() && inviteForm.email().invalid()) {
@@ -105,7 +121,7 @@ import { OrgContextService } from '../../state/org-context.service';
           </fieldset>
 
           <div class="form-control mt-4">
-            <label class="label"><span class="label-text">Roles</span></label>
+            <label class="label"><span class="label-text">Funções</span></label>
             <div class="flex flex-wrap gap-2">
               @for (role of availableRoles; track role) {
                 <label class="label cursor-pointer gap-2">
@@ -115,19 +131,19 @@ import { OrgContextService } from '../../state/org-context.service';
                     [checked]="selectedRoles().includes(role)"
                     (change)="toggleRole(role)"
                   />
-                  <span class="label-text">{{ role }}</span>
+                  <span class="label-text">{{ translateRole(role) }}</span>
                 </label>
               }
             </div>
           </div>
 
           <div class="modal-action">
-            <button type="button" class="btn" (click)="showCreateModal.set(false)">Cancel</button>
+            <button type="button" class="btn" (click)="showCreateModal.set(false)">Cancelar</button>
             <button type="submit" class="btn btn-primary" [disabled]="sending()">
               @if (sending()) {
                 <span class="loading loading-spinner loading-sm"></span>
               }
-              Send
+              Enviar
             </button>
           </div>
         </form>
@@ -139,9 +155,9 @@ import { OrgContextService } from '../../state/org-context.service';
 
     <app-confirm-dialog
       [open]="showRevokeConfirm()"
-      title="Revoke Invite"
-      [message]="'Revoke the invite sent to ' + (revokeTarget()?.email ?? '') + '?'"
-      confirmLabel="Revoke"
+      title="Revogar Convite"
+      [message]="'Revogar o convite enviado para ' + (revokeTarget()?.email ?? '') + '?'"
+      confirmLabel="Revogar"
       variant="danger"
       (confirmed)="revokeInvite()"
       (cancelled)="showRevokeConfirm.set(false)"
@@ -168,9 +184,17 @@ export default class InvitesPage implements OnInit {
   // Signal form for the invite email
   protected readonly inviteModel = signal({ email: '' });
   protected readonly inviteForm = form(this.inviteModel, (s) => {
-    required(s.email, { message: 'Email is required' });
-    emailValidator(s.email, { message: 'Enter a valid email address' });
+    required(s.email, { message: 'E-mail é obrigatório' });
+    emailValidator(s.email, { message: 'Digite um e-mail válido' });
   });
+
+  protected translateRole(role: string): string {
+    return ROLE_LABELS[role] ?? role;
+  }
+
+  protected translateStatus(status: string): string {
+    return STATUS_LABELS[status] ?? status;
+  }
 
   ngOnInit(): void {
     this.loadInvites(1);
@@ -190,7 +214,7 @@ export default class InvitesPage implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toastService.error('Failed to load invites');
+        this.toastService.error('Falha ao carregar convites');
       },
     });
   }
@@ -204,7 +228,7 @@ export default class InvitesPage implements OnInit {
   onSendInvite(event: Event): void {
     event.preventDefault();
     if (this.selectedRoles().length === 0) {
-      this.toastService.warning('Select at least one role');
+      this.toastService.warning('Selecione pelo menos uma função');
       return;
     }
 
@@ -224,12 +248,12 @@ export default class InvitesPage implements OnInit {
             });
         });
         this.showCreateModal.set(false);
-        this.toastService.success('Invite sent!');
+        this.toastService.success('Convite enviado!');
         this.inviteModel.set({ email: '' });
         this.selectedRoles.set([RolesEnum.TEACHER]);
         this.loadInvites(this.currentPage());
       } catch {
-        this.toastService.error('Failed to send invite');
+        this.toastService.error('Falha ao enviar convite');
       } finally {
         this.sending.set(false);
       }
@@ -249,10 +273,10 @@ export default class InvitesPage implements OnInit {
 
     this.inviteService.revoke(slug, invite.id).subscribe({
       next: () => {
-        this.toastService.success('Invite revoked');
+        this.toastService.success('Convite revogado');
         this.loadInvites(this.currentPage());
       },
-      error: () => this.toastService.error('Failed to revoke invite'),
+      error: () => this.toastService.error('Falha ao revogar convite'),
     });
   }
 }

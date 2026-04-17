@@ -15,6 +15,6 @@ import { Component, input } from '@angular/core';
 })
 export class EmptyState {
   icon = input('📭');
-  title = input('Nothing here yet');
+  title = input('Nada aqui ainda');
   description = input('');
 }

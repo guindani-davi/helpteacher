@@ -6,7 +6,6 @@ import { HelpersModule } from '../helpers/helpers.module';
 import { MembershipsModule } from '../memberships/memberships.module';
 import { RegistrationsModule } from '../registrations/registrations.module';
 import { ReportsModule } from '../reports/reports.module';
-import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { EducationLevelsController } from './controllers/implementations/education-levels.controller';
 import { IEducationLevelsRepository } from './repositories/i.education-levels.repository';
 import { EducationLevelsRepository } from './repositories/implementations/education-levels.repository';
@@ -20,7 +19,6 @@ import { EducationLevelsService } from './services/implementations/education-lev
     HelpersModule,
     forwardRef(() => AuthModule),
     forwardRef(() => MembershipsModule),
-    forwardRef(() => SubscriptionsModule),
     forwardRef(() => GradeLevelsModule),
     forwardRef(() => RegistrationsModule),
     forwardRef(() => ReportsModule),

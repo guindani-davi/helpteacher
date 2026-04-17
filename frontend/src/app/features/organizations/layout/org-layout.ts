@@ -49,11 +49,10 @@ import { OrgContextService } from '../state/org-context.service';
                 tabindex="0"
                 class="menu menu dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow border border-base-300"
               >
-                <li><a routerLink="/orgs">Switch Organization</a></li>
-                <li><a routerLink="/subscription">My Subscription</a></li>
-                <li><a routerLink="/profile">My Profile</a></li>
-                <li><a routerLink="/invites">Pending Invites</a></li>
-                <li><button (click)="logout()">Logout</button></li>
+                <li><a routerLink="/orgs">Trocar Organização</a></li>
+                <li><a routerLink="/profile">Meu Perfil</a></li>
+                <li><a routerLink="/invites">Convites Pendentes</a></li>
+                <li><button (click)="logout()">Sair</button></li>
               </ul>
             </div>
           </div>
@@ -96,7 +95,7 @@ import { OrgContextService } from '../state/org-context.service';
                       d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1"
                     />
                   </svg>
-                  Dashboard
+                  Painel
                 </a>
               </li>
               <li>
@@ -115,7 +114,7 @@ import { OrgContextService } from '../state/org-context.service';
                       d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197"
                     />
                   </svg>
-                  Students
+                  Alunos
                 </a>
               </li>
               <li>
@@ -134,7 +133,7 @@ import { OrgContextService } from '../state/org-context.service';
                       d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                     />
                   </svg>
-                  Classes
+                  Aulas
                 </a>
               </li>
               <li>
@@ -153,11 +152,11 @@ import { OrgContextService } from '../state/org-context.service';
                       d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                  Schedules
+                  Horários
                 </a>
               </li>
 
-              <div class="divider text-sm text-base-content/40 my-2">Curriculum</div>
+              <div class="divider text-sm text-base-content/40 my-2">Currículo</div>
               <li>
                 <a [routerLink]="basePath() + '/subjects'" routerLinkActive="active">
                   <svg
@@ -174,7 +173,7 @@ import { OrgContextService } from '../state/org-context.service';
                       d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
                     />
                   </svg>
-                  Subjects
+                  Matérias
                 </a>
               </li>
               <li>
@@ -193,7 +192,7 @@ import { OrgContextService } from '../state/org-context.service';
                       d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
                     />
                   </svg>
-                  Schools
+                  Escolas
                 </a>
               </li>
               <li>
@@ -212,13 +211,13 @@ import { OrgContextService } from '../state/org-context.service';
                       d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
                     />
                   </svg>
-                  Education Levels
+                  Níveis de Ensino
                 </a>
               </li>
             }
 
             @if (orgContext.isAdmin()) {
-              <div class="divider text-sm text-base-content/40 my-2">Settings</div>
+              <div class="divider text-sm text-base-content/40 my-2">Configurações</div>
               <li>
                 <a
                   [routerLink]="basePath() + '/settings'"
@@ -245,7 +244,7 @@ import { OrgContextService } from '../state/org-context.service';
                       d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                     />
                   </svg>
-                  Settings
+                  Configurações
                 </a>
               </li>
               <li>
@@ -264,7 +263,7 @@ import { OrgContextService } from '../state/org-context.service';
                       d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
                     />
                   </svg>
-                  Members
+                  Membros
                 </a>
               </li>
               <li>
@@ -283,13 +282,13 @@ import { OrgContextService } from '../state/org-context.service';
                       d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                     />
                   </svg>
-                  Invites
+                  Convites
                 </a>
               </li>
             }
 
             @if (hasResponsibleRole()) {
-              <div class="divider text-sm text-base-content/40 my-2">Parent</div>
+              <div class="divider text-sm text-base-content/40 my-2">Responsável</div>
               <li>
                 <a [routerLink]="basePath() + '/my-students'" routerLinkActive="active">
                   <svg
@@ -306,7 +305,7 @@ import { OrgContextService } from '../state/org-context.service';
                       d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                     />
                   </svg>
-                  My Students
+                  Meus Alunos
                 </a>
               </li>
             }
@@ -321,7 +320,7 @@ export default class OrgLayout {
   protected readonly orgContext = inject(OrgContextService);
   private readonly authService = inject(AuthService);
 
-  protected orgName = computed(() => this.orgContext.org()?.name ?? 'Organization');
+  protected orgName = computed(() => this.orgContext.org()?.name ?? 'Organização');
 
   protected userInitials = computed(() => {
     const user = this.authService.user();

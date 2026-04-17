@@ -19,10 +19,6 @@ import { RolesGuard } from '../../../auth/guards/roles.guard';
 import type { JwtPayload } from '../../../auth/models/jwt.model';
 import { PaginationQueryDTO } from '../../../common/dtos/pagination-query.dto';
 import { PaginatedResponse } from '../../../common/models/paginated-response.model';
-import { AllowedTiers } from '../../../subscriptions/decorators/allowed-tiers.decorator';
-import { SubscriptionTierEnum } from '../../../subscriptions/enums/subscription-tier.enum';
-import { ActiveSubscriptionGuard } from '../../../subscriptions/guards/active-subscription.guard';
-import { SubscriptionTierGuard } from '../../../subscriptions/guards/subscription-tier.guard';
 import { DeleteMemberParamsDTO } from '../../dtos/delete-member.dto';
 import { GetMembersParamsDTO } from '../../dtos/get-members.dto';
 import { TransferOwnershipParamsDTO } from '../../dtos/transfer-ownership.dto';
@@ -37,7 +33,7 @@ import { IMembershipsService } from '../../services/i.memberships.service';
 import { IMembershipsController } from '../i.memberships.controller';
 
 @Controller('memberships')
-@UseGuards(MembershipGuard, ActiveSubscriptionGuard)
+@UseGuards(MembershipGuard)
 export class MembershipsController extends IMembershipsController {
   public constructor(
     @Inject(IMembershipsService)
@@ -54,7 +50,7 @@ export class MembershipsController extends IMembershipsController {
   }
 
   @Get(':slug/members')
-  @UseGuards(MembershipGuard, RolesGuard, ActiveSubscriptionGuard)
+  @UseGuards(MembershipGuard, RolesGuard)
   @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN)
   public async getMembers(
     @Param() params: GetMembersParamsDTO,
@@ -81,9 +77,8 @@ export class MembershipsController extends IMembershipsController {
   }
 
   @Put(':slug/transfer-ownership/:memberId')
-  @UseGuards(MembershipGuard, RolesGuard, SubscriptionTierGuard)
+  @UseGuards(MembershipGuard, RolesGuard)
   @AllowedRoles(RolesEnum.OWNER)
-  @AllowedTiers(SubscriptionTierEnum.PRO)
   @HttpCode(HttpStatus.OK)
   public async transferOwnership(
     @Param() params: TransferOwnershipParamsDTO,
@@ -98,9 +93,8 @@ export class MembershipsController extends IMembershipsController {
   }
 
   @Delete(':slug/members/:memberId')
-  @UseGuards(MembershipGuard, RolesGuard, SubscriptionTierGuard)
+  @UseGuards(MembershipGuard, RolesGuard)
   @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN)
-  @AllowedTiers(SubscriptionTierEnum.PRO)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async deleteMember(
     @Param() params: DeleteMemberParamsDTO,

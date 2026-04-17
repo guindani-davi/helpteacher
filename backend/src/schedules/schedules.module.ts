@@ -6,7 +6,6 @@ import { DatabaseModule } from '../database/database.module';
 import { HelpersModule } from '../helpers/helpers.module';
 import { MembershipsModule } from '../memberships/memberships.module';
 import { ReportsModule } from '../reports/reports.module';
-import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { SchedulesController } from './controllers/implementations/schedules.controller';
 import { ISchedulesRepository } from './repositories/i.schedules.repository';
 import { SchedulesRepository } from './repositories/implementations/schedules.repository';
@@ -20,7 +19,6 @@ import { SchedulesService } from './services/implementations/schedules.service';
     HelpersModule,
     forwardRef(() => AuthModule),
     forwardRef(() => MembershipsModule),
-    forwardRef(() => SubscriptionsModule),
     forwardRef(() => ClassesModule),
     forwardRef(() => ClassTopicsModule),
     forwardRef(() => ReportsModule),

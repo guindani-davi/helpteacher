@@ -7,7 +7,6 @@ import { MembershipsModule } from '../memberships/memberships.module';
 import { ReportsModule } from '../reports/reports.module';
 import { SchedulesModule } from '../schedules/schedules.module';
 import { StudentsModule } from '../students/students.module';
-import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { ClassesController } from './controllers/implementations/classes.controller';
 import { IClassesRepository } from './repositories/i.classes.repository';
 import { ClassesRepository } from './repositories/implementations/classes.repository';
@@ -22,7 +21,6 @@ import { ClassesService } from './services/implementations/classes.service';
     forwardRef(() => SchedulesModule),
     forwardRef(() => StudentsModule),
     forwardRef(() => AuthModule),
-    forwardRef(() => SubscriptionsModule),
     forwardRef(() => ClassTopicsModule),
     forwardRef(() => ReportsModule),
     forwardRef(() => MembershipsModule),

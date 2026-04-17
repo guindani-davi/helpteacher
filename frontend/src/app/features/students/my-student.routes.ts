@@ -4,16 +4,16 @@ export const myStudentRoutes: Routes = [
   {
     path: '',
     loadComponent: () => import('./pages/my-students.page'),
-    title: 'My Students — Help Teacher',
+    title: 'Meus Alunos — Help Teacher',
   },
   {
     path: ':studentId',
     loadComponent: () => import('./pages/student-progress.page'),
-    title: 'Student Progress — Help Teacher',
+    title: 'Progresso do Aluno — Help Teacher',
   },
   {
     path: ':studentId/report',
     loadComponent: () => import('./pages/student-report.page'),
-    title: 'Student Report — Help Teacher',
+    title: 'Relatório do Aluno — Help Teacher',
   },
 ];

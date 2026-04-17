@@ -4,24 +4,85 @@ import {
   type ExceptionFilter,
   HttpException,
   HttpStatus,
-  Inject,
   Logger,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import { LocaleEnum } from '../../i18n/enums/locale.enum';
-import { II18nService } from '../../i18n/services/i.i18n.service';
 import { DomainExceptionCode } from '../enums/domain-exception-code.enum';
 import { DomainException } from '../exceptions/domain.exception';
 import { ApiErrorResponse } from '../models/api-error.model';
 
+const ERROR_MESSAGES: Record<string, string> = {
+  'errors.entityNotFound': '{entity} was not found',
+  'errors.entityAlreadyExists': '{entity} already exists',
+  'errors.slugAlreadyExists': 'An organization with this name already exists',
+  'errors.databaseError': 'An unexpected database error occurred',
+  'errors.invalidCredentials': 'Invalid email or password',
+  'errors.invalidResetToken': 'Invalid or expired reset token',
+  'errors.invalidRefreshToken': 'Invalid or expired refresh token',
+  'errors.forbiddenOperation':
+    'You do not have permission to perform this action',
+  'errors.inviteAlreadyExists':
+    'A pending invite already exists for this email in this organization',
+  'errors.inviteExpired': 'This invite has expired',
+  'errors.authRequired': 'Authentication is required to access this resource',
+  'errors.authInvalidToken': 'Authentication token is invalid or expired',
+  'errors.notOrgMember': 'You are not a member of this organization',
+  'errors.insufficientRole':
+    'You do not have the required role to perform this action',
+  'errors.validationError': 'One or more validation errors occurred',
+  'errors.startTimeBeforeEndTime': 'Start time must be before end time',
+  'errors.internalServerError': 'An unexpected error occurred',
+  'errors.cannotAssignOwnerRole': 'Cannot assign owner role directly',
+  'errors.cannotUpdateOwner':
+    'You do not have permission to update this member',
+  'errors.cannotUpdateAdmin':
+    'You do not have permission to update this member',
+  'errors.cannotRemoveOwner':
+    'You do not have permission to remove this member',
+  'errors.cannotRemoveAdmin':
+    'You do not have permission to remove this member',
+  'errors.targetAlreadyOwner': 'Target member is already the owner',
+  'errors.memberNotInOrganization':
+    'Member does not belong to this organization',
+  'errors.onlyPendingInvitesRevoked': 'Only pending invites can be revoked',
+  'errors.inviteNotPending': 'This invite is no longer pending',
+  'errors.inviteEmailMismatch': 'This invite does not belong to your account',
+  'errors.inviteAlreadyMember': 'You are already a member of this organization',
+  'errors.inviteOrgNotFound':
+    'The organization associated with this invite was not found',
+  'errors.studentUserNotLinked':
+    'Student-user link does not belong to this student',
+  'errors.noAccessToStudent': 'You do not have access to this student',
+  'errors.teacherNotInOrganization':
+    'Teacher is not a member of this organization',
+  'errors.registrationOverlap':
+    'Student already has a registration that overlaps with the given date range',
+};
+
+const ENTITY_NAMES: Record<string, string> = {
+  user: 'User',
+  organization: 'Organization',
+  membership: 'Membership',
+  invite: 'Invite',
+  student: 'Student',
+  school: 'School',
+  subject: 'Subject',
+  topic: 'Topic',
+  class: 'Class',
+  schedule: 'Schedule',
+  educationLevel: 'Education level',
+  gradeLevel: 'Grade level',
+  registration: 'Registration',
+  studentUser: 'Student-user link',
+  classTopic: 'Class-topic link',
+};
+
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger: Logger;
-  private readonly i18nService: II18nService;
 
-  public constructor(@Inject(II18nService) i18nService: II18nService) {
+  public constructor() {
     this.logger = new Logger(AllExceptionsFilter.name);
-    this.i18nService = i18nService;
   }
 
   private static readonly DOMAIN_CODE_TO_STATUS = new Map<
@@ -39,26 +100,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
     [DomainExceptionCode.VALIDATION_ERROR, HttpStatus.UNPROCESSABLE_ENTITY],
     [DomainExceptionCode.INVITE_ALREADY_EXISTS, HttpStatus.CONFLICT],
     [DomainExceptionCode.INVITE_EXPIRED, HttpStatus.GONE],
-    [DomainExceptionCode.INSUFFICIENT_SUBSCRIPTION, HttpStatus.FORBIDDEN],
-    [DomainExceptionCode.SUBSCRIPTION_REQUIRED, HttpStatus.FORBIDDEN],
-    [DomainExceptionCode.SUBSCRIPTION_ALREADY_CANCELING, HttpStatus.CONFLICT],
-    [DomainExceptionCode.SUBSCRIPTION_NOT_CANCELING, HttpStatus.CONFLICT],
-    [DomainExceptionCode.SUBSCRIPTION_CANCEL_NOT_ALLOWED, HttpStatus.CONFLICT],
-    [DomainExceptionCode.SUBSCRIPTION_INVALID_STATE, HttpStatus.CONFLICT],
-    [DomainExceptionCode.ASAAS_API_ERROR, HttpStatus.BAD_GATEWAY],
     [DomainExceptionCode.REGISTRATION_OVERLAP, HttpStatus.CONFLICT],
-    [DomainExceptionCode.ORGANIZATION_LIMIT_REACHED, HttpStatus.FORBIDDEN],
   ]);
 
   public catch(exception: unknown, host: ArgumentsHost): void {
     const response = host.switchToHttp().getResponse<Response>();
     const request = host.switchToHttp().getRequest<Request>();
-    const locale = this.resolveLocale(request);
 
-    const { statusCode, errorResponse } = this.buildErrorResponse(
-      exception,
-      locale,
-    );
+    const { statusCode, errorResponse } = this.buildErrorResponse(exception);
 
     this.logException(statusCode, request, exception);
 
@@ -85,28 +134,22 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
   }
 
-  private buildErrorResponse(
-    exception: unknown,
-    locale: LocaleEnum,
-  ): {
+  private buildErrorResponse(exception: unknown): {
     statusCode: number;
     errorResponse: ApiErrorResponse;
   } {
     if (exception instanceof DomainException) {
-      return this.handleDomainException(exception, locale);
+      return this.handleDomainException(exception);
     }
 
     if (exception instanceof HttpException) {
-      return this.handleHttpException(exception, locale);
+      return this.handleHttpException(exception);
     }
 
-    return this.handleUnknownException(locale);
+    return this.handleUnknownException();
   }
 
-  private handleDomainException(
-    exception: DomainException,
-    locale: LocaleEnum,
-  ): {
+  private handleDomainException(exception: DomainException): {
     statusCode: number;
     errorResponse: ApiErrorResponse;
   } {
@@ -114,15 +157,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
       AllExceptionsFilter.DOMAIN_CODE_TO_STATUS.get(exception.code) ??
       HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const translatedArgs = this.translateEntityArgs(
-      exception.messageArgs,
-      locale,
-    );
-
-    const translatedMessage = this.i18nService.t(
-      locale,
+    const translatedMessage = this.translate(
       exception.messageKey,
-      translatedArgs,
+      exception.messageArgs,
     );
 
     return {
@@ -135,10 +172,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     };
   }
 
-  private handleHttpException(
-    exception: HttpException,
-    locale: LocaleEnum,
-  ): {
+  private handleHttpException(exception: HttpException): {
     statusCode: number;
     errorResponse: ApiErrorResponse;
   } {
@@ -152,7 +186,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
         statusCode,
         errorResponse: ApiErrorResponse.create(
           'VALIDATION_ERROR',
-          this.i18nService.t(locale, 'errors.validationError'),
+          ERROR_MESSAGES['errors.validationError'] ??
+            'One or more validation errors occurred',
           details,
         ),
       };
@@ -163,7 +198,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       'messageKey' in exceptionResponse
     ) {
       const { messageKey } = exceptionResponse as { messageKey: string };
-      const translatedMessage = this.i18nService.t(locale, messageKey);
+      const translatedMessage = this.translate(messageKey);
       const errorCode = this.statusToErrorCode(statusCode);
 
       return {
@@ -186,7 +221,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     };
   }
 
-  private handleUnknownException(locale: LocaleEnum): {
+  private handleUnknownException(): {
     statusCode: number;
     errorResponse: ApiErrorResponse;
   } {
@@ -194,53 +229,29 @@ export class AllExceptionsFilter implements ExceptionFilter {
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
       errorResponse: ApiErrorResponse.create(
         'INTERNAL_SERVER_ERROR',
-        this.i18nService.t(locale, 'errors.internalServerError'),
+        ERROR_MESSAGES['errors.internalServerError'] ??
+          'An unexpected error occurred',
       ),
     };
   }
 
-  private resolveLocale(request: Request): LocaleEnum {
-    const user = (request as unknown as Record<string, unknown>).user as
-      | { locale?: string }
-      | undefined;
+  private translate(key: string, args?: Record<string, string>): string {
+    let message = ERROR_MESSAGES[key] ?? key;
 
-    if (
-      user?.locale &&
-      Object.values(LocaleEnum).includes(user.locale as LocaleEnum)
-    ) {
-      return user.locale as LocaleEnum;
-    }
+    if (args) {
+      // Translate entity names
+      if (args.entity) {
+        const entityKey = this.entityNameToKey(args.entity);
+        args = { ...args, entity: ENTITY_NAMES[entityKey] ?? args.entity };
+      }
 
-    const acceptLanguage = request.headers['accept-language'];
-
-    if (acceptLanguage) {
-      const requested = acceptLanguage.split(',')[0]?.trim();
-
-      if (requested) {
-        const match = Object.values(LocaleEnum).find(
-          (l) => l === requested || requested.startsWith(l),
-        );
-
-        if (match) return match;
+      // Replace placeholders
+      for (const [argKey, argValue] of Object.entries(args)) {
+        message = message.replace(new RegExp(`\\{${argKey}\\}`, 'g'), argValue);
       }
     }
 
-    return LocaleEnum.PT_BR;
-  }
-
-  private translateEntityArgs(
-    args: Record<string, string> | undefined,
-    locale: LocaleEnum,
-  ): Record<string, string> | undefined {
-    if (!args?.entity) return args;
-
-    const entityKey = this.entityNameToKey(args.entity);
-    const translatedEntity = this.i18nService.t(
-      locale,
-      `entities.${entityKey}`,
-    );
-
-    return { ...args, entity: translatedEntity };
+    return message;
   }
 
   private entityNameToKey(name: string): string {

@@ -19,13 +19,10 @@ interface ExpandedLevel {
   selector: 'app-education-level-list-page',
   imports: [PageHeader, ConfirmDialog, Pagination, EmptyState, FormField],
   template: `
-    <app-page-header
-      title="Education Levels"
-      subtitle="Manage education levels and their grade levels"
-    >
+    <app-page-header title="Níveis de Ensino" subtitle="Gerencie níveis de ensino e suas séries">
       @if (orgContext.isAdmin()) {
         <button class="btn btn-primary" (click)="openCreateLevelModal()">
-          + Add Education Level
+          + Adicionar Nível de Ensino
         </button>
       }
     </app-page-header>
@@ -37,12 +34,12 @@ interface ExpandedLevel {
     } @else if (levels().length === 0) {
       <app-empty-state
         icon="🎓"
-        title="No education levels yet"
-        description="Create your first education level to organize grade levels."
+        title="Nenhum nível de ensino ainda"
+        description="Crie seu primeiro nível de ensino para organizar as séries."
       >
         @if (orgContext.isAdmin()) {
           <button class="btn btn-primary" (click)="openCreateLevelModal()">
-            Add Education Level
+            Adicionar Nível de Ensino
           </button>
         }
       </app-empty-state>
@@ -78,13 +75,13 @@ interface ExpandedLevel {
                     class="btn btn-ghost"
                     (click)="openEditLevelModal(item.level); $event.stopPropagation()"
                   >
-                    Edit
+                    Editar
                   </button>
                   <button
                     class="btn btn-ghost text-error"
                     (click)="confirmDeleteLevel(item.level); $event.stopPropagation()"
                   >
-                    Delete
+                    Excluir
                   </button>
                 }
               </div>
@@ -93,13 +90,13 @@ interface ExpandedLevel {
             @if (item.expanded) {
               <div class="border-t border-base-300 px-4 py-3">
                 <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-semibold text-base-content/70">Grade Levels</span>
+                  <span class="text-sm font-semibold text-base-content/70">Séries</span>
                   @if (orgContext.isAdmin()) {
                     <button
                       class="btn btn-outline btn-primary"
                       (click)="openCreateGradeModal(item.level)"
                     >
-                      + Add Grade Level
+                      + Adicionar Série
                     </button>
                   }
                 </div>
@@ -110,15 +107,15 @@ interface ExpandedLevel {
                   </div>
                 } @else if (item.gradeLevels.length === 0) {
                   <p class="text-sm text-base-content/50 py-2">
-                    No grade levels yet. Add one above.
+                    Nenhuma série ainda. Adicione uma acima.
                   </p>
                 } @else {
                   <div class="overflow-x-auto">
                     <table class="table table">
                       <thead>
                         <tr>
-                          <th>Name</th>
-                          <th class="text-right">Actions</th>
+                          <th>Nome</th>
+                          <th class="text-right">Ações</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -131,13 +128,13 @@ interface ExpandedLevel {
                                   class="btn btn-ghost"
                                   (click)="openEditGradeModal(item.level, grade)"
                                 >
-                                  Edit
+                                  Editar
                                 </button>
                                 <button
                                   class="btn btn-ghost text-error"
                                   (click)="confirmDeleteGrade(item.level, grade)"
                                 >
-                                  Delete
+                                  Excluir
                                 </button>
                               }
                             </td>
@@ -165,15 +162,15 @@ interface ExpandedLevel {
     <dialog class="modal" [class.modal-open]="showLevelModal()">
       <div class="modal-box">
         <h3 class="font-bold text-lg">
-          {{ editingLevel() ? 'Edit Education Level' : 'Add Education Level' }}
+          {{ editingLevel() ? 'Editar Nível de Ensino' : 'Adicionar Nível de Ensino' }}
         </h3>
         <form (submit)="onSubmitLevel($event)">
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Name</legend>
+            <legend class="fieldset-legend">Nome</legend>
             <input
               type="text"
               class="input input-bordered w-full"
-              placeholder="Education level name"
+              placeholder="Nome do nível de ensino"
               [formField]="levelForm.name"
             />
             @if (levelForm.name().touched() && levelForm.name().invalid()) {
@@ -185,12 +182,12 @@ interface ExpandedLevel {
             }
           </fieldset>
           <div class="modal-action">
-            <button type="button" class="btn" (click)="closeLevelModal()">Cancel</button>
+            <button type="button" class="btn" (click)="closeLevelModal()">Cancelar</button>
             <button type="submit" class="btn btn-primary" [disabled]="savingLevel()">
               @if (savingLevel()) {
                 <span class="loading loading-spinner loading-sm"></span>
               }
-              {{ editingLevel() ? 'Save' : 'Create' }}
+              {{ editingLevel() ? 'Salvar' : 'Criar' }}
             </button>
           </div>
         </form>
@@ -204,15 +201,15 @@ interface ExpandedLevel {
     <dialog class="modal" [class.modal-open]="showGradeModal()">
       <div class="modal-box">
         <h3 class="font-bold text-lg">
-          {{ editingGrade() ? 'Edit Grade Level' : 'Add Grade Level' }}
+          {{ editingGrade() ? 'Editar Série' : 'Adicionar Série' }}
         </h3>
         <form (submit)="onSubmitGrade($event)">
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Name</legend>
+            <legend class="fieldset-legend">Nome</legend>
             <input
               type="text"
               class="input input-bordered w-full"
-              placeholder="Grade level name"
+              placeholder="Nome da série"
               [formField]="gradeForm.name"
             />
             @if (gradeForm.name().touched() && gradeForm.name().invalid()) {
@@ -224,12 +221,12 @@ interface ExpandedLevel {
             }
           </fieldset>
           <div class="modal-action">
-            <button type="button" class="btn" (click)="closeGradeModal()">Cancel</button>
+            <button type="button" class="btn" (click)="closeGradeModal()">Cancelar</button>
             <button type="submit" class="btn btn-primary" [disabled]="savingGrade()">
               @if (savingGrade()) {
                 <span class="loading loading-spinner loading-sm"></span>
               }
-              {{ editingGrade() ? 'Save' : 'Create' }}
+              {{ editingGrade() ? 'Salvar' : 'Criar' }}
             </button>
           </div>
         </form>
@@ -242,13 +239,13 @@ interface ExpandedLevel {
     <!-- Delete education level confirm -->
     <app-confirm-dialog
       [open]="showDeleteLevelConfirm()"
-      title="Delete Education Level"
+      title="Excluir Nível de Ensino"
       [message]="
-        'Delete &quot;' +
+        'Excluir &quot;' +
         (deleteLevelTarget()?.name ?? '') +
-        '&quot; and all its grade levels? This cannot be undone.'
+        '&quot; e todas as suas séries? Esta ação não pode ser desfeita.'
       "
-      confirmLabel="Delete"
+      confirmLabel="Excluir"
       variant="danger"
       (confirmed)="deleteLevel()"
       (cancelled)="showDeleteLevelConfirm.set(false)"
@@ -257,13 +254,13 @@ interface ExpandedLevel {
     <!-- Delete grade level confirm -->
     <app-confirm-dialog
       [open]="showDeleteGradeConfirm()"
-      title="Delete Grade Level"
+      title="Excluir Série"
       [message]="
-        'Delete grade level &quot;' +
+        'Excluir série &quot;' +
         (deleteGradeTarget()?.name ?? '') +
-        '&quot;? This cannot be undone.'
+        '&quot;? Esta ação não pode ser desfeita.'
       "
-      confirmLabel="Delete"
+      confirmLabel="Excluir"
       variant="danger"
       (confirmed)="deleteGrade()"
       (cancelled)="showDeleteGradeConfirm.set(false)"
@@ -290,7 +287,7 @@ export default class EducationLevelListPage implements OnInit {
 
   protected readonly levelModel = signal({ name: '' });
   protected readonly levelForm = form(this.levelModel, (s) => {
-    required(s.name, { message: 'Name is required' });
+    required(s.name, { message: 'Nome é obrigatório' });
   });
 
   // Grade level modal
@@ -304,7 +301,7 @@ export default class EducationLevelListPage implements OnInit {
 
   protected readonly gradeModel = signal({ name: '' });
   protected readonly gradeForm = form(this.gradeModel, (s) => {
-    required(s.name, { message: 'Name is required' });
+    required(s.name, { message: 'Nome é obrigatório' });
   });
 
   ngOnInit(): void {
@@ -333,7 +330,7 @@ export default class EducationLevelListPage implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toastService.error('Failed to load education levels');
+        this.toastService.error('Falha ao carregar níveis de ensino');
       },
     });
   }
@@ -369,7 +366,7 @@ export default class EducationLevelListPage implements OnInit {
         this.levels.update((list) =>
           list.map((l) => (l.level.id === item.level.id ? { ...l, gradeLoading: false } : l)),
         );
-        this.toastService.error('Failed to load grade levels');
+        this.toastService.error('Falha ao carregar séries');
       },
     });
   }
@@ -413,11 +410,11 @@ export default class EducationLevelListPage implements OnInit {
 
         this.closeLevelModal();
         this.toastService.success(
-          editing ? 'Education level updated!' : 'Education level created!',
+          editing ? 'Nível de ensino atualizado!' : 'Nível de ensino criado!',
         );
         this.loadLevels(this.currentPage());
       } catch {
-        this.toastService.error('Failed to save education level');
+        this.toastService.error('Falha ao salvar nível de ensino');
       } finally {
         this.savingLevel.set(false);
       }
@@ -437,10 +434,10 @@ export default class EducationLevelListPage implements OnInit {
 
     this.levelService.delete(slug, level.id).subscribe({
       next: () => {
-        this.toastService.success('Education level deleted');
+        this.toastService.success('Nível de ensino excluído');
         this.loadLevels(this.currentPage());
       },
-      error: () => this.toastService.error('Failed to delete education level'),
+      error: () => this.toastService.error('Falha ao excluir nível de ensino'),
     });
   }
 
@@ -486,10 +483,10 @@ export default class EducationLevelListPage implements OnInit {
         });
 
         this.closeGradeModal();
-        this.toastService.success(editing ? 'Grade level updated!' : 'Grade level created!');
+        this.toastService.success(editing ? 'Série atualizada!' : 'Série criada!');
         this.refreshGradeLevels(parentLevel.id);
       } catch {
-        this.toastService.error('Failed to save grade level');
+        this.toastService.error('Falha ao salvar série');
       } finally {
         this.savingGrade.set(false);
       }
@@ -511,10 +508,10 @@ export default class EducationLevelListPage implements OnInit {
 
     this.gradeService.delete(slug, parent.id, grade.id).subscribe({
       next: () => {
-        this.toastService.success('Grade level deleted');
+        this.toastService.success('Série excluída');
         this.refreshGradeLevels(parent.id);
       },
-      error: () => this.toastService.error('Failed to delete grade level'),
+      error: () => this.toastService.error('Falha ao excluir série'),
     });
   }
 
@@ -532,7 +529,7 @@ export default class EducationLevelListPage implements OnInit {
           ),
         );
       },
-      error: () => this.toastService.error('Failed to refresh grade levels'),
+      error: () => this.toastService.error('Falha ao atualizar séries'),
     });
   }
 }

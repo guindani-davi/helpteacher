@@ -7,9 +7,9 @@ import { AuthService } from '../../../core/auth';
   selector: 'app-forgot-password-page',
   imports: [FormField, RouterLink],
   template: `
-    <h2 class="text-2xl font-bold text-base-content mb-2">Forgot password?</h2>
+    <h2 class="text-2xl font-bold text-base-content mb-2">Esqueceu a senha?</h2>
     <p class="text-text-secondary mb-8">
-      Enter your email and we'll send you a link to reset your password.
+      Digite seu e-mail e enviaremos um link para redefinir sua senha.
     </p>
 
     @if (successMessage()) {
@@ -26,11 +26,11 @@ import { AuthService } from '../../../core/auth';
 
     <form (submit)="onSubmit($event)">
       <fieldset class="fieldset mb-6">
-        <legend class="fieldset-legend">Email</legend>
+        <legend class="fieldset-legend">E-mail</legend>
         <input
           type="email"
           class="input input-bordered w-full"
-          placeholder="you&#64;example.com"
+          placeholder="voce&#64;exemplo.com"
           [formField]="forgotForm.email"
         />
         @if (forgotForm.email().touched() && forgotForm.email().invalid()) {
@@ -46,12 +46,12 @@ import { AuthService } from '../../../core/auth';
         @if (isLoading()) {
           <span class="loading loading-spinner loading-sm"></span>
         }
-        Send reset link
+        Enviar link
       </button>
     </form>
 
     <p class="text-center text-text-secondary text-sm mt-8">
-      <a routerLink="/login" class="link link-primary font-medium">Back to sign in</a>
+      <a routerLink="/login" class="link link-primary font-medium">Voltar para login</a>
     </p>
   `,
 })
@@ -65,8 +65,8 @@ export default class ForgotPasswordPage {
   protected readonly forgotModel = signal({ email: '' });
 
   protected readonly forgotForm = form(this.forgotModel, (s) => {
-    required(s.email, { message: 'Email is required' });
-    email(s.email, { message: 'Enter a valid email address' });
+    required(s.email, { message: 'E-mail é obrigatório' });
+    email(s.email, { message: 'Digite um e-mail válido' });
   });
 
   onSubmit(event: Event): void {
@@ -84,10 +84,10 @@ export default class ForgotPasswordPage {
           });
         });
         this.successMessage.set(
-          'If an account with that email exists, a reset link has been sent.',
+          'Se existe uma conta com este e-mail, um link de redefinição foi enviado.',
         );
       } catch {
-        this.errorMessage.set('Something went wrong. Please try again.');
+        this.errorMessage.set('Algo deu errado. Tente novamente.');
       } finally {
         this.isLoading.set(false);
       }

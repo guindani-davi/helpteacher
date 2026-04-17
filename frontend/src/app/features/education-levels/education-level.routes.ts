@@ -4,6 +4,6 @@ export const educationLevelRoutes: Routes = [
   {
     path: '',
     loadComponent: () => import('./pages/education-level-list.page'),
-    title: 'Education Levels — Help Teacher',
+    title: 'Níveis de Ensino — Help Teacher',
   },
 ];

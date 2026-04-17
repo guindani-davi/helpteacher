@@ -22,7 +22,6 @@ import { PaginatedResponse } from '../../../common/models/paginated-response.mod
 import { MembershipGuard } from '../../../memberships/guards/membership.guard';
 import type { Membership } from '../../../memberships/models/membership.model';
 import { Student } from '../../../students/models/student.model';
-import { ActiveSubscriptionGuard } from '../../../subscriptions/guards/active-subscription.guard';
 import { LinkStudentUserBodyDTO } from '../../dtos/link-student-user.dto';
 import { UnlinkStudentUserParamsDTO } from '../../dtos/unlink-student-user.dto';
 import { StudentUserWithUser } from '../../models/student-user-with-user.model';
@@ -31,7 +30,7 @@ import { IStudentUsersService } from '../../services/i.student-users.service';
 import { IStudentUsersController } from '../i.student-users.controller';
 
 @Controller('organizations')
-@UseGuards(MembershipGuard, RolesGuard, ActiveSubscriptionGuard)
+@UseGuards(MembershipGuard, RolesGuard)
 @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN)
 export class StudentUsersController extends IStudentUsersController {
   public constructor(

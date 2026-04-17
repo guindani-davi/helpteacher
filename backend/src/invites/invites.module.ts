@@ -5,7 +5,6 @@ import { EmailModule } from '../email/email.module';
 import { HelpersModule } from '../helpers/helpers.module';
 import { MembershipsModule } from '../memberships/memberships.module';
 import { OrganizationsModule } from '../organizations/organizations.module';
-import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { OrganizationInvitesController } from './controllers/implementations/organization-invites.controller';
 import { UserInvitesController } from './controllers/implementations/user-invites.controller';
 import { IInvitesRepository } from './repositories/i.invites.repository';
@@ -21,7 +20,6 @@ import { InvitesService } from './services/implementations/invites.service';
     MembershipsModule,
     OrganizationsModule,
     EmailModule,
-    SubscriptionsModule,
   ],
   controllers: [OrganizationInvitesController, UserInvitesController],
   providers: [

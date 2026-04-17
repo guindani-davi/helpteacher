@@ -8,7 +8,6 @@ import { MembershipsModule } from '../memberships/memberships.module';
 import { RegistrationsModule } from '../registrations/registrations.module';
 import { ReportsModule } from '../reports/reports.module';
 import { StudentUsersModule } from '../student-users/student-users.module';
-import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { StudentsController } from './controllers/implementations/students.controller';
 import { IStudentsRepository } from './repositories/i.students.repository';
 import { StudentsRepository } from './repositories/implementations/students.repository';
@@ -22,7 +21,6 @@ import { StudentsService } from './services/implementations/students.service';
     HelpersModule,
     forwardRef(() => AuthModule),
     forwardRef(() => MembershipsModule),
-    forwardRef(() => SubscriptionsModule),
     forwardRef(() => StudentUsersModule),
     forwardRef(() => RegistrationsModule),
     forwardRef(() => ClassesModule),

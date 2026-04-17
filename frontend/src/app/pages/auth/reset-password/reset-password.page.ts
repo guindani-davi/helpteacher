@@ -7,15 +7,15 @@ import { AuthService } from '../../../core/auth';
   selector: 'app-reset-password-page',
   imports: [FormField, RouterLink],
   template: `
-    <h2 class="text-2xl font-bold text-base-content mb-2">Reset password</h2>
-    <p class="text-text-secondary mb-8">Enter your new password below.</p>
+    <h2 class="text-2xl font-bold text-base-content mb-2">Redefinir senha</h2>
+    <p class="text-text-secondary mb-8">Digite sua nova senha abaixo.</p>
 
     @if (successMessage()) {
       <div role="alert" class="alert alert-success alert-soft mb-6">
         <span>{{ successMessage() }}</span>
       </div>
       <p class="text-center mt-4">
-        <a routerLink="/login" class="link link-primary font-medium">Go to sign in</a>
+        <a routerLink="/login" class="link link-primary font-medium">Ir para login</a>
       </p>
     } @else {
       @if (errorMessage()) {
@@ -26,7 +26,7 @@ import { AuthService } from '../../../core/auth';
 
       <form (submit)="onSubmit($event)">
         <fieldset class="fieldset mb-6">
-          <legend class="fieldset-legend">New password</legend>
+          <legend class="fieldset-legend">Nova senha</legend>
           <input
             type="password"
             class="input input-bordered w-full"
@@ -46,12 +46,12 @@ import { AuthService } from '../../../core/auth';
           @if (isLoading()) {
             <span class="loading loading-spinner loading-sm"></span>
           }
-          Reset password
+          Redefinir senha
         </button>
       </form>
 
       <p class="text-center text-text-secondary text-sm mt-8">
-        <a routerLink="/login" class="link link-primary font-medium">Back to sign in</a>
+        <a routerLink="/login" class="link link-primary font-medium">Voltar para login</a>
       </p>
     }
   `,
@@ -70,14 +70,14 @@ export default class ResetPasswordPage implements OnInit {
   protected readonly resetModel = signal({ newPassword: '' });
 
   protected readonly resetForm = form(this.resetModel, (s) => {
-    required(s.newPassword, { message: 'Password is required' });
-    minLength(s.newPassword, 8, { message: 'Password must be at least 8 characters' });
+    required(s.newPassword, { message: 'Senha é obrigatória' });
+    minLength(s.newPassword, 8, { message: 'A senha deve ter pelo menos 8 caracteres' });
   });
 
   ngOnInit(): void {
     this.token = this.route.snapshot.queryParamMap.get('token') ?? '';
     if (!this.token) {
-      this.errorMessage.set('Invalid or missing reset token. Please request a new link.');
+      this.errorMessage.set('Token inválido ou ausente. Solicite um novo link.');
     }
   }
 
@@ -98,9 +98,9 @@ export default class ResetPasswordPage implements OnInit {
               error: (err) => reject(err),
             });
         });
-        this.successMessage.set('Password reset successfully! You can now sign in.');
+        this.successMessage.set('Senha redefinida com sucesso! Agora você pode entrar.');
       } catch {
-        this.errorMessage.set('Invalid or expired token. Please request a new link.');
+        this.errorMessage.set('Token inválido ou expirado. Solicite um novo link.');
       } finally {
         this.isLoading.set(false);
       }

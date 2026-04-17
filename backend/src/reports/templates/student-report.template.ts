@@ -23,7 +23,6 @@ export interface ReportLabels {
 export function buildStudentReportHtml(
   report: StudentReport,
   labels: ReportLabels,
-  dateLocale: string,
 ): string {
   const { organization, student, registration, classes } = report;
 
@@ -63,7 +62,7 @@ export function buildStudentReportHtml(
     .join('');
 
   return `<!DOCTYPE html>
-<html lang="${escape(dateLocale)}">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <style>
@@ -120,7 +119,7 @@ export function buildStudentReportHtml(
   </div>
 
   <div class="footer">
-    ${escape(labels.generatedOn)} ${new Date().toLocaleDateString(dateLocale, { year: 'numeric', month: 'long', day: 'numeric' })}
+    ${escape(labels.generatedOn)} ${new Date().toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' })}
   </div>
 </body>
 </html>`;

@@ -35,17 +35,16 @@ import { EmptyState, ToastContainer } from '../../../shared';
               tabindex="0"
               class="menu dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow border border-base-300"
             >
-              <li><a routerLink="/subscription">My Subscription</a></li>
-              <li><a routerLink="/profile">My Profile</a></li>
-              <li><a routerLink="/invites">Pending Invites</a></li>
-              <li><button (click)="logout()">Logout</button></li>
+              <li><a routerLink="/profile">Meu Perfil</a></li>
+              <li><a routerLink="/invites">Convites Pendentes</a></li>
+              <li><button (click)="logout()">Sair</button></li>
             </ul>
           </div>
         </div>
       </header>
 
       <main class="flex-1 max-w-4xl mx-auto w-full p-6">
-        <h1 class="text-2xl font-bold text-base-content mb-6">Your Organizations</h1>
+        <h1 class="text-2xl font-bold text-base-content mb-6">Suas Organizações</h1>
 
         <!-- Pending invites banner -->
         @if (pendingInvites().length > 0) {
@@ -64,8 +63,8 @@ import { EmptyState, ToastContainer } from '../../../shared';
                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
               />
             </svg>
-            <span>You have {{ pendingInvites().length }} pending invite(s)</span>
-            <a routerLink="/invites" class="btn btn-primary">View</a>
+            <span>Você tem {{ pendingInvites().length }} convite(s) pendente(s)</span>
+            <a routerLink="/invites" class="btn btn-primary">Ver</a>
           </div>
         }
 
@@ -77,11 +76,11 @@ import { EmptyState, ToastContainer } from '../../../shared';
         } @else if (memberships().length === 0) {
           <app-empty-state
             icon="🏢"
-            title="No organizations yet"
-            description="Create your first organization to start managing classes and students."
+            title="Nenhuma organização ainda"
+            description="Crie sua primeira organização para começar a gerenciar aulas e alunos."
           >
             <button class="btn btn-primary" (click)="showCreateModal.set(true)">
-              Create Organization
+              Criar Organização
             </button>
           </app-empty-state>
         } @else {
@@ -116,21 +115,21 @@ import { EmptyState, ToastContainer } from '../../../shared';
             }
           </div>
           <button class="btn btn-primary" (click)="showCreateModal.set(true)">
-            + New Organization
+            + Nova Organização
           </button>
         }
 
         <!-- Create org modal -->
         <dialog class="modal" [class.modal-open]="showCreateModal()">
           <div class="modal-box">
-            <h3 class="font-bold text-lg">Create Organization</h3>
+            <h3 class="font-bold text-lg">Criar Organização</h3>
             <form (submit)="onCreate($event)">
               <fieldset class="fieldset mt-4">
-                <legend class="fieldset-legend">Organization Name</legend>
+                <legend class="fieldset-legend">Nome da Organização</legend>
                 <input
                   type="text"
                   class="input input-bordered w-full"
-                  placeholder="My School"
+                  placeholder="Minha Escola"
                   [formField]="createForm.name"
                 />
                 @if (createForm.name().touched() && createForm.name().invalid()) {
@@ -143,13 +142,13 @@ import { EmptyState, ToastContainer } from '../../../shared';
               </fieldset>
               <div class="modal-action">
                 <button type="button" class="btn" (click)="showCreateModal.set(false)">
-                  Cancel
+                  Cancelar
                 </button>
                 <button type="submit" class="btn btn-primary" [disabled]="creating()">
                   @if (creating()) {
                     <span class="loading loading-spinner loading-sm"></span>
                   }
-                  Create
+                  Criar
                 </button>
               </div>
             </form>
@@ -186,7 +185,7 @@ export default class OrgSelectorPage implements OnInit {
   // Create org form
   protected readonly createModel = signal({ name: '' });
   protected readonly createForm = form(this.createModel, (s) => {
-    required(s.name, { message: 'Organization name is required' });
+    required(s.name, { message: 'Nome da organização é obrigatório' });
   });
 
   ngOnInit(): void {
@@ -229,10 +228,10 @@ export default class OrgSelectorPage implements OnInit {
           });
         });
         this.showCreateModal.set(false);
-        this.toastService.success('Organization created!');
+        this.toastService.success('Organização criada!');
         this.router.navigate(['/orgs', res.data.slug]);
       } catch {
-        this.toastService.error('Failed to create organization');
+        this.toastService.error('Falha ao criar organização');
       } finally {
         this.creating.set(false);
       }

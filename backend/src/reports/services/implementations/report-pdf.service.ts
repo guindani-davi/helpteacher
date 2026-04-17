@@ -1,28 +1,62 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import chromium from '@sparticuz/chromium';
 import { existsSync } from 'fs';
 import puppeteer from 'puppeteer-core';
-import { LocaleEnum } from '../../../i18n/enums/locale.enum';
-import { II18nService } from '../../../i18n/services/i.i18n.service';
 import { StudentReport } from '../../models/student-report.model';
 import {
-    type ReportLabels,
-    buildStudentReportHtml,
+  type ReportLabels,
+  buildStudentReportHtml,
 } from '../../templates/student-report.template';
 import { IReportPdfService } from '../i.report-pdf.service';
 
+const REPORT_LABELS: ReportLabels = {
+  student: 'Aluno',
+  registration: 'Matrícula',
+  classes: 'Aulas',
+  educationLevel: 'Nível de Ensino',
+  gradeLevel: 'Série',
+  school: 'Escola',
+  startDate: 'Data de Início',
+  endDate: 'Data de Término',
+  date: 'Data',
+  day: 'Dia',
+  time: 'Horário',
+  teacher: 'Professor',
+  subjects: 'Disciplinas',
+  topics: 'Tópicos',
+  noRegistration: 'Nenhuma matrícula encontrada.',
+  noClasses: 'Nenhuma aula encontrada.',
+  generatedOn: 'Gerado em',
+};
+
+const DAY_LABELS: Record<string, string> = {
+  monday: 'Segunda-feira',
+  tuesday: 'Terça-feira',
+  wednesday: 'Quarta-feira',
+  thursday: 'Quinta-feira',
+  friday: 'Sexta-feira',
+  saturday: 'Sábado',
+  sunday: 'Domingo',
+};
+
+function translateDay(day: string): string {
+  return DAY_LABELS[day.toLowerCase()] ?? day;
+}
+
 @Injectable()
 export class ReportPdfService extends IReportPdfService {
-  public constructor(@Inject(II18nService) i18nService: II18nService) {
-    super(i18nService);
-  }
-
   public async generateStudentReportPdf(
     report: StudentReport,
-    locale: LocaleEnum,
   ): Promise<Buffer> {
-    const labels = this.buildLabels(locale);
-    const html = buildStudentReportHtml(report, labels, locale);
+    // Translate day of week for each class
+    const translatedReport: StudentReport = {
+      ...report,
+      classes: report.classes.map((c) => ({
+        ...c,
+        dayOfWeek: translateDay(c.dayOfWeek),
+      })),
+    };
+    const html = buildStudentReportHtml(translatedReport, REPORT_LABELS);
 
     const isServerless =
       !!process.env.AWS_LAMBDA_FUNCTION_NAME || !!process.env.VERCEL;
@@ -70,29 +104,5 @@ export class ReportPdfService extends IReportPdfService {
     } finally {
       await browser.close();
     }
-  }
-
-  private buildLabels(locale: LocaleEnum): ReportLabels {
-    const t = (key: string): string => this.i18nService.t(locale, key);
-
-    return {
-      student: t('reports.student'),
-      registration: t('reports.registration'),
-      classes: t('reports.classes'),
-      educationLevel: t('reports.educationLevel'),
-      gradeLevel: t('reports.gradeLevel'),
-      school: t('reports.school'),
-      startDate: t('reports.startDate'),
-      endDate: t('reports.endDate'),
-      date: t('reports.date'),
-      day: t('reports.day'),
-      time: t('reports.time'),
-      teacher: t('reports.teacher'),
-      subjects: t('reports.subjects'),
-      topics: t('reports.topics'),
-      noRegistration: t('reports.noRegistration'),
-      noClasses: t('reports.noClasses'),
-      generatedOn: t('reports.generatedOn'),
-    };
   }
 }

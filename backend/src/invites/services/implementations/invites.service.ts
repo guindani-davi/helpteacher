@@ -77,11 +77,7 @@ export class InvitesService extends IInvitesService {
       expiresAt,
     );
 
-    await this.emailService.sendInviteEmail(
-      body.email,
-      organization.name,
-      user.locale,
-    );
+    await this.emailService.sendInviteEmail(body.email, organization.name);
 
     return invite;
   }

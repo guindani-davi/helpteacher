@@ -50,7 +50,6 @@ export class ReportsService extends IReportsService {
     const cached = await this.reportCacheService.getCachedPdf(
       membership.organizationId,
       params.studentId,
-      user.locale,
     );
 
     if (cached) {
@@ -62,15 +61,11 @@ export class ReportsService extends IReportsService {
       membership.organizationId,
     );
 
-    const pdf = await this.reportPdfService.generateStudentReportPdf(
-      report,
-      user.locale,
-    );
+    const pdf = await this.reportPdfService.generateStudentReportPdf(report);
 
     await this.reportCacheService.cachePdf(
       membership.organizationId,
       params.studentId,
-      user.locale,
       pdf,
     );
 

@@ -21,9 +21,6 @@ import { PaginationQueryDTO } from '../../../common/dtos/pagination-query.dto';
 import { PaginatedResponse } from '../../../common/models/paginated-response.model';
 import { MembershipGuard } from '../../../memberships/guards/membership.guard';
 import type { Membership } from '../../../memberships/models/membership.model';
-import { AllowedTiers } from '../../../subscriptions/decorators/allowed-tiers.decorator';
-import { SubscriptionTierEnum } from '../../../subscriptions/enums/subscription-tier.enum';
-import { SubscriptionTierGuard } from '../../../subscriptions/guards/subscription-tier.guard';
 import {
   CreateInviteBodyDTO,
   CreateInviteParamsDTO,
@@ -35,9 +32,8 @@ import { IInvitesService } from '../../services/i.invites.service';
 import { IOrganizationInvitesController } from '../i.organization-invites.controller';
 
 @Controller('organizations')
-@UseGuards(MembershipGuard, RolesGuard, SubscriptionTierGuard)
+@UseGuards(MembershipGuard, RolesGuard)
 @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN)
-@AllowedTiers(SubscriptionTierEnum.PRO)
 export class OrganizationInvitesController extends IOrganizationInvitesController {
   public constructor(@Inject(IInvitesService) invitesService: IInvitesService) {
     super(invitesService);

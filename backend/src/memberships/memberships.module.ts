@@ -3,7 +3,6 @@ import { AuthModule } from '../auth/auth.module';
 import { DatabaseModule } from '../database/database.module';
 import { HelpersModule } from '../helpers/helpers.module';
 import { OrganizationsModule } from '../organizations/organizations.module';
-import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { MembershipsController } from './controllers/implementations/memberships.controller';
 import { UserMembershipsController } from './controllers/implementations/user-memberships.controller';
 import { MembershipGuard } from './guards/membership.guard';
@@ -18,7 +17,6 @@ import { MembershipsService } from './services/implementations/memberships.servi
     DatabaseModule,
     HelpersModule,
     forwardRef(() => AuthModule),
-    forwardRef(() => SubscriptionsModule),
     forwardRef(() => OrganizationsModule),
   ],
   providers: [

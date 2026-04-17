@@ -7,8 +7,8 @@ import { AuthService } from '../../../core/auth';
   selector: 'app-register-page',
   imports: [FormField, RouterLink],
   template: `
-    <h2 class="text-2xl font-bold text-base-content mb-2">Create your account</h2>
-    <p class="text-text-secondary mb-8">Get started with Help Teacher</p>
+    <h2 class="text-2xl font-bold text-base-content mb-2">Crie sua conta</h2>
+    <p class="text-text-secondary mb-8">Comece a usar o Help Teacher</p>
 
     @if (errorMessage()) {
       <div role="alert" class="alert alert-error alert-soft mb-6">
@@ -19,11 +19,11 @@ import { AuthService } from '../../../core/auth';
     <form (submit)="onSubmit($event)">
       <div class="grid grid-cols-2 gap-4 mb-4">
         <fieldset class="fieldset">
-          <legend class="fieldset-legend">First name</legend>
+          <legend class="fieldset-legend">Nome</legend>
           <input
             type="text"
             class="input input-bordered w-full"
-            placeholder="John"
+            placeholder="João"
             [formField]="registerForm.name"
           />
           @if (registerForm.name().touched() && registerForm.name().invalid()) {
@@ -36,11 +36,11 @@ import { AuthService } from '../../../core/auth';
         </fieldset>
 
         <fieldset class="fieldset">
-          <legend class="fieldset-legend">Last name</legend>
+          <legend class="fieldset-legend">Sobrenome</legend>
           <input
             type="text"
             class="input input-bordered w-full"
-            placeholder="Doe"
+            placeholder="Silva"
             [formField]="registerForm.surname"
           />
           @if (registerForm.surname().touched() && registerForm.surname().invalid()) {
@@ -54,11 +54,11 @@ import { AuthService } from '../../../core/auth';
       </div>
 
       <fieldset class="fieldset mb-4">
-        <legend class="fieldset-legend">Email</legend>
+        <legend class="fieldset-legend">E-mail</legend>
         <input
           type="email"
           class="input input-bordered w-full"
-          placeholder="you&#64;example.com"
+          placeholder="voce&#64;exemplo.com"
           [formField]="registerForm.email"
         />
         @if (registerForm.email().touched() && registerForm.email().invalid()) {
@@ -71,7 +71,7 @@ import { AuthService } from '../../../core/auth';
       </fieldset>
 
       <fieldset class="fieldset mb-6">
-        <legend class="fieldset-legend">Password</legend>
+        <legend class="fieldset-legend">Senha</legend>
         <input
           type="password"
           class="input input-bordered w-full"
@@ -91,13 +91,13 @@ import { AuthService } from '../../../core/auth';
         @if (isLoading()) {
           <span class="loading loading-spinner loading-sm"></span>
         }
-        Create account
+        Criar conta
       </button>
     </form>
 
     <p class="text-center text-text-secondary text-sm mt-8">
-      Already have an account?
-      <a routerLink="/login" class="link link-primary font-medium">Sign in</a>
+      Já tem uma conta?
+      <a routerLink="/login" class="link link-primary font-medium">Entrar</a>
     </p>
   `,
 })
@@ -116,12 +116,12 @@ export default class RegisterPage {
   });
 
   protected readonly registerForm = form(this.registerModel, (s) => {
-    required(s.name, { message: 'First name is required' });
-    required(s.surname, { message: 'Last name is required' });
-    required(s.email, { message: 'Email is required' });
-    email(s.email, { message: 'Enter a valid email address' });
-    required(s.password, { message: 'Password is required' });
-    minLength(s.password, 8, { message: 'Password must be at least 8 characters' });
+    required(s.name, { message: 'Nome é obrigatório' });
+    required(s.surname, { message: 'Sobrenome é obrigatório' });
+    required(s.email, { message: 'E-mail é obrigatório' });
+    email(s.email, { message: 'Digite um e-mail válido' });
+    required(s.password, { message: 'Senha é obrigatória' });
+    minLength(s.password, 8, { message: 'A senha deve ter pelo menos 8 caracteres' });
   });
 
   onSubmit(event: Event): void {

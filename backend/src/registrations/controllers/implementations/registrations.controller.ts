@@ -22,7 +22,6 @@ import { PaginationQueryDTO } from '../../../common/dtos/pagination-query.dto';
 import { PaginatedResponse } from '../../../common/models/paginated-response.model';
 import { MembershipGuard } from '../../../memberships/guards/membership.guard';
 import type { Membership } from '../../../memberships/models/membership.model';
-import { ActiveSubscriptionGuard } from '../../../subscriptions/guards/active-subscription.guard';
 import { CreateRegistrationBodyDTO } from '../../dtos/create-registration.dto';
 import { DeleteRegistrationParamsDTO } from '../../dtos/delete-registration.dto';
 import { GetRegistrationParamsDTO } from '../../dtos/get-registration.dto';
@@ -35,7 +34,7 @@ import { IRegistrationsService } from '../../services/i.registrations.service';
 import { IRegistrationsController } from '../i.registrations.controller';
 
 @Controller('organizations')
-@UseGuards(MembershipGuard, RolesGuard, ActiveSubscriptionGuard)
+@UseGuards(MembershipGuard, RolesGuard)
 @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN)
 export class RegistrationsController extends IRegistrationsController {
   public constructor(

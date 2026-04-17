@@ -16,6 +16,23 @@ import { ScheduleService } from '../../schedules/services/schedule.service';
 import { StudentService } from '../../students/services/student.service';
 import { ClassService } from '../services/class.service';
 
+const ROLE_LABELS: Record<string, string> = {
+  owner: 'Proprietário',
+  admin: 'Admin',
+  teacher: 'Professor',
+  responsible: 'Responsável',
+};
+
+const DAY_LABELS: Record<string, string> = {
+  monday: 'Segunda-feira',
+  tuesday: 'Terça-feira',
+  wednesday: 'Quarta-feira',
+  thursday: 'Quinta-feira',
+  friday: 'Sexta-feira',
+  saturday: 'Sábado',
+  sunday: 'Domingo',
+};
+
 function capitalize(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
@@ -25,8 +42,8 @@ function capitalize(value: string): string {
   imports: [PageHeader, FormField],
   template: `
     <app-page-header
-      [title]="isEditing() ? 'Edit Class' : 'New Class'"
-      [subtitle]="isEditing() ? 'Update class information' : 'Create a new class'"
+      [title]="isEditing() ? 'Editar Aula' : 'Nova Aula'"
+      [subtitle]="isEditing() ? 'Atualizar informações da aula' : 'Criar uma nova aula'"
     />
 
     @if (loadingData()) {
@@ -39,12 +56,12 @@ function capitalize(value: string): string {
           <div class="card-body">
             <form (submit)="onSave($event)">
               <fieldset class="fieldset mb-4">
-                <legend class="fieldset-legend">Schedule</legend>
+                <legend class="fieldset-legend">Horário</legend>
                 <select class="select select-bordered w-full" [formField]="classForm.scheduleId">
-                  <option value="">Select a schedule</option>
+                  <option value="">Selecione um horário</option>
                   @for (schedule of schedules(); track schedule.id) {
                     <option [value]="schedule.id">
-                      {{ capitalize(schedule.dayOfWeek) }} {{ schedule.startTime }}–{{
+                      {{ translateDay(schedule.dayOfWeek) }} {{ schedule.startTime }}–{{
                         schedule.endTime
                       }}
                     </option>
@@ -59,9 +76,9 @@ function capitalize(value: string): string {
                 }
               </fieldset>
               <fieldset class="fieldset mb-4">
-                <legend class="fieldset-legend">Student</legend>
+                <legend class="fieldset-legend">Aluno</legend>
                 <select class="select select-bordered w-full" [formField]="classForm.studentId">
-                  <option value="">Select a student</option>
+                  <option value="">Selecione um aluno</option>
                   @for (student of students(); track student.id) {
                     <option [value]="student.id">{{ student.name }} {{ student.surname }}</option>
                   }
@@ -75,13 +92,13 @@ function capitalize(value: string): string {
                 }
               </fieldset>
               <fieldset class="fieldset mb-4">
-                <legend class="fieldset-legend">Teacher</legend>
+                <legend class="fieldset-legend">Professor</legend>
                 <select class="select select-bordered w-full" [formField]="classForm.teacherId">
-                  <option value="">Select a teacher</option>
+                  <option value="">Selecione um professor</option>
                   @for (member of members(); track member.id) {
                     <option [value]="member.userId">
                       {{ member.user.name }} {{ member.user.surname }} ({{
-                        member.roles.join(', ')
+                        translateRoles(member.roles)
                       }})
                     </option>
                   }
@@ -95,7 +112,7 @@ function capitalize(value: string): string {
                 }
               </fieldset>
               <fieldset class="fieldset mb-4">
-                <legend class="fieldset-legend">Date</legend>
+                <legend class="fieldset-legend">Data</legend>
                 <input
                   type="date"
                   class="input input-bordered w-full"
@@ -103,9 +120,9 @@ function capitalize(value: string): string {
                 />
                 @if (selectedScheduleDay()) {
                   <p class="label text-info text-sm">
-                    📅 The selected schedule is on
-                    <strong>{{ capitalize(selectedScheduleDay()!) }}</strong
-                    >s. Please pick a date that falls on that day.
+                    📅 O horário selecionado é na
+                    <strong>{{ translateDay(selectedScheduleDay()!) }}</strong
+                    >. Escolha uma data que caia nesse dia.
                   </p>
                 }
                 @if (dateWeekdayError()) {
@@ -120,12 +137,12 @@ function capitalize(value: string): string {
                 }
               </fieldset>
               <div class="flex justify-end gap-2 mt-6">
-                <button type="button" class="btn" (click)="goBack()">Cancel</button>
+                <button type="button" class="btn" (click)="goBack()">Cancelar</button>
                 <button type="submit" class="btn btn-primary" [disabled]="saving()">
                   @if (saving()) {
                     <span class="loading loading-spinner loading-sm"></span>
                   }
-                  {{ isEditing() ? 'Save Changes' : 'Create Class' }}
+                  {{ isEditing() ? 'Salvar Alterações' : 'Criar Aula' }}
                 </button>
               </div>
             </form>
@@ -161,13 +178,21 @@ export default class ClassCreateEditPage implements OnInit {
     date: '',
   });
   protected readonly classForm = form(this.classModel, (s) => {
-    required(s.scheduleId, { message: 'Schedule is required' });
-    required(s.studentId, { message: 'Student is required' });
-    required(s.teacherId, { message: 'Teacher is required' });
-    required(s.date, { message: 'Date is required' });
+    required(s.scheduleId, { message: 'Horário é obrigatório' });
+    required(s.studentId, { message: 'Aluno é obrigatório' });
+    required(s.teacherId, { message: 'Professor é obrigatório' });
+    required(s.date, { message: 'Data é obrigatória' });
   });
 
   protected capitalize = capitalize;
+
+  protected translateRoles(roles: string[]): string {
+    return roles.map((role) => ROLE_LABELS[role] ?? role).join(', ');
+  }
+
+  protected translateDay(day: string): string {
+    return DAY_LABELS[day.toLowerCase()] ?? day;
+  }
 
   /** Day-of-week enum value for the currently selected schedule. */
   protected readonly selectedScheduleDay = computed(() => {
@@ -195,7 +220,8 @@ export default class ClassCreateEditPage implements OnInit {
     const jsDay = new Date(date + 'T00:00:00Z').getUTCDay();
     const expectedDay = ClassCreateEditPage.DAY_MAP[day];
     if (jsDay !== expectedDay) {
-      return `The selected date is not a ${capitalize(day)}. Please choose a ${capitalize(day)}.`;
+      const translatedDay = this.translateDay(day);
+      return `A data selecionada não é uma ${translatedDay}. Escolha uma ${translatedDay}.`;
     }
     return null;
   });
@@ -228,7 +254,7 @@ export default class ClassCreateEditPage implements OnInit {
         checkDone();
       },
       error: () => {
-        this.toastService.error('Failed to load schedules');
+        this.toastService.error('Falha ao carregar horários');
         checkDone();
       },
     });
@@ -239,7 +265,7 @@ export default class ClassCreateEditPage implements OnInit {
         checkDone();
       },
       error: () => {
-        this.toastService.error('Failed to load students');
+        this.toastService.error('Falha ao carregar alunos');
         checkDone();
       },
     });
@@ -251,7 +277,7 @@ export default class ClassCreateEditPage implements OnInit {
         checkDone();
       },
       error: () => {
-        this.toastService.error('Failed to load members');
+        this.toastService.error('Falha ao carregar membros');
         checkDone();
       },
     });
@@ -268,7 +294,7 @@ export default class ClassCreateEditPage implements OnInit {
           checkDone();
         },
         error: () => {
-          this.toastService.error('Failed to load class');
+          this.toastService.error('Falha ao carregar aula');
           checkDone();
           this.goBack();
         },
@@ -298,7 +324,7 @@ export default class ClassCreateEditPage implements OnInit {
           obs.subscribe({ next: () => resolve(), error: reject });
         });
 
-        this.toastService.success(this.isEditing() ? 'Class updated!' : 'Class created!');
+        this.toastService.success(this.isEditing() ? 'Aula atualizada!' : 'Aula criada!');
 
         if (this.isEditing()) {
           this.router.navigate(['/orgs', slug, 'classes', this.classId]);
@@ -306,7 +332,7 @@ export default class ClassCreateEditPage implements OnInit {
           this.router.navigate(['/orgs', slug, 'classes']);
         }
       } catch {
-        this.toastService.error('Failed to save class');
+        this.toastService.error('Falha ao salvar aula');
       } finally {
         this.saving.set(false);
       }

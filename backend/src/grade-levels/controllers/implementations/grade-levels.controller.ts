@@ -22,7 +22,6 @@ import { PaginationQueryDTO } from '../../../common/dtos/pagination-query.dto';
 import { PaginatedResponse } from '../../../common/models/paginated-response.model';
 import { MembershipGuard } from '../../../memberships/guards/membership.guard';
 import type { Membership } from '../../../memberships/models/membership.model';
-import { ActiveSubscriptionGuard } from '../../../subscriptions/guards/active-subscription.guard';
 import { CreateGradeLevelBodyDTO } from '../../dtos/create-grade-level.dto';
 import { DeleteGradeLevelParamsDTO } from '../../dtos/delete-grade-level.dto';
 import { GetGradeLevelParamsDTO } from '../../dtos/get-grade-level.dto';
@@ -36,7 +35,7 @@ import { IGradeLevelsService } from '../../services/i.grade-levels.service';
 import { IGradeLevelsController } from '../i.grade-levels.controller';
 
 @Controller('organizations')
-@UseGuards(MembershipGuard, RolesGuard, ActiveSubscriptionGuard)
+@UseGuards(MembershipGuard, RolesGuard)
 @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN)
 export class GradeLevelsController extends IGradeLevelsController {
   public constructor(

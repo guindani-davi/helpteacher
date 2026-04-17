@@ -32,10 +32,5 @@ export type {
   StudentUserWithUser,
 } from "./student";
 export type { Subject } from "./subject";
-export type {
-  CheckoutSessionResponse,
-  SubscriptionPlanResponse,
-  UserSubscriptionResponse,
-} from "./subscription";
 export type { Topic } from "./topic";
 export type { SafeUser } from "./user";

@@ -11,9 +11,9 @@ import { StudentService } from '../services/student.service';
   selector: 'app-student-list-page',
   imports: [PageHeader, ConfirmDialog, Pagination, EmptyState, FormField],
   template: `
-    <app-page-header title="Students" subtitle="Manage your students">
+    <app-page-header title="Alunos" subtitle="Gerencie seus alunos">
       @if (orgContext.isAdmin()) {
-        <button class="btn btn-primary" (click)="openCreateModal()">+ Add Student</button>
+        <button class="btn btn-primary" (click)="openCreateModal()">+ Adicionar Aluno</button>
       }
     </app-page-header>
 
@@ -22,7 +22,7 @@ import { StudentService } from '../services/student.service';
       <input
         type="text"
         class="input input-bordered w-full max-w-xs"
-        placeholder="Search students…"
+        placeholder="Buscar alunos…"
         [value]="searchQuery()"
         (input)="onSearch($event)"
       />
@@ -35,11 +35,11 @@ import { StudentService } from '../services/student.service';
     } @else if (filteredStudents().length === 0) {
       <app-empty-state
         icon="🎓"
-        title="No students yet"
-        description="Create your first student to get started."
+        title="Nenhum aluno ainda"
+        description="Crie seu primeiro aluno para começar."
       >
         @if (orgContext.isAdmin()) {
-          <button class="btn btn-primary" (click)="openCreateModal()">Add Student</button>
+          <button class="btn btn-primary" (click)="openCreateModal()">Adicionar Aluno</button>
         }
       </app-empty-state>
     } @else {
@@ -48,9 +48,9 @@ import { StudentService } from '../services/student.service';
           <table class="table">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Surname</th>
-                <th class="text-right">Actions</th>
+                <th>Nome</th>
+                <th>Sobrenome</th>
+                <th class="text-right">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -59,11 +59,11 @@ import { StudentService } from '../services/student.service';
                   <td class="font-medium">{{ student.name }}</td>
                   <td>{{ student.surname }}</td>
                   <td class="text-right">
-                    <button class="btn btn-ghost" (click)="goToDetail(student)">View</button>
+                    <button class="btn btn-ghost" (click)="goToDetail(student)">Ver</button>
                     @if (orgContext.isAdmin()) {
-                      <button class="btn btn-ghost" (click)="openEditModal(student)">Edit</button>
+                      <button class="btn btn-ghost" (click)="openEditModal(student)">Editar</button>
                       <button class="btn btn-ghost text-error" (click)="confirmDelete(student)">
-                        Delete
+                        Excluir
                       </button>
                     }
                   </td>
@@ -86,15 +86,15 @@ import { StudentService } from '../services/student.service';
     <dialog class="modal" [class.modal-open]="showModal()">
       <div class="modal-box">
         <h3 class="font-bold text-lg">
-          {{ editingStudent() ? 'Edit Student' : 'Add Student' }}
+          {{ editingStudent() ? 'Editar Aluno' : 'Adicionar Aluno' }}
         </h3>
         <form (submit)="onSubmit($event)">
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Name</legend>
+            <legend class="fieldset-legend">Nome</legend>
             <input
               type="text"
               class="input input-bordered w-full"
-              placeholder="First name"
+              placeholder="Nome"
               [formField]="studentForm.name"
             />
             @if (studentForm.name().touched() && studentForm.name().invalid()) {
@@ -106,11 +106,11 @@ import { StudentService } from '../services/student.service';
             }
           </fieldset>
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Surname</legend>
+            <legend class="fieldset-legend">Sobrenome</legend>
             <input
               type="text"
               class="input input-bordered w-full"
-              placeholder="Last name"
+              placeholder="Sobrenome"
               [formField]="studentForm.surname"
             />
             @if (studentForm.surname().touched() && studentForm.surname().invalid()) {
@@ -122,12 +122,12 @@ import { StudentService } from '../services/student.service';
             }
           </fieldset>
           <div class="modal-action">
-            <button type="button" class="btn" (click)="closeModal()">Cancel</button>
+            <button type="button" class="btn" (click)="closeModal()">Cancelar</button>
             <button type="submit" class="btn btn-primary" [disabled]="saving()">
               @if (saving()) {
                 <span class="loading loading-spinner loading-sm"></span>
               }
-              {{ editingStudent() ? 'Save' : 'Create' }}
+              {{ editingStudent() ? 'Salvar' : 'Criar' }}
             </button>
           </div>
         </form>
@@ -139,15 +139,15 @@ import { StudentService } from '../services/student.service';
 
     <app-confirm-dialog
       [open]="showDeleteConfirm()"
-      title="Delete Student"
+      title="Excluir Aluno"
       [message]="
-        'Delete student &quot;' +
+        'Excluir aluno &quot;' +
         (deleteTarget()?.name ?? '') +
         ' ' +
         (deleteTarget()?.surname ?? '') +
-        '&quot;? This cannot be undone.'
+        '&quot;? Esta ação não pode ser desfeita.'
       "
-      confirmLabel="Delete"
+      confirmLabel="Excluir"
       variant="danger"
       (confirmed)="deleteStudent()"
       (cancelled)="showDeleteConfirm.set(false)"
@@ -173,8 +173,8 @@ export default class StudentListPage implements OnInit {
 
   protected readonly studentModel = signal({ name: '', surname: '' });
   protected readonly studentForm = form(this.studentModel, (s) => {
-    required(s.name, { message: 'Name is required' });
-    required(s.surname, { message: 'Surname is required' });
+    required(s.name, { message: 'Nome é obrigatório' });
+    required(s.surname, { message: 'Sobrenome é obrigatório' });
   });
 
   protected filteredStudents = signal<Student[]>([]);
@@ -198,7 +198,7 @@ export default class StudentListPage implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toastService.error('Failed to load students');
+        this.toastService.error('Falha ao carregar alunos');
       },
     });
   }
@@ -270,10 +270,10 @@ export default class StudentListPage implements OnInit {
         });
 
         this.closeModal();
-        this.toastService.success(editing ? 'Student updated!' : 'Student created!');
+        this.toastService.success(editing ? 'Aluno atualizado!' : 'Aluno criado!');
         this.loadStudents(this.currentPage());
       } catch {
-        this.toastService.error('Failed to save student');
+        this.toastService.error('Falha ao salvar aluno');
       } finally {
         this.saving.set(false);
       }
@@ -293,10 +293,10 @@ export default class StudentListPage implements OnInit {
 
     this.studentService.delete(slug, student.id).subscribe({
       next: () => {
-        this.toastService.success('Student deleted');
+        this.toastService.success('Aluno excluído');
         this.loadStudents(this.currentPage());
       },
-      error: () => this.toastService.error('Failed to delete student'),
+      error: () => this.toastService.error('Falha ao excluir aluno'),
     });
   }
 }

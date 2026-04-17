@@ -22,7 +22,6 @@ import { PaginationQueryDTO } from '../../../common/dtos/pagination-query.dto';
 import { PaginatedResponse } from '../../../common/models/paginated-response.model';
 import { MembershipGuard } from '../../../memberships/guards/membership.guard';
 import type { Membership } from '../../../memberships/models/membership.model';
-import { ActiveSubscriptionGuard } from '../../../subscriptions/guards/active-subscription.guard';
 import { CreateSchoolBodyDTO } from '../../dtos/create-school.dto';
 import { DeleteSchoolParamsDTO } from '../../dtos/delete-school.dto';
 import { GetSchoolParamsDTO } from '../../dtos/get-school.dto';
@@ -35,7 +34,7 @@ import { ISchoolsService } from '../../services/i.schools.service';
 import { ISchoolsController } from '../i.schools.controller';
 
 @Controller('organizations')
-@UseGuards(MembershipGuard, RolesGuard, ActiveSubscriptionGuard)
+@UseGuards(MembershipGuard, RolesGuard)
 @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN)
 export class SchoolsController extends ISchoolsController {
   public constructor(@Inject(ISchoolsService) schoolsService: ISchoolsService) {

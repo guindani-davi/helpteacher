@@ -7,7 +7,7 @@ import { IUserMembershipsController } from '../i.user-memberships.controller';
 
 /**
  * Handles user-scoped membership endpoints (no org slug required).
- * Only JWT auth is applied — no MembershipGuard or ActiveSubscriptionGuard.
+ * Only JWT auth is applied — no MembershipGuard.
  */
 @Controller('memberships')
 export class UserMembershipsController extends IUserMembershipsController {

@@ -3,7 +3,6 @@ import { AuthModule } from '../auth/auth.module';
 import { DatabaseModule } from '../database/database.module';
 import { MembershipsModule } from '../memberships/memberships.module';
 import { StorageModule } from '../storage/storage.module';
-import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { ReportsController } from './controllers/implementations/reports.controller';
 import { IReportCacheService } from './services/i.report-cache.service';
 import { IReportDataService } from './services/i.report-data.service';
@@ -21,7 +20,6 @@ import { ReportsService } from './services/implementations/reports.service';
     StorageModule,
     forwardRef(() => AuthModule),
     forwardRef(() => MembershipsModule),
-    forwardRef(() => SubscriptionsModule),
   ],
   providers: [
     {

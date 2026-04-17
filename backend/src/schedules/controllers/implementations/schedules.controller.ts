@@ -22,7 +22,6 @@ import { PaginationQueryDTO } from '../../../common/dtos/pagination-query.dto';
 import { PaginatedResponse } from '../../../common/models/paginated-response.model';
 import { MembershipGuard } from '../../../memberships/guards/membership.guard';
 import type { Membership } from '../../../memberships/models/membership.model';
-import { ActiveSubscriptionGuard } from '../../../subscriptions/guards/active-subscription.guard';
 import { CreateScheduleBodyDTO } from '../../dtos/create-schedule.dto';
 import { DeleteScheduleParamsDTO } from '../../dtos/delete-schedule.dto';
 import { GetScheduleParamsDTO } from '../../dtos/get-schedule.dto';
@@ -35,7 +34,7 @@ import { ISchedulesService } from '../../services/i.schedules.service';
 import { ISchedulesController } from '../i.schedules.controller';
 
 @Controller('organizations')
-@UseGuards(MembershipGuard, RolesGuard, ActiveSubscriptionGuard)
+@UseGuards(MembershipGuard, RolesGuard)
 @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN)
 export class SchedulesController extends ISchedulesController {
   public constructor(

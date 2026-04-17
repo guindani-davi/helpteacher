@@ -22,7 +22,6 @@ import { PaginationQueryDTO } from '../../../common/dtos/pagination-query.dto';
 import { PaginatedResponse } from '../../../common/models/paginated-response.model';
 import { MembershipGuard } from '../../../memberships/guards/membership.guard';
 import type { Membership } from '../../../memberships/models/membership.model';
-import { ActiveSubscriptionGuard } from '../../../subscriptions/guards/active-subscription.guard';
 import { CreateSubjectBodyDTO } from '../../dtos/create-subject.dto';
 import { DeleteSubjectParamsDTO } from '../../dtos/delete-subject.dto';
 import { GetSubjectParamsDTO } from '../../dtos/get-subject.dto';
@@ -35,7 +34,7 @@ import { ISubjectsService } from '../../services/i.subjects.service';
 import { ISubjectsController } from '../i.subjects.controller';
 
 @Controller('organizations')
-@UseGuards(MembershipGuard, RolesGuard, ActiveSubscriptionGuard)
+@UseGuards(MembershipGuard, RolesGuard)
 @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN)
 export class SubjectsController extends ISubjectsController {
   public constructor(

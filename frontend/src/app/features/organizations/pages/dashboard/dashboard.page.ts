@@ -8,11 +8,18 @@ import { PageHeader } from '../../../../shared';
 import { ClassService } from '../../../classes/services/class.service';
 import { OrgContextService } from '../../state/org-context.service';
 
+const ROLE_LABELS: Record<string, string> = {
+  owner: 'Proprietário',
+  admin: 'Admin',
+  teacher: 'Professor',
+  responsible: 'Responsável',
+};
+
 @Component({
   selector: 'app-dashboard-page',
   imports: [PageHeader, RouterLink, DatePipe],
   template: `
-    <app-page-header title="Dashboard" subtitle="Overview of your organization" />
+    <app-page-header title="Painel" subtitle="Visão geral da sua organização" />
 
     <!-- Stats Row -->
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
@@ -34,7 +41,7 @@ import { OrgContextService } from '../../state/org-context.service';
               />
             </svg>
           </div>
-          <div class="stat-title text-sm">Students</div>
+          <div class="stat-title text-sm">Alunos</div>
           <div class="stat-value text-primary">{{ loading() ? '…' : studentsCount() }}</div>
         </div>
       </div>
@@ -56,7 +63,7 @@ import { OrgContextService } from '../../state/org-context.service';
               />
             </svg>
           </div>
-          <div class="stat-title text-sm">Schedules</div>
+          <div class="stat-title text-sm">Horários</div>
           <div class="stat-value text-secondary">{{ loading() ? '…' : schedulesCount() }}</div>
         </div>
       </div>
@@ -78,7 +85,7 @@ import { OrgContextService } from '../../state/org-context.service';
               />
             </svg>
           </div>
-          <div class="stat-title text-sm">Classes</div>
+          <div class="stat-title text-sm">Aulas</div>
           <div class="stat-value text-accent">{{ loading() ? '…' : classesCount() }}</div>
         </div>
       </div>
@@ -100,7 +107,7 @@ import { OrgContextService } from '../../state/org-context.service';
               />
             </svg>
           </div>
-          <div class="stat-title text-sm">Subjects</div>
+          <div class="stat-title text-sm">Disciplinas</div>
           <div class="stat-value text-info">{{ loading() ? '…' : subjectsCount() }}</div>
         </div>
       </div>
@@ -112,10 +119,10 @@ import { OrgContextService } from '../../state/org-context.service';
         <!-- Your Role -->
         <div class="card bg-base-100 border border-base-300 shadow-sm">
           <div class="card-body">
-            <h2 class="card-title text-base-content">Your Role</h2>
+            <h2 class="card-title text-base-content">Sua Função</h2>
             <div class="flex flex-wrap gap-2 mt-2">
               @for (role of roles(); track role) {
-                <span class="badge badge-primary">{{ role }}</span>
+                <span class="badge badge-primary">{{ translateRole(role) }}</span>
               }
             </div>
           </div>
@@ -124,7 +131,7 @@ import { OrgContextService } from '../../state/org-context.service';
         <!-- Quick Actions -->
         <div class="card bg-base-100 border border-base-300 shadow-sm">
           <div class="card-body">
-            <h2 class="card-title text-base-content">Quick Actions</h2>
+            <h2 class="card-title text-base-content">Ações Rápidas</h2>
             <div class="flex flex-col gap-2 mt-2">
               <a
                 [routerLink]="basePath() + '/students'"
@@ -144,7 +151,7 @@ import { OrgContextService } from '../../state/org-context.service';
                     d="M12 4v16m8-8H4"
                   />
                 </svg>
-                Add Student
+                Adicionar Aluno
               </a>
               <a
                 [routerLink]="basePath() + '/classes/new'"
@@ -164,7 +171,7 @@ import { OrgContextService } from '../../state/org-context.service';
                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                Add Class
+                Adicionar Aula
               </a>
             </div>
           </div>
@@ -175,21 +182,21 @@ import { OrgContextService } from '../../state/org-context.service';
       <div class="lg:col-span-2 space-y-6">
         <div class="card bg-base-100 border border-base-300 shadow-sm">
           <div class="card-body">
-            <h2 class="card-title text-base-content">Recent Classes</h2>
+            <h2 class="card-title text-base-content">Aulas Recentes</h2>
             @if (loading()) {
               <div class="flex justify-center py-8">
                 <span class="loading loading-spinner loading-md text-primary"></span>
               </div>
             } @else if (recentClasses().length === 0) {
-              <p class="text-base-content/60 py-4">No classes recorded yet.</p>
+              <p class="text-base-content/60 py-4">Nenhuma aula registrada ainda.</p>
             } @else {
               <div class="overflow-x-auto">
                 <table class="table table">
                   <thead>
                     <tr>
-                      <th>Date</th>
-                      <th>Student</th>
-                      <th>Teacher</th>
+                      <th>Data</th>
+                      <th>Aluno</th>
+                      <th>Professor</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -230,8 +237,12 @@ export default class DashboardPage implements OnInit {
 
   protected roles = computed(() => {
     const r = this.orgContext.currentUserRoles();
-    return r.length > 0 ? r : ['Member'];
+    return r.length > 0 ? r : ['Membro'];
   });
+
+  protected translateRole(role: string): string {
+    return ROLE_LABELS[role] ?? role;
+  }
 
   protected basePath = computed(() => {
     const slug = this.orgContext.org()?.slug ?? '';

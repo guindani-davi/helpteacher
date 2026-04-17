@@ -1,4 +1,5 @@
 import type { UpdateUserBody } from '@help-teacher/shared';
+import { LocaleEnum } from '@help-teacher/shared';
 import {
   IsEnum,
   IsNotEmpty,
@@ -9,7 +10,6 @@ import {
   ValidateIf,
 } from 'class-validator';
 import { AtLeastOneField } from '../../common/validators/at-least-one-field.validator';
-import { LocaleEnum } from '../../i18n/enums/locale.enum';
 
 @AtLeastOneField(['locale', 'password'])
 export class UpdateUserBodyDTO implements UpdateUserBody {

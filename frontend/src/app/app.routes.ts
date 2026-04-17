@@ -2,15 +2,8 @@ import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from './core/auth';
 
 export const routes: Routes = [
-  // -----------------------------------------------------------------------
-  // Public landing page
-  // -----------------------------------------------------------------------
-  {
-    path: '',
-    loadComponent: () => import('./pages/landing/landing.page'),
-    title: 'Help Teacher — Manage your students, classes, and curriculum',
-    pathMatch: 'full',
-  },
+  // Redirect root to login
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
 
   // -----------------------------------------------------------------------
   // Public / Auth routes — SSG-friendly, guest-only
@@ -23,22 +16,22 @@ export const routes: Routes = [
       {
         path: 'login',
         loadComponent: () => import('./pages/auth/login/login.page'),
-        title: 'Login — Help Teacher',
+        title: 'Entrar — Help Teacher',
       },
       {
         path: 'register',
         loadComponent: () => import('./pages/auth/register/register.page'),
-        title: 'Register — Help Teacher',
+        title: 'Cadastrar — Help Teacher',
       },
       {
         path: 'forgot-password',
         loadComponent: () => import('./pages/auth/forgot-password/forgot-password.page'),
-        title: 'Forgot Password — Help Teacher',
+        title: 'Esqueci a Senha — Help Teacher',
       },
       {
         path: 'reset-password',
         loadComponent: () => import('./pages/auth/reset-password/reset-password.page'),
-        title: 'Reset Password — Help Teacher',
+        title: 'Redefinir Senha — Help Teacher',
       },
     ],
   },
@@ -52,7 +45,7 @@ export const routes: Routes = [
     path: 'orgs',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/orgs/org-selector/org-selector.page'),
-    title: 'Organizations — Help Teacher',
+    title: 'Organizações — Help Teacher',
   },
 
   // Pending invites
@@ -60,7 +53,7 @@ export const routes: Routes = [
     path: 'invites',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/invites/invites-pending.page'),
-    title: 'Pending Invites — Help Teacher',
+    title: 'Convites Pendentes — Help Teacher',
   },
 
   // Profile
@@ -68,22 +61,7 @@ export const routes: Routes = [
     path: 'profile',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/profile/profile.page'),
-    title: 'My Profile — Help Teacher',
-  },
-
-  // Subscription (auth required)
-  {
-    path: 'subscription',
-    canActivate: [authGuard],
-    loadComponent: () => import('./pages/subscription/subscription.page'),
-    title: 'My Subscription — Help Teacher',
-  },
-
-  // Plans (public)
-  {
-    path: 'plans',
-    loadComponent: () => import('./pages/plans/plans.page'),
-    title: 'Plans — Help Teacher',
+    title: 'Meu Perfil — Help Teacher',
   },
 
   // Organization context (org layout + all child features)
@@ -97,6 +75,6 @@ export const routes: Routes = [
   {
     path: '**',
     loadComponent: () => import('./pages/not-found/not-found.page'),
-    title: 'Not Found — Help Teacher',
+    title: 'Página Não Encontrada — Help Teacher',
   },
 ];

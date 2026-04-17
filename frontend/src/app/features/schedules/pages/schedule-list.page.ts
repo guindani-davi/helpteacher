@@ -17,6 +17,16 @@ const DAY_ORDER: Record<string, number> = {
   [DayOfWeekEnum.SUNDAY]: 7,
 };
 
+const DAY_LABELS: Record<string, string> = {
+  monday: 'Segunda-feira',
+  tuesday: 'Terça-feira',
+  wednesday: 'Quarta-feira',
+  thursday: 'Quinta-feira',
+  friday: 'Sexta-feira',
+  saturday: 'Sábado',
+  sunday: 'Domingo',
+};
+
 function capitalize(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
@@ -25,9 +35,9 @@ function capitalize(value: string): string {
   selector: 'app-schedule-list-page',
   imports: [PageHeader, ConfirmDialog, Pagination, EmptyState, FormField],
   template: `
-    <app-page-header title="Schedules" subtitle="Manage your weekly schedules">
+    <app-page-header title="Horários" subtitle="Gerencie seus horários semanais">
       @if (orgContext.isAdmin()) {
-        <button class="btn btn-primary" (click)="openCreateModal()">+ Add Schedule</button>
+        <button class="btn btn-primary" (click)="openCreateModal()">+ Adicionar Horário</button>
       }
     </app-page-header>
 
@@ -38,11 +48,11 @@ function capitalize(value: string): string {
     } @else if (sortedSchedules().length === 0) {
       <app-empty-state
         icon="📅"
-        title="No schedules yet"
-        description="Create your first schedule to define class time slots."
+        title="Nenhum horário ainda"
+        description="Crie seu primeiro horário para definir os intervalos de aula."
       >
         @if (orgContext.isAdmin()) {
-          <button class="btn btn-primary" (click)="openCreateModal()">Add Schedule</button>
+          <button class="btn btn-primary" (click)="openCreateModal()">Adicionar Horário</button>
         }
       </app-empty-state>
     } @else {
@@ -51,23 +61,25 @@ function capitalize(value: string): string {
           <table class="table">
             <thead>
               <tr>
-                <th>Day of Week</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th class="text-right">Actions</th>
+                <th>Dia da Semana</th>
+                <th>Hora de Início</th>
+                <th>Hora de Término</th>
+                <th class="text-right">Ações</th>
               </tr>
             </thead>
             <tbody>
               @for (schedule of sortedSchedules(); track schedule.id) {
                 <tr>
-                  <td class="font-medium">{{ capitalize(schedule.dayOfWeek) }}</td>
+                  <td class="font-medium">{{ translateDay(schedule.dayOfWeek) }}</td>
                   <td>{{ formatTime(schedule.startTime) }}</td>
                   <td>{{ formatTime(schedule.endTime) }}</td>
                   <td class="text-right">
                     @if (orgContext.isAdmin()) {
-                      <button class="btn btn-ghost" (click)="openEditModal(schedule)">Edit</button>
+                      <button class="btn btn-ghost" (click)="openEditModal(schedule)">
+                        Editar
+                      </button>
                       <button class="btn btn-ghost text-error" (click)="confirmDelete(schedule)">
-                        Delete
+                        Excluir
                       </button>
                     }
                   </td>
@@ -90,13 +102,13 @@ function capitalize(value: string): string {
     <dialog class="modal" [class.modal-open]="showModal()">
       <div class="modal-box">
         <h3 class="font-bold text-lg">
-          {{ editingSchedule() ? 'Edit Schedule' : 'Add Schedule' }}
+          {{ editingSchedule() ? 'Editar Horário' : 'Adicionar Horário' }}
         </h3>
         <form (submit)="onSubmit($event)">
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Day of Week</legend>
+            <legend class="fieldset-legend">Dia da Semana</legend>
             <select class="select select-bordered w-full" [formField]="scheduleForm.dayOfWeek">
-              <option value="">Select a day</option>
+              <option value="">Selecione um dia</option>
               @for (day of dayOptions; track day.value) {
                 <option [value]="day.value">{{ day.label }}</option>
               }
@@ -110,7 +122,7 @@ function capitalize(value: string): string {
             }
           </fieldset>
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Start Time</legend>
+            <legend class="fieldset-legend">Hora de Início</legend>
             <input
               type="time"
               class="input input-bordered w-full"
@@ -125,7 +137,7 @@ function capitalize(value: string): string {
             }
           </fieldset>
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">End Time</legend>
+            <legend class="fieldset-legend">Hora de Término</legend>
             <input
               type="time"
               class="input input-bordered w-full"
@@ -143,12 +155,12 @@ function capitalize(value: string): string {
             }
           </fieldset>
           <div class="modal-action">
-            <button type="button" class="btn" (click)="closeModal()">Cancel</button>
+            <button type="button" class="btn" (click)="closeModal()">Cancelar</button>
             <button type="submit" class="btn btn-primary" [disabled]="saving() || timeRangeError()">
               @if (saving()) {
                 <span class="loading loading-spinner loading-sm"></span>
               }
-              {{ editingSchedule() ? 'Save' : 'Create' }}
+              {{ editingSchedule() ? 'Salvar' : 'Criar' }}
             </button>
           </div>
         </form>
@@ -160,17 +172,17 @@ function capitalize(value: string): string {
 
     <app-confirm-dialog
       [open]="showDeleteConfirm()"
-      title="Delete Schedule"
+      title="Excluir Horário"
       [message]="
-        'Delete this schedule (' +
-        capitalize(deleteTarget()?.dayOfWeek ?? '') +
+        'Excluir este horário (' +
+        translateDay(deleteTarget()?.dayOfWeek ?? '') +
         ' ' +
         formatTime(deleteTarget()?.startTime ?? '') +
         '–' +
         formatTime(deleteTarget()?.endTime ?? '') +
-        ')? This cannot be undone.'
+        ')? Esta ação não pode ser desfeita.'
       "
-      confirmLabel="Delete"
+      confirmLabel="Excluir"
       variant="danger"
       (confirmed)="deleteSchedule()"
       (cancelled)="showDeleteConfirm.set(false)"
@@ -199,32 +211,36 @@ export default class ScheduleListPage implements OnInit {
   );
 
   protected readonly dayOptions = [
-    { value: DayOfWeekEnum.MONDAY, label: 'Monday' },
-    { value: DayOfWeekEnum.TUESDAY, label: 'Tuesday' },
-    { value: DayOfWeekEnum.WEDNESDAY, label: 'Wednesday' },
-    { value: DayOfWeekEnum.THURSDAY, label: 'Thursday' },
-    { value: DayOfWeekEnum.FRIDAY, label: 'Friday' },
-    { value: DayOfWeekEnum.SATURDAY, label: 'Saturday' },
-    { value: DayOfWeekEnum.SUNDAY, label: 'Sunday' },
+    { value: DayOfWeekEnum.MONDAY, label: 'Segunda-feira' },
+    { value: DayOfWeekEnum.TUESDAY, label: 'Terça-feira' },
+    { value: DayOfWeekEnum.WEDNESDAY, label: 'Quarta-feira' },
+    { value: DayOfWeekEnum.THURSDAY, label: 'Quinta-feira' },
+    { value: DayOfWeekEnum.FRIDAY, label: 'Sexta-feira' },
+    { value: DayOfWeekEnum.SATURDAY, label: 'Sábado' },
+    { value: DayOfWeekEnum.SUNDAY, label: 'Domingo' },
   ];
 
   protected readonly scheduleModel = signal({ dayOfWeek: '', startTime: '', endTime: '' });
   protected readonly scheduleForm = form(this.scheduleModel, (s) => {
-    required(s.dayOfWeek, { message: 'Day of week is required' });
-    required(s.startTime, { message: 'Start time is required' });
-    required(s.endTime, { message: 'End time is required' });
+    required(s.dayOfWeek, { message: 'Dia da semana é obrigatório' });
+    required(s.startTime, { message: 'Hora de início é obrigatória' });
+    required(s.endTime, { message: 'Hora de término é obrigatória' });
   });
 
   protected readonly timeRangeError = computed(() => {
     const { startTime, endTime } = this.scheduleModel();
     if (!startTime || !endTime) return null;
     if (startTime >= endTime) {
-      return 'Start time must be before end time';
+      return 'A hora de início deve ser antes da hora de término';
     }
     return null;
   });
 
   protected capitalize = capitalize;
+
+  protected translateDay(day: string): string {
+    return DAY_LABELS[day.toLowerCase()] ?? day;
+  }
 
   protected formatTime(time: string): string {
     return time?.slice(0, 5) ?? '';
@@ -248,7 +264,7 @@ export default class ScheduleListPage implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toastService.error('Failed to load schedules');
+        this.toastService.error('Falha ao carregar horários');
       },
     });
   }
@@ -298,10 +314,10 @@ export default class ScheduleListPage implements OnInit {
         });
 
         this.closeModal();
-        this.toastService.success(editing ? 'Schedule updated!' : 'Schedule created!');
+        this.toastService.success(editing ? 'Horário atualizado!' : 'Horário criado!');
         this.loadSchedules(this.currentPage());
       } catch {
-        this.toastService.error('Failed to save schedule');
+        this.toastService.error('Falha ao salvar horário');
       } finally {
         this.saving.set(false);
       }
@@ -321,10 +337,10 @@ export default class ScheduleListPage implements OnInit {
 
     this.scheduleService.delete(slug, schedule.id).subscribe({
       next: () => {
-        this.toastService.success('Schedule deleted');
+        this.toastService.success('Horário excluído');
         this.loadSchedules(this.currentPage());
       },
-      error: () => this.toastService.error('Failed to delete schedule'),
+      error: () => this.toastService.error('Falha ao excluir horário'),
     });
   }
 }

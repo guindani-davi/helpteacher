@@ -1,3 +1,4 @@
+import type { LocaleEnum } from '@help-teacher/shared';
 import { Inject, Injectable } from '@nestjs/common';
 import { EntityAlreadyExistsException } from '../../../common/exceptions/entity-already-exists.exception';
 import { EntityNotFoundException } from '../../../common/exceptions/entity-not-found.exception';
@@ -6,7 +7,6 @@ import { DatabaseException } from '../../../database/exceptions/database.excepti
 import { IDatabaseService } from '../../../database/services/i.database.service';
 import { Database } from '../../../database/types';
 import { IHelpersService } from '../../../helpers/services/i.helpers.service';
-import type { LocaleEnum } from '../../../i18n/enums/locale.enum';
 import { CreateUserBodyDTO } from '../../dtos/create-user.dto';
 import { User } from '../../models/user.model';
 import { IUsersRepository } from '../i.users.repository';

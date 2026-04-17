@@ -7,13 +7,23 @@ import { ConfirmDialog, EmptyState, PageHeader, Pagination } from '../../../shar
 import { OrgContextService } from '../../organizations/state/org-context.service';
 import { ClassService } from '../services/class.service';
 
+const DAY_LABELS: Record<string, string> = {
+  monday: 'Segunda-feira',
+  tuesday: 'Terça-feira',
+  wednesday: 'Quarta-feira',
+  thursday: 'Quinta-feira',
+  friday: 'Sexta-feira',
+  saturday: 'Sábado',
+  sunday: 'Domingo',
+};
+
 @Component({
   selector: 'app-class-list-page',
   imports: [PageHeader, ConfirmDialog, Pagination, EmptyState, DatePipe],
   template: `
-    <app-page-header title="Classes" subtitle="Manage your classes">
+    <app-page-header title="Aulas" subtitle="Gerencie suas aulas">
       @if (orgContext.isAdmin()) {
-        <button class="btn btn-primary" (click)="navigateToCreate()">+ New Class</button>
+        <button class="btn btn-primary" (click)="navigateToCreate()">+ Nova Aula</button>
       }
     </app-page-header>
 
@@ -24,11 +34,11 @@ import { ClassService } from '../services/class.service';
     } @else if (classes().length === 0) {
       <app-empty-state
         icon="🏫"
-        title="No classes yet"
-        description="Create your first class to start tracking lessons."
+        title="Nenhuma aula ainda"
+        description="Crie sua primeira aula para começar a rastrear lições."
       >
         @if (orgContext.isAdmin()) {
-          <button class="btn btn-primary" (click)="navigateToCreate()">New Class</button>
+          <button class="btn btn-primary" (click)="navigateToCreate()">Nova Aula</button>
         }
       </app-empty-state>
     } @else {
@@ -37,11 +47,11 @@ import { ClassService } from '../services/class.service';
           <table class="table">
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Student</th>
-                <th>Teacher</th>
-                <th>Schedule</th>
-                <th class="text-right">Actions</th>
+                <th>Data</th>
+                <th>Aluno</th>
+                <th>Professor</th>
+                <th>Horário</th>
+                <th class="text-right">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -51,15 +61,15 @@ import { ClassService } from '../services/class.service';
                   <td>{{ cls.student.name }} {{ cls.student.surname }}</td>
                   <td>{{ cls.teacher.name }} {{ cls.teacher.surname }}</td>
                   <td class="text-sm text-base-content/70">
-                    {{ capitalize(cls.schedule.dayOfWeek) }}
+                    {{ translateDay(cls.schedule.dayOfWeek) }}
                     {{ cls.schedule.startTime.slice(0, 5) }}–{{ cls.schedule.endTime.slice(0, 5) }}
                   </td>
                   <td class="text-right">
-                    <button class="btn btn-ghost" (click)="viewDetails(cls)">View</button>
+                    <button class="btn btn-ghost" (click)="viewDetails(cls)">Ver</button>
                     @if (orgContext.isAdmin()) {
-                      <button class="btn btn-ghost" (click)="navigateToEdit(cls)">Edit</button>
+                      <button class="btn btn-ghost" (click)="navigateToEdit(cls)">Editar</button>
                       <button class="btn btn-ghost text-error" (click)="confirmDelete(cls)">
-                        Delete
+                        Excluir
                       </button>
                     }
                   </td>
@@ -80,11 +90,13 @@ import { ClassService } from '../services/class.service';
 
     <app-confirm-dialog
       [open]="showDeleteConfirm()"
-      title="Delete Class"
+      title="Excluir Aula"
       [message]="
-        'Delete class on ' + (deleteTarget()?.classInfo?.date ?? '') + '? This cannot be undone.'
+        'Excluir aula em ' +
+        (deleteTarget()?.classInfo?.date ?? '') +
+        '? Esta ação não pode ser desfeita.'
       "
-      confirmLabel="Delete"
+      confirmLabel="Excluir"
       variant="danger"
       (confirmed)="deleteClass()"
       (cancelled)="showDeleteConfirm.set(false)"
@@ -108,6 +120,10 @@ export default class ClassListPage implements OnInit {
     return value.charAt(0).toUpperCase() + value.slice(1);
   }
 
+  protected translateDay(day: string): string {
+    return DAY_LABELS[day.toLowerCase()] ?? day;
+  }
+
   ngOnInit(): void {
     this.loadClasses(1);
   }
@@ -126,7 +142,7 @@ export default class ClassListPage implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toastService.error('Failed to load classes');
+        this.toastService.error('Falha ao carregar aulas');
       },
     });
   }
@@ -162,10 +178,10 @@ export default class ClassListPage implements OnInit {
 
     this.classService.delete(slug, cls.classInfo.id).subscribe({
       next: () => {
-        this.toastService.success('Class deleted');
+        this.toastService.success('Aula excluída');
         this.loadClasses(this.currentPage());
       },
-      error: () => this.toastService.error('Failed to delete class'),
+      error: () => this.toastService.error('Falha ao excluir aula'),
     });
   }
 }

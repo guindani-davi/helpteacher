@@ -24,7 +24,6 @@ import { PaginationQueryDTO } from '../../../common/dtos/pagination-query.dto';
 import { PaginatedResponse } from '../../../common/models/paginated-response.model';
 import { MembershipGuard } from '../../../memberships/guards/membership.guard';
 import type { Membership } from '../../../memberships/models/membership.model';
-import { ActiveSubscriptionGuard } from '../../../subscriptions/guards/active-subscription.guard';
 import { CreateStudentBodyDTO } from '../../dtos/create-student.dto';
 import { DeleteStudentParamsDTO } from '../../dtos/delete-student.dto';
 import { GetStudentParamsDTO } from '../../dtos/get-student.dto';
@@ -38,7 +37,7 @@ import { IStudentsService } from '../../services/i.students.service';
 import { IStudentsController } from '../i.students.controller';
 
 @Controller('organizations')
-@UseGuards(MembershipGuard, RolesGuard, ActiveSubscriptionGuard)
+@UseGuards(MembershipGuard, RolesGuard)
 @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN)
 export class StudentsController extends IStudentsController {
   public constructor(

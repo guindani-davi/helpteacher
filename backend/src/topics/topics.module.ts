@@ -6,7 +6,6 @@ import { HelpersModule } from '../helpers/helpers.module';
 import { MembershipsModule } from '../memberships/memberships.module';
 import { ReportsModule } from '../reports/reports.module';
 import { SubjectsModule } from '../subjects/subjects.module';
-import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { TopicsController } from './controllers/implementations/topics.controller';
 import { ITopicsRepository } from './repositories/i.topics.repository';
 import { TopicsRepository } from './repositories/implementations/topics.repository';
@@ -21,7 +20,6 @@ import { TopicsService } from './services/implementations/topics.service';
     forwardRef(() => SubjectsModule),
     forwardRef(() => AuthModule),
     forwardRef(() => MembershipsModule),
-    forwardRef(() => SubscriptionsModule),
     forwardRef(() => ClassTopicsModule),
     forwardRef(() => ReportsModule),
   ],

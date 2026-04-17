@@ -7,11 +7,18 @@ import { ConfirmDialog, PageHeader } from '../../../../shared';
 import { MembershipService } from '../../services/membership.service';
 import { OrgContextService } from '../../state/org-context.service';
 
+const ROLE_LABELS: Record<string, string> = {
+  owner: 'Proprietário',
+  admin: 'Admin',
+  teacher: 'Professor',
+  responsible: 'Responsável',
+};
+
 @Component({
   selector: 'app-members-page',
   imports: [PageHeader, ConfirmDialog],
   template: `
-    <app-page-header title="Members" subtitle="Manage who has access to this organization" />
+    <app-page-header title="Membros" subtitle="Gerencie quem tem acesso a esta organização" />
 
     @if (loading()) {
       <div class="flex justify-center py-16">
@@ -23,10 +30,10 @@ import { OrgContextService } from '../../state/org-context.service';
           <table class="table">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Roles</th>
-                <th class="text-right">Actions</th>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Funções</th>
+                <th class="text-right">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -35,13 +42,15 @@ import { OrgContextService } from '../../state/org-context.service';
                   <td class="font-medium">
                     {{ member.user.name }} {{ member.user.surname }}
                     @if (isMe(member)) {
-                      <span class="badge badge-primary badge-outline ml-1">you</span>
+                      <span class="badge badge-primary badge-outline ml-1">você</span>
                     }
                   </td>
                   <td class="text-base-content/60 text-sm">{{ member.user.email }}</td>
                   <td>
                     @for (role of member.roles; track role) {
-                      <span class="badge badge-primary badge-outline mr-1">{{ role }}</span>
+                      <span class="badge badge-primary badge-outline mr-1">{{
+                        translateRole(role)
+                      }}</span>
                     }
                   </td>
                   <td class="text-right">
@@ -53,17 +62,19 @@ import { OrgContextService } from '../../state/org-context.service';
                           class="dropdown-content menu bg-base-100 rounded-box z-50 w-52 p-2 shadow border border-base-300"
                         >
                           <li>
-                            <button (click)="openRolesModal(member)">Manage Roles</button>
+                            <button (click)="openRolesModal(member)">Gerenciar Funções</button>
                           </li>
                           @if (canTransfer(member)) {
                             <li>
-                              <button (click)="confirmTransfer(member)">Transfer Ownership</button>
+                              <button (click)="confirmTransfer(member)">
+                                Transferir Propriedade
+                              </button>
                             </li>
                           }
                           @if (canRemove(member)) {
                             <li>
                               <button class="text-error" (click)="confirmRemove(member)">
-                                Remove
+                                Remover
                               </button>
                             </li>
                           }
@@ -82,7 +93,7 @@ import { OrgContextService } from '../../state/org-context.service';
     <!-- Manage Roles Modal -->
     <dialog class="modal" [class.modal-open]="showRolesModal()">
       <div class="modal-box">
-        <h3 class="font-bold text-lg">Manage Roles</h3>
+        <h3 class="font-bold text-lg">Gerenciar Funções</h3>
         @if (rolesMember()) {
           <p class="text-sm text-base-content/60 mt-1">
             {{ rolesMember()!.user.name }} {{ rolesMember()!.user.surname }}
@@ -106,10 +117,10 @@ import { OrgContextService } from '../../state/org-context.service';
           }
         </div>
         @if (noRolesSelected()) {
-          <p class="text-sm text-error mt-2">At least one role must be selected</p>
+          <p class="text-sm text-error mt-2">Pelo menos uma função deve ser selecionada</p>
         }
         <div class="modal-action">
-          <button class="btn" (click)="closeRolesModal()">Cancel</button>
+          <button class="btn" (click)="closeRolesModal()">Cancelar</button>
           <button
             class="btn btn-primary"
             [disabled]="savingRoles() || noRolesSelected()"
@@ -118,7 +129,7 @@ import { OrgContextService } from '../../state/org-context.service';
             @if (savingRoles()) {
               <span class="loading loading-spinner loading-sm"></span>
             }
-            Save
+            Salvar
           </button>
         </div>
       </div>
@@ -129,9 +140,9 @@ import { OrgContextService } from '../../state/org-context.service';
 
     <app-confirm-dialog
       [open]="showRemoveConfirm()"
-      title="Remove Member"
-      [message]="'Remove this member from the organization?'"
-      confirmLabel="Remove"
+      title="Remover Membro"
+      [message]="'Remover este membro da organização?'"
+      confirmLabel="Remover"
       variant="danger"
       (confirmed)="removeMember()"
       (cancelled)="showRemoveConfirm.set(false)"
@@ -139,9 +150,9 @@ import { OrgContextService } from '../../state/org-context.service';
 
     <app-confirm-dialog
       [open]="showTransferConfirm()"
-      title="Transfer Ownership"
-      [message]="'Transfer ownership to this member? You will lose owner privileges.'"
-      confirmLabel="Transfer"
+      title="Transferir Propriedade"
+      [message]="'Transferir propriedade para este membro? Você perderá os privilégios de proprietário.'"
+      confirmLabel="Transferir"
       variant="danger"
       (confirmed)="transferOwnership()"
       (cancelled)="showTransferConfirm.set(false)"
@@ -167,15 +178,19 @@ export default class MembersPage implements OnInit {
   protected readonly savingRoles = signal(false);
 
   protected readonly editableRoles = [
-    { value: RolesEnum.OWNER, label: 'Owner', description: 'Full control of the organization' },
-    { value: RolesEnum.ADMIN, label: 'Admin', description: 'Manage members and settings' },
-    { value: RolesEnum.TEACHER, label: 'Teacher', description: 'Manage classes and students' },
+    { value: RolesEnum.OWNER, label: 'Proprietário', description: 'Controle total da organização' },
+    { value: RolesEnum.ADMIN, label: 'Admin', description: 'Gerenciar membros e configurações' },
+    { value: RolesEnum.TEACHER, label: 'Professor', description: 'Gerenciar aulas e alunos' },
     {
       value: RolesEnum.RESPONSIBLE,
-      label: 'Responsible',
-      description: 'View student progress (parent)',
+      label: 'Responsável',
+      description: 'Ver progresso do aluno (pai/mãe)',
     },
   ];
+
+  protected translateRole(role: string): string {
+    return ROLE_LABELS[role] ?? role;
+  }
 
   ngOnInit(): void {
     this.loadMembers();
@@ -193,7 +208,7 @@ export default class MembersPage implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toastService.error('Failed to load members');
+        this.toastService.error('Falha ao carregar membros');
       },
     });
   }
@@ -269,7 +284,7 @@ export default class MembersPage implements OnInit {
     this.savingRoles.set(true);
     this.memberService.updateMember(slug, member.id, { roles: this.selectedRoles() }).subscribe({
       next: () => {
-        this.toastService.success('Roles updated');
+        this.toastService.success('Funções atualizadas');
         this.closeRolesModal();
         this.loadMembers();
         // Reload own membership in case the owner changed their own roles
@@ -277,7 +292,7 @@ export default class MembersPage implements OnInit {
           this.orgContext.load(slug);
         }
       },
-      error: () => this.toastService.error('Failed to update roles'),
+      error: () => this.toastService.error('Falha ao atualizar funções'),
       complete: () => this.savingRoles.set(false),
     });
   }
@@ -301,10 +316,10 @@ export default class MembersPage implements OnInit {
 
     this.memberService.removeMember(slug, member.id).subscribe({
       next: () => {
-        this.toastService.success('Member removed');
+        this.toastService.success('Membro removido');
         this.loadMembers();
       },
-      error: () => this.toastService.error('Failed to remove member'),
+      error: () => this.toastService.error('Falha ao remover membro'),
     });
   }
 
@@ -316,10 +331,10 @@ export default class MembersPage implements OnInit {
 
     this.memberService.transferOwnership(slug, member.id).subscribe({
       next: () => {
-        this.toastService.success('Ownership transferred');
+        this.toastService.success('Propriedade transferida');
         this.loadMembers();
       },
-      error: () => this.toastService.error('Failed to transfer ownership'),
+      error: () => this.toastService.error('Falha ao transferir propriedade'),
     });
   }
 }

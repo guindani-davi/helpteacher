@@ -18,7 +18,6 @@ import { RolesGuard } from '../../../auth/guards/roles.guard';
 import type { JwtPayload } from '../../../auth/models/jwt.model';
 import { MembershipGuard } from '../../../memberships/guards/membership.guard';
 import type { Membership } from '../../../memberships/models/membership.model';
-import { ActiveSubscriptionGuard } from '../../../subscriptions/guards/active-subscription.guard';
 import { CreateClassTopicBodyDTO } from '../../dtos/create-class-topic.dto';
 import { DeleteClassTopicParamsDTO } from '../../dtos/delete-class-topic.dto';
 import { GetClassTopicsParamsDTO } from '../../dtos/get-class-topics.dto';
@@ -28,7 +27,7 @@ import { IClassTopicsService } from '../../services/i.class-topics.service';
 import { IClassTopicsController } from '../i.class-topics.controller';
 
 @Controller('organizations')
-@UseGuards(MembershipGuard, RolesGuard, ActiveSubscriptionGuard)
+@UseGuards(MembershipGuard, RolesGuard)
 @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN)
 export class ClassTopicsController extends IClassTopicsController {
   public constructor(

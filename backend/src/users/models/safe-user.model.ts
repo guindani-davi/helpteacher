@@ -1,4 +1,4 @@
-import type { LocaleEnum } from '../../i18n/enums/locale.enum';
+import type { LocaleEnum } from '@help-teacher/shared';
 import { User } from './user.model';
 
 export class SafeUser {

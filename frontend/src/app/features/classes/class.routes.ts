@@ -4,21 +4,21 @@ export const classRoutes: Routes = [
   {
     path: '',
     loadComponent: () => import('./pages/class-list.page'),
-    title: 'Classes — Help Teacher',
+    title: 'Aulas — Help Teacher',
   },
   {
     path: 'new',
     loadComponent: () => import('./pages/class-create-edit.page'),
-    title: 'New Class — Help Teacher',
+    title: 'Nova Aula — Help Teacher',
   },
   {
     path: ':classId',
     loadComponent: () => import('./pages/class-detail.page'),
-    title: 'Class Detail — Help Teacher',
+    title: 'Detalhes da Aula — Help Teacher',
   },
   {
     path: ':classId/edit',
     loadComponent: () => import('./pages/class-create-edit.page'),
-    title: 'Edit Class — Help Teacher',
+    title: 'Editar Aula — Help Teacher',
   },
 ];

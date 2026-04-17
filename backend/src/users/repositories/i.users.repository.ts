@@ -1,6 +1,6 @@
+import type { LocaleEnum } from '@help-teacher/shared';
 import { IDatabaseService } from '../../database/services/i.database.service';
 import { IHelpersService } from '../../helpers/services/i.helpers.service';
-import type { LocaleEnum } from '../../i18n/enums/locale.enum';
 import { CreateUserBodyDTO } from '../dtos/create-user.dto';
 import { User } from '../models/user.model';
 

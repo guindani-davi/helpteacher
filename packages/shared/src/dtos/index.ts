@@ -30,6 +30,5 @@ export type { CreateSchoolBody, UpdateSchoolBody } from "./school.dto";
 export type { LinkStudentUserBody } from "./student-user.dto";
 export type { CreateStudentBody, UpdateStudentBody } from "./student.dto";
 export type { CreateSubjectBody, UpdateSubjectBody } from "./subject.dto";
-export type { ChangePlanBody } from "./subscription.dto";
 export type { CreateTopicBody, UpdateTopicBody } from "./topic.dto";
 export type { CreateUserBody, UpdateUserBody } from "./user.dto";

@@ -4,6 +4,6 @@ export const schoolRoutes: Routes = [
   {
     path: '',
     loadComponent: () => import('./pages/school-list.page'),
-    title: 'Schools — Help Teacher',
+    title: 'Escolas — Help Teacher',
   },
 ];

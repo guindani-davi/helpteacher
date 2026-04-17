@@ -22,7 +22,6 @@ import { PaginationQueryDTO } from '../../../common/dtos/pagination-query.dto';
 import { PaginatedResponse } from '../../../common/models/paginated-response.model';
 import { MembershipGuard } from '../../../memberships/guards/membership.guard';
 import type { Membership } from '../../../memberships/models/membership.model';
-import { ActiveSubscriptionGuard } from '../../../subscriptions/guards/active-subscription.guard';
 import { CreateClassBodyDTO } from '../../dtos/create-class.dto';
 import { DeleteClassParamsDTO } from '../../dtos/delete-class.dto';
 import { GetClassParamsDTO } from '../../dtos/get-class.dto';
@@ -36,7 +35,7 @@ import { IClassesService } from '../../services/i.classes.service';
 import { IClassesController } from '../i.classes.controller';
 
 @Controller('organizations')
-@UseGuards(MembershipGuard, RolesGuard, ActiveSubscriptionGuard)
+@UseGuards(MembershipGuard, RolesGuard)
 @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN)
 export class ClassesController extends IClassesController {
   public constructor(@Inject(IClassesService) classesService: IClassesService) {

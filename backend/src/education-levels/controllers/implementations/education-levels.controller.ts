@@ -22,7 +22,6 @@ import { PaginationQueryDTO } from '../../../common/dtos/pagination-query.dto';
 import { PaginatedResponse } from '../../../common/models/paginated-response.model';
 import { MembershipGuard } from '../../../memberships/guards/membership.guard';
 import type { Membership } from '../../../memberships/models/membership.model';
-import { ActiveSubscriptionGuard } from '../../../subscriptions/guards/active-subscription.guard';
 import { CreateEducationLevelBodyDTO } from '../../dtos/create-education-level.dto';
 import { DeleteEducationLevelParamsDTO } from '../../dtos/delete-education-level.dto';
 import { GetEducationLevelParamsDTO } from '../../dtos/get-education-level.dto';
@@ -35,7 +34,7 @@ import { IEducationLevelsService } from '../../services/i.education-levels.servi
 import { IEducationLevelsController } from '../i.education-levels.controller';
 
 @Controller('organizations')
-@UseGuards(MembershipGuard, RolesGuard, ActiveSubscriptionGuard)
+@UseGuards(MembershipGuard, RolesGuard)
 @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN)
 export class EducationLevelsController extends IEducationLevelsController {
   public constructor(

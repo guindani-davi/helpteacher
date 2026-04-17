@@ -7,7 +7,6 @@ import { MembershipsModule } from '../memberships/memberships.module';
 import { ReportsModule } from '../reports/reports.module';
 import { SchoolsModule } from '../schools/schools.module';
 import { StudentsModule } from '../students/students.module';
-import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { RegistrationsController } from './controllers/implementations/registrations.controller';
 import { IRegistrationsRepository } from './repositories/i.registrations.repository';
 import { RegistrationsRepository } from './repositories/implementations/registrations.repository';
@@ -24,7 +23,6 @@ import { RegistrationsService } from './services/implementations/registrations.s
     forwardRef(() => GradeLevelsModule),
     forwardRef(() => AuthModule),
     forwardRef(() => MembershipsModule),
-    forwardRef(() => SubscriptionsModule),
     forwardRef(() => ReportsModule),
   ],
   providers: [

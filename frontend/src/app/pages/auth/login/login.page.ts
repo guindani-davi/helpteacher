@@ -7,8 +7,8 @@ import { AuthService } from '../../../core/auth';
   selector: 'app-login-page',
   imports: [FormField, RouterLink],
   template: `
-    <h2 class="text-2xl font-bold text-base-content mb-2">Welcome back</h2>
-    <p class="text-text-secondary mb-8">Sign in to your account</p>
+    <h2 class="text-2xl font-bold text-base-content mb-2">Bem-vindo de volta</h2>
+    <p class="text-text-secondary mb-8">Entre na sua conta</p>
 
     @if (errorMessage()) {
       <div role="alert" class="alert alert-error alert-soft mb-6">
@@ -18,11 +18,11 @@ import { AuthService } from '../../../core/auth';
 
     <form (submit)="onSubmit($event)">
       <fieldset class="fieldset mb-4">
-        <legend class="fieldset-legend">Email</legend>
+        <legend class="fieldset-legend">E-mail</legend>
         <input
           type="email"
           class="input input-bordered w-full"
-          placeholder="you&#64;example.com"
+          placeholder="voce&#64;exemplo.com"
           [formField]="loginForm.email"
         />
         @if (loginForm.email().touched() && loginForm.email().invalid()) {
@@ -35,7 +35,7 @@ import { AuthService } from '../../../core/auth';
       </fieldset>
 
       <fieldset class="fieldset mb-6">
-        <legend class="fieldset-legend">Password</legend>
+        <legend class="fieldset-legend">Senha</legend>
         <input
           type="password"
           class="input input-bordered w-full"
@@ -52,20 +52,20 @@ import { AuthService } from '../../../core/auth';
       </fieldset>
 
       <div class="flex items-center justify-between mb-6">
-        <a routerLink="/forgot-password" class="link link-primary text-sm"> Forgot password? </a>
+        <a routerLink="/forgot-password" class="link link-primary text-sm"> Esqueceu a senha? </a>
       </div>
 
       <button type="submit" class="btn btn-accent btn-block" [disabled]="isLoading()">
         @if (isLoading()) {
           <span class="loading loading-spinner loading-sm"></span>
         }
-        Sign in
+        Entrar
       </button>
     </form>
 
     <p class="text-center text-text-secondary text-sm mt-8">
-      Don't have an account?
-      <a routerLink="/register" class="link link-primary font-medium">Sign up</a>
+      Não tem uma conta?
+      <a routerLink="/register" class="link link-primary font-medium">Cadastre-se</a>
     </p>
   `,
 })
@@ -82,10 +82,10 @@ export default class LoginPage {
   });
 
   protected readonly loginForm = form(this.loginModel, (s) => {
-    required(s.email, { message: 'Email is required' });
-    email(s.email, { message: 'Enter a valid email address' });
-    required(s.password, { message: 'Password is required' });
-    minLength(s.password, 6, { message: 'Password must be at least 6 characters' });
+    required(s.email, { message: 'E-mail é obrigatório' });
+    email(s.email, { message: 'Digite um e-mail válido' });
+    required(s.password, { message: 'Senha é obrigatória' });
+    minLength(s.password, 6, { message: 'A senha deve ter pelo menos 6 caracteres' });
   });
 
   onSubmit(event: Event): void {
@@ -109,7 +109,7 @@ export default class LoginPage {
         });
         this.router.navigateByUrl('/orgs');
       } catch {
-        this.errorMessage.set('Invalid email or password. Please try again.');
+        this.errorMessage.set('E-mail ou senha inválidos. Tente novamente.');
       } finally {
         this.isLoading.set(false);
       }

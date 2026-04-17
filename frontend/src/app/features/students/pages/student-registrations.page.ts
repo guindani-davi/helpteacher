@@ -2,11 +2,11 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { form, FormField, required, submit } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 import type {
-    EducationLevel,
-    GradeLevel,
-    PaginatedResponse,
-    Registration,
-    School,
+  EducationLevel,
+  GradeLevel,
+  PaginatedResponse,
+  Registration,
+  School,
 } from '@help-teacher/shared';
 import { ToastService } from '../../../core/services/toast.service';
 import { ConfirmDialog, EmptyState, PageHeader, Pagination } from '../../../shared';
@@ -22,14 +22,12 @@ import { StudentService } from '../services/student.service';
   imports: [PageHeader, ConfirmDialog, Pagination, EmptyState, FormField],
   template: `
     <app-page-header
-      [title]="'Registrations — ' + studentName()"
-      subtitle="Manage student registrations"
+      [title]="'Matrículas — ' + studentName()"
+      subtitle="Gerenciar matrículas do aluno"
     >
       <div class="flex gap-2">
-        <button class="btn" (click)="goBackToDetail()">← Back</button>
-        <button class="btn btn-primary" (click)="openCreateModal()">
-          + Add Registration
-        </button>
+        <button class="btn" (click)="goBackToDetail()">← Voltar</button>
+        <button class="btn btn-primary" (click)="openCreateModal()">+ Adicionar Matrícula</button>
       </div>
     </app-page-header>
 
@@ -40,10 +38,10 @@ import { StudentService } from '../services/student.service';
     } @else if (registrations().length === 0) {
       <app-empty-state
         icon="📋"
-        title="No registrations yet"
-        description="Create a registration for this student."
+        title="Nenhuma matrícula ainda"
+        description="Crie uma matrícula para este aluno."
       >
-        <button class="btn btn-primary" (click)="openCreateModal()">Add Registration</button>
+        <button class="btn btn-primary" (click)="openCreateModal()">Adicionar Matrícula</button>
       </app-empty-state>
     } @else {
       <div class="card bg-base-100 shadow-sm border border-base-300">
@@ -51,12 +49,12 @@ import { StudentService } from '../services/student.service';
           <table class="table">
             <thead>
               <tr>
-                <th>School</th>
-                <th>Grade Level</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Active</th>
-                <th class="text-right">Actions</th>
+                <th>Escola</th>
+                <th>Série</th>
+                <th>Data de Início</th>
+                <th>Data de Término</th>
+                <th>Ativo</th>
+                <th class="text-right">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -65,18 +63,18 @@ import { StudentService } from '../services/student.service';
                   <td>{{ reg.schoolId }}</td>
                   <td>{{ reg.gradeLevelId }}</td>
                   <td>{{ reg.startDate }}</td>
-                  <td>{{ reg.endDate ?? 'Ongoing' }}</td>
+                  <td>{{ reg.endDate ?? 'Em andamento' }}</td>
                   <td>
                     @if (reg.isActive) {
-                      <span class="badge badge-success">Active</span>
+                      <span class="badge badge-success">Ativo</span>
                     } @else {
-                      <span class="badge badge-primary badge-outline">Inactive</span>
+                      <span class="badge badge-primary badge-outline">Inativo</span>
                     }
                   </td>
                   <td class="text-right">
-                    <button class="btn btn-ghost" (click)="openEditModal(reg)">Edit</button>
+                    <button class="btn btn-ghost" (click)="openEditModal(reg)">Editar</button>
                     <button class="btn btn-ghost text-error" (click)="confirmDelete(reg)">
-                      Delete
+                      Excluir
                     </button>
                   </td>
                 </tr>
@@ -98,68 +96,68 @@ import { StudentService } from '../services/student.service';
     <dialog class="modal" [class.modal-open]="showModal()">
       <div class="modal-box">
         <h3 class="font-bold text-lg">
-          {{ editingReg() ? 'Edit Registration' : 'Add Registration' }}
+          {{ editingReg() ? 'Editar Matrícula' : 'Adicionar Matrícula' }}
         </h3>
         <form (submit)="onSubmit($event)">
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">School</legend>
+            <legend class="fieldset-legend">Escola</legend>
             <select class="select select-bordered w-full" [formField]="regForm.schoolId">
-              <option value="">Select a school</option>
+              <option value="">Selecione uma escola</option>
               @for (school of schools(); track school.id) {
                 <option [value]="school.id">{{ school.name }}</option>
               }
             </select>
             @if (regForm.schoolId().touched() && regForm.schoolId().invalid()) {
-              <p class="label text-error">School is required</p>
+              <p class="label text-error">Escola é obrigatória</p>
             }
           </fieldset>
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Education Level</legend>
+            <legend class="fieldset-legend">Nível de Ensino</legend>
             <select
               class="select select-bordered w-full"
               [value]="selectedEducationLevelId()"
               (change)="onEducationLevelChange($event)"
             >
-              <option value="">Select an education level</option>
+              <option value="">Selecione um nível de ensino</option>
               @for (el of educationLevels(); track el.id) {
                 <option [value]="el.id">{{ el.name }}</option>
               }
             </select>
           </fieldset>
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Grade Level</legend>
+            <legend class="fieldset-legend">Série</legend>
             <select class="select select-bordered w-full" [formField]="regForm.gradeLevelId">
-              <option value="">Select a grade level</option>
+              <option value="">Selecione uma série</option>
               @for (gl of gradeLevels(); track gl.id) {
                 <option [value]="gl.id">{{ gl.name }}</option>
               }
             </select>
             @if (regForm.gradeLevelId().touched() && regForm.gradeLevelId().invalid()) {
-              <p class="label text-error">Grade level is required</p>
+              <p class="label text-error">Série é obrigatória</p>
             }
           </fieldset>
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Start Date</legend>
+            <legend class="fieldset-legend">Data de Início</legend>
             <input
               type="date"
               class="input input-bordered w-full"
               [formField]="regForm.startDate"
             />
             @if (regForm.startDate().touched() && regForm.startDate().invalid()) {
-              <p class="label text-error">Start date is required</p>
+              <p class="label text-error">Data de início é obrigatória</p>
             }
           </fieldset>
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">End Date (optional)</legend>
+            <legend class="fieldset-legend">Data de Término (opcional)</legend>
             <input type="date" class="input input-bordered w-full" [formField]="regForm.endDate" />
           </fieldset>
           <div class="modal-action">
-            <button type="button" class="btn" (click)="closeModal()">Cancel</button>
+            <button type="button" class="btn" (click)="closeModal()">Cancelar</button>
             <button type="submit" class="btn btn-primary" [disabled]="saving()">
               @if (saving()) {
                 <span class="loading loading-spinner loading-sm"></span>
               }
-              {{ editingReg() ? 'Save' : 'Create' }}
+              {{ editingReg() ? 'Salvar' : 'Criar' }}
             </button>
           </div>
         </form>
@@ -171,9 +169,9 @@ import { StudentService } from '../services/student.service';
 
     <app-confirm-dialog
       [open]="showDeleteConfirm()"
-      title="Delete Registration"
-      message="Delete this registration? This cannot be undone."
-      confirmLabel="Delete"
+      title="Excluir Matrícula"
+      message="Excluir esta matrícula? Esta ação não pode ser desfeita."
+      confirmLabel="Excluir"
       variant="danger"
       (confirmed)="deleteRegistration()"
       (cancelled)="showDeleteConfirm.set(false)"
@@ -217,9 +215,9 @@ export default class StudentRegistrationsPage implements OnInit {
     endDate: '',
   });
   protected readonly regForm = form(this.regModel, (s) => {
-    required(s.schoolId, { message: 'School is required' });
-    required(s.gradeLevelId, { message: 'Grade level is required' });
-    required(s.startDate, { message: 'Start date is required' });
+    required(s.schoolId, { message: 'Escola é obrigatória' });
+    required(s.gradeLevelId, { message: 'Série é obrigatória' });
+    required(s.startDate, { message: 'Data de início é obrigatória' });
   });
 
   ngOnInit(): void {
@@ -253,7 +251,7 @@ export default class StudentRegistrationsPage implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toastService.error('Failed to load registrations');
+        this.toastService.error('Falha ao carregar matrículas');
       },
     });
   }
@@ -264,12 +262,12 @@ export default class StudentRegistrationsPage implements OnInit {
 
     this.schoolService.list(slug, 1, 100).subscribe({
       next: (res: PaginatedResponse<School>) => this.schools.set(res.items),
-      error: () => this.toastService.error('Failed to load schools'),
+      error: () => this.toastService.error('Falha ao carregar escolas'),
     });
 
     this.educationLevelService.list(slug, 1, 100).subscribe({
       next: (res: PaginatedResponse<EducationLevel>) => this.educationLevels.set(res.items),
-      error: () => this.toastService.error('Failed to load education levels'),
+      error: () => this.toastService.error('Falha ao carregar níveis de ensino'),
     });
   }
 
@@ -285,7 +283,7 @@ export default class StudentRegistrationsPage implements OnInit {
 
     this.gradeLevelService.list(slug, id, 1, 100).subscribe({
       next: (res: PaginatedResponse<GradeLevel>) => this.gradeLevels.set(res.items),
-      error: () => this.toastService.error('Failed to load grade levels'),
+      error: () => this.toastService.error('Falha ao carregar séries'),
     });
   }
 
@@ -347,10 +345,10 @@ export default class StudentRegistrationsPage implements OnInit {
         });
 
         this.closeModal();
-        this.toastService.success(editing ? 'Registration updated!' : 'Registration created!');
+        this.toastService.success(editing ? 'Matrícula atualizada!' : 'Matrícula criada!');
         this.loadRegistrations(this.currentPage());
       } catch {
-        this.toastService.error('Failed to save registration');
+        this.toastService.error('Falha ao salvar matrícula');
       } finally {
         this.saving.set(false);
       }
@@ -370,10 +368,10 @@ export default class StudentRegistrationsPage implements OnInit {
 
     this.registrationService.delete(slug, reg.id).subscribe({
       next: () => {
-        this.toastService.success('Registration deleted');
+        this.toastService.success('Matrícula excluída');
         this.loadRegistrations(this.currentPage());
       },
-      error: () => this.toastService.error('Failed to delete registration'),
+      error: () => this.toastService.error('Falha ao excluir matrícula'),
     });
   }
 

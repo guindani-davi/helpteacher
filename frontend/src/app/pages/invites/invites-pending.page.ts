@@ -5,6 +5,13 @@ import { ToastService } from '../../core/services/toast.service';
 import { InviteService } from '../../features/organizations/services/invite.service';
 import { EmptyState, ToastContainer } from '../../shared';
 
+const ROLE_LABELS: Record<string, string> = {
+  owner: 'Proprietário',
+  admin: 'Admin',
+  teacher: 'Professor',
+  responsible: 'Responsável',
+};
+
 @Component({
   selector: 'app-invites-pending-page',
   imports: [RouterLink, ToastContainer, EmptyState],
@@ -16,7 +23,7 @@ import { EmptyState, ToastContainer } from '../../shared';
         </div>
       </header>
       <main class="flex-1 max-w-2xl mx-auto w-full p-6">
-        <h1 class="text-2xl font-bold text-base-content mb-6">Pending Invites</h1>
+        <h1 class="text-2xl font-bold text-base-content mb-6">Convites Pendentes</h1>
 
         @if (loading()) {
           <div class="flex justify-center py-16">
@@ -25,10 +32,10 @@ import { EmptyState, ToastContainer } from '../../shared';
         } @else if (invites().length === 0) {
           <app-empty-state
             icon="✉️"
-            title="No pending invites"
-            description="You don't have any pending invitations."
+            title="Nenhum convite pendente"
+            description="Você não tem nenhum convite pendente."
           >
-            <a routerLink="/orgs" class="btn btn-primary">Back to Organizations</a>
+            <a routerLink="/orgs" class="btn btn-primary">Voltar para Organizações</a>
           </app-empty-state>
         } @else {
           <div class="space-y-4">
@@ -38,15 +45,17 @@ import { EmptyState, ToastContainer } from '../../shared';
                   <div>
                     <h3 class="font-semibold">{{ invite.email }}</h3>
                     <p class="text-sm text-base-content/60">
-                      Roles:
+                      Funções:
                       @for (role of invite.roles; track role) {
-                        <span class="badge badge-primary badge-outline mr-1">{{ role }}</span>
+                        <span class="badge badge-primary badge-outline mr-1">{{
+                          translateRole(role)
+                        }}</span>
                       }
                     </p>
                   </div>
                   <div class="flex gap-2">
-                    <button class="btn btn-primary" (click)="accept(invite.id)">Accept</button>
-                    <button class="btn btn-ghost" (click)="reject(invite.id)">Reject</button>
+                    <button class="btn btn-primary" (click)="accept(invite.id)">Aceitar</button>
+                    <button class="btn btn-ghost" (click)="reject(invite.id)">Recusar</button>
                   </div>
                 </div>
               </div>
@@ -65,6 +74,10 @@ export default class InvitesPendingPage implements OnInit {
   protected readonly invites = signal<Invite[]>([]);
   protected readonly loading = signal(true);
 
+  protected translateRole(role: string): string {
+    return ROLE_LABELS[role] ?? role;
+  }
+
   ngOnInit(): void {
     this.loadInvites();
   }
@@ -78,7 +91,7 @@ export default class InvitesPendingPage implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toastService.error('Failed to load invites');
+        this.toastService.error('Falha ao carregar convites');
       },
     });
   }
@@ -86,20 +99,20 @@ export default class InvitesPendingPage implements OnInit {
   protected accept(id: string): void {
     this.inviteService.accept(id).subscribe({
       next: () => {
-        this.toastService.success('Invite accepted!');
+        this.toastService.success('Convite aceito!');
         this.invites.update((list) => list.filter((i) => i.id !== id));
       },
-      error: () => this.toastService.error('Failed to accept invite'),
+      error: () => this.toastService.error('Falha ao aceitar convite'),
     });
   }
 
   protected reject(id: string): void {
     this.inviteService.reject(id).subscribe({
       next: () => {
-        this.toastService.info('Invite rejected');
+        this.toastService.info('Convite recusado');
         this.invites.update((list) => list.filter((i) => i.id !== id));
       },
-      error: () => this.toastService.error('Failed to reject invite'),
+      error: () => this.toastService.error('Falha ao recusar convite'),
     });
   }
 }

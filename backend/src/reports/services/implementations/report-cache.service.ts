@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { LocaleEnum } from '../../../i18n/enums/locale.enum';
 import { StorageBucket } from '../../../storage/enums/storage-bucket.enum';
 import { IStorageService } from '../../../storage/services/i.storage.service';
 import { IReportCacheService } from '../i.report-cache.service';
@@ -13,19 +12,17 @@ export class ReportCacheService extends IReportCacheService {
   public async getCachedPdf(
     organizationId: string,
     studentId: string,
-    locale: LocaleEnum,
   ): Promise<Buffer | null> {
-    const path = this.buildPath(organizationId, studentId, locale);
+    const path = this.buildPath(organizationId, studentId);
     return this.storageService.download(this.bucket, path);
   }
 
   public async cachePdf(
     organizationId: string,
     studentId: string,
-    locale: LocaleEnum,
     pdf: Buffer,
   ): Promise<void> {
-    const path = this.buildPath(organizationId, studentId, locale);
+    const path = this.buildPath(organizationId, studentId);
     await this.storageService.upload(this.bucket, path, pdf, 'application/pdf');
   }
 
@@ -41,12 +38,8 @@ export class ReportCacheService extends IReportCacheService {
     await this.storageService.deleteByPrefix(this.bucket, organizationId);
   }
 
-  private buildPath(
-    organizationId: string,
-    studentId: string,
-    locale: string,
-  ): string {
-    return `${organizationId}/${studentId}/${locale}.pdf`;
+  private buildPath(organizationId: string, studentId: string): string {
+    return `${organizationId}/${studentId}/report.pdf`;
   }
 
   private buildStudentPrefix(

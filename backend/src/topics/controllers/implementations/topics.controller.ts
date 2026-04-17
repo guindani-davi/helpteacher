@@ -21,7 +21,6 @@ import type { JwtPayload } from '../../../auth/models/jwt.model';
 import { PaginatedResponse } from '../../../common/models/paginated-response.model';
 import { MembershipGuard } from '../../../memberships/guards/membership.guard';
 import type { Membership } from '../../../memberships/models/membership.model';
-import { ActiveSubscriptionGuard } from '../../../subscriptions/guards/active-subscription.guard';
 import { CreateTopicBodyDTO } from '../../dtos/create-topic.dto';
 import { DeleteTopicParamsDTO } from '../../dtos/delete-topic.dto';
 import { GetTopicParamsDTO } from '../../dtos/get-topic.dto';
@@ -35,7 +34,7 @@ import { ITopicsService } from '../../services/i.topics.service';
 import { ITopicsController } from '../i.topics.controller';
 
 @Controller('organizations')
-@UseGuards(MembershipGuard, RolesGuard, ActiveSubscriptionGuard)
+@UseGuards(MembershipGuard, RolesGuard)
 @AllowedRoles(RolesEnum.OWNER, RolesEnum.ADMIN)
 export class TopicsController extends ITopicsController {
   public constructor(@Inject(ITopicsService) topicsService: ITopicsService) {

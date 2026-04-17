@@ -5,7 +5,6 @@ import { DatabaseModule } from '../database/database.module';
 import { HelpersModule } from '../helpers/helpers.module';
 import { MembershipsModule } from '../memberships/memberships.module';
 import { ReportsModule } from '../reports/reports.module';
-import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { TopicsModule } from '../topics/topics.module';
 import { ClassTopicsController } from './controllers/implementations/class-topics.controller';
 import { IClassTopicsRepository } from './repositories/i.class-topics.repository';
@@ -20,7 +19,6 @@ import { ClassTopicsService } from './services/implementations/class-topics.serv
     HelpersModule,
     forwardRef(() => AuthModule),
     forwardRef(() => MembershipsModule),
-    forwardRef(() => SubscriptionsModule),
     forwardRef(() => ClassesModule),
     forwardRef(() => TopicsModule),
     forwardRef(() => ReportsModule),

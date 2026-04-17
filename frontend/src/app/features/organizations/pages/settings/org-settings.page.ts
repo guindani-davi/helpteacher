@@ -10,18 +10,21 @@ import { OrgContextService } from '../../state/org-context.service';
   selector: 'app-org-settings-page',
   imports: [PageHeader, ConfirmDialog, FormField],
   template: `
-    <app-page-header title="Organization Settings" subtitle="Manage your organization details" />
+    <app-page-header
+      title="Configurações da Organização"
+      subtitle="Gerencie os detalhes da sua organização"
+    />
 
     <div class="max-w-2xl space-y-6">
       <!-- Logo upload -->
       <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body">
-          <h2 class="card-title text-base">Organization Logo</h2>
+          <h2 class="card-title text-base">Logo da Organização</h2>
           <div class="flex items-center gap-6 mt-2">
             @if (logoUrl()) {
               <img
                 [src]="logoUrl()"
-                alt="Organization logo"
+                alt="Logo da organização"
                 class="w-20 h-20 rounded-lg object-cover border border-base-300"
               />
             } @else {
@@ -53,9 +56,9 @@ import { OrgContextService } from '../../state/org-context.service';
                 (change)="onLogoSelected($event)"
               />
               <button type="button" class="btn btn-outline w-fit" (click)="logoInput.click()">
-                Choose File
+                Escolher Arquivo
               </button>
-              <p class="text-sm text-base-content/50">PNG or JPEG, max 2 MB</p>
+              <p class="text-sm text-base-content/50">PNG ou JPEG, máximo 2 MB</p>
               @if (uploadingLogo()) {
                 <span class="loading loading-spinner loading-sm text-primary"></span>
               }
@@ -67,11 +70,11 @@ import { OrgContextService } from '../../state/org-context.service';
       <!-- Edit form -->
       <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body">
-          <h2 class="card-title text-base">General</h2>
+          <h2 class="card-title text-base">Geral</h2>
 
           <form (submit)="onSave($event)">
             <fieldset class="fieldset mb-4">
-              <legend class="fieldset-legend text-sm mb-0.5">Organization Name</legend>
+              <legend class="fieldset-legend text-sm mb-0.5">Nome da Organização</legend>
               <input
                 type="text"
                 class="input input-bordered w-full"
@@ -91,7 +94,7 @@ import { OrgContextService } from '../../state/org-context.service';
                 @if (saving()) {
                   <span class="loading loading-spinner loading-sm"></span>
                 }
-                Save Changes
+                Salvar Alterações
               </button>
             </div>
           </form>
@@ -102,13 +105,14 @@ import { OrgContextService } from '../../state/org-context.service';
       @if (orgContext.isOwner()) {
         <div class="card bg-base-100 shadow-sm border border-error/30">
           <div class="card-body">
-            <h2 class="card-title text-base text-error">Danger Zone</h2>
+            <h2 class="card-title text-base text-error">Zona de Perigo</h2>
             <p class="text-sm text-base-content/60">
-              Permanently delete this organization and all its data. This cannot be undone.
+              Exclua permanentemente esta organização e todos os seus dados. Esta ação não pode ser
+              desfeita.
             </p>
             <div class="flex justify-end mt-2">
               <button class="btn btn-error btn-outline" (click)="showDeleteConfirm.set(true)">
-                Delete Organization
+                Excluir Organização
               </button>
             </div>
           </div>
@@ -118,9 +122,9 @@ import { OrgContextService } from '../../state/org-context.service';
 
     <app-confirm-dialog
       [open]="showDeleteConfirm()"
-      title="Delete Organization"
-      message="This will permanently delete the organization and all associated data. This action cannot be undone."
-      confirmLabel="Delete"
+      title="Excluir Organização"
+      message="Isso excluirá permanentemente a organização e todos os dados associados. Esta ação não pode ser desfeita."
+      confirmLabel="Excluir"
       variant="danger"
       (confirmed)="deleteOrg()"
       (cancelled)="showDeleteConfirm.set(false)"
@@ -142,7 +146,7 @@ export default class OrgSettingsPage implements OnInit {
   protected readonly settingsModel = signal({ name: '' });
 
   protected readonly settingsForm = form(this.settingsModel, (s) => {
-    required(s.name, { message: 'Name is required' });
+    required(s.name, { message: 'Nome é obrigatório' });
   });
 
   ngOnInit(): void {
@@ -163,12 +167,12 @@ export default class OrgSettingsPage implements OnInit {
     this.uploadingLogo.set(true);
     this.orgService.uploadLogo(slug, file).subscribe({
       next: () => {
-        this.toastService.success('Logo updated');
+        this.toastService.success('Logo atualizado');
         // Reload org context to pick up new logoUrl
         this.orgContext.load(slug).finally(() => this.uploadingLogo.set(false));
       },
       error: () => {
-        this.toastService.error('Failed to upload logo');
+        this.toastService.error('Falha ao enviar logo');
         this.uploadingLogo.set(false);
       },
     });
@@ -189,13 +193,13 @@ export default class OrgSettingsPage implements OnInit {
             error: reject,
           });
         });
-        this.toastService.success('Settings saved');
+        this.toastService.success('Configurações salvas');
         // If slug changed, navigate to new URL
         if (res.data.slug !== slug) {
           this.router.navigateByUrl(`/orgs/${res.data.slug}/settings`);
         }
       } catch {
-        this.toastService.error('Failed to save settings');
+        this.toastService.error('Falha ao salvar configurações');
       } finally {
         this.saving.set(false);
       }
@@ -208,10 +212,10 @@ export default class OrgSettingsPage implements OnInit {
     this.showDeleteConfirm.set(false);
     this.orgService.delete(slug).subscribe({
       next: () => {
-        this.toastService.success('Organization deleted');
+        this.toastService.success('Organização excluída');
         this.router.navigateByUrl('/orgs');
       },
-      error: () => this.toastService.error('Failed to delete organization'),
+      error: () => this.toastService.error('Falha ao excluir organização'),
     });
   }
 }

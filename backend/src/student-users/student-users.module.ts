@@ -4,7 +4,6 @@ import { DatabaseModule } from '../database/database.module';
 import { HelpersModule } from '../helpers/helpers.module';
 import { MembershipsModule } from '../memberships/memberships.module';
 import { StudentsModule } from '../students/students.module';
-import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { StudentUsersController } from './controllers/implementations/student-users.controller';
 import { IStudentUsersRepository } from './repositories/i.student-users.repository';
 import { StudentUsersRepository } from './repositories/implementations/student-users.repository';
@@ -17,7 +16,6 @@ import { StudentUsersService } from './services/implementations/student-users.se
     DatabaseModule,
     HelpersModule,
     forwardRef(() => AuthModule),
-    forwardRef(() => SubscriptionsModule),
     forwardRef(() => StudentsModule),
     forwardRef(() => MembershipsModule),
   ],

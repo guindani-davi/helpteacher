@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import type { LocaleEnum } from '../../i18n/enums/locale.enum';
 import { IStorageService } from '../../storage/services/i.storage.service';
 
 @Injectable()
@@ -13,13 +12,11 @@ export abstract class IReportCacheService {
   public abstract getCachedPdf(
     organizationId: string,
     studentId: string,
-    locale: LocaleEnum,
   ): Promise<Buffer | null>;
 
   public abstract cachePdf(
     organizationId: string,
     studentId: string,
-    locale: LocaleEnum,
     pdf: Buffer,
   ): Promise<void>;
 

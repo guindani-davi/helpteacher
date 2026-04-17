@@ -8,7 +8,7 @@ import { Component, input, output } from '@angular/core';
         <h3 class="font-bold text-lg">{{ title() }}</h3>
         <p class="py-4">{{ message() }}</p>
         <div class="modal-action">
-          <button class="btn" (click)="cancelled.emit()">Cancel</button>
+          <button class="btn" (click)="cancelled.emit()">Cancelar</button>
           <button
             class="btn"
             [class.btn-error]="variant() === 'danger'"
@@ -27,9 +27,9 @@ import { Component, input, output } from '@angular/core';
 })
 export class ConfirmDialog {
   open = input.required<boolean>();
-  title = input('Are you sure?');
-  message = input('This action cannot be undone.');
-  confirmLabel = input('Confirm');
+  title = input('Tem certeza?');
+  message = input('Esta ação não pode ser desfeita.');
+  confirmLabel = input('Confirmar');
   variant = input<'danger' | 'primary'>('danger');
 
   confirmed = output<void>();

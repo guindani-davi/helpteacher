@@ -19,9 +19,9 @@ interface ExpandedSubject {
   selector: 'app-subject-list-page',
   imports: [PageHeader, ConfirmDialog, Pagination, EmptyState, FormField],
   template: `
-    <app-page-header title="Subjects" subtitle="Manage your subjects and their topics">
+    <app-page-header title="Matérias" subtitle="Gerencie suas matérias e seus tópicos">
       @if (orgContext.isAdmin()) {
-        <button class="btn btn-primary" (click)="openCreateModal()">+ Add Subject</button>
+        <button class="btn btn-primary" (click)="openCreateModal()">+ Adicionar Matéria</button>
       }
     </app-page-header>
 
@@ -32,11 +32,11 @@ interface ExpandedSubject {
     } @else if (subjects().length === 0) {
       <app-empty-state
         icon="📚"
-        title="No subjects yet"
-        description="Create your first subject to start organizing topics."
+        title="Nenhuma matéria ainda"
+        description="Crie sua primeira matéria para começar a organizar tópicos."
       >
         @if (orgContext.isAdmin()) {
-          <button class="btn btn-primary" (click)="openCreateModal()">Add Subject</button>
+          <button class="btn btn-primary" (click)="openCreateModal()">Adicionar Matéria</button>
         }
       </app-empty-state>
     } @else {
@@ -71,13 +71,13 @@ interface ExpandedSubject {
                     class="btn btn-ghost"
                     (click)="openEditModal(item.subject); $event.stopPropagation()"
                   >
-                    Edit
+                    Editar
                   </button>
                   <button
                     class="btn btn-ghost text-error"
                     (click)="confirmDelete(item.subject); $event.stopPropagation()"
                   >
-                    Delete
+                    Excluir
                   </button>
                 }
               </div>
@@ -86,13 +86,13 @@ interface ExpandedSubject {
             @if (item.expanded) {
               <div class="border-t border-base-300 px-4 py-3">
                 <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-semibold text-base-content/70">Topics</span>
+                  <span class="text-sm font-semibold text-base-content/70">Tópicos</span>
                   @if (orgContext.isAdmin()) {
                     <button
                       class="btn btn-outline btn-primary"
                       (click)="openCreateTopicModal(item.subject)"
                     >
-                      + Add Topic
+                      + Adicionar Tópico
                     </button>
                   }
                 </div>
@@ -102,14 +102,16 @@ interface ExpandedSubject {
                     <span class="loading loading-spinner loading-sm text-primary"></span>
                   </div>
                 } @else if (item.topics.length === 0) {
-                  <p class="text-sm text-base-content/50 py-2">No topics yet. Add one above.</p>
+                  <p class="text-sm text-base-content/50 py-2">
+                    Nenhum tópico ainda. Adicione um acima.
+                  </p>
                 } @else {
                   <div class="overflow-x-auto">
                     <table class="table table">
                       <thead>
                         <tr>
-                          <th>Name</th>
-                          <th class="text-right">Actions</th>
+                          <th>Nome</th>
+                          <th class="text-right">Ações</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -122,13 +124,13 @@ interface ExpandedSubject {
                                   class="btn btn-ghost"
                                   (click)="openEditTopicModal(item.subject, topic)"
                                 >
-                                  Edit
+                                  Editar
                                 </button>
                                 <button
                                   class="btn btn-ghost text-error"
                                   (click)="confirmDeleteTopic(item.subject, topic)"
                                 >
-                                  Delete
+                                  Excluir
                                 </button>
                               }
                             </td>
@@ -156,15 +158,15 @@ interface ExpandedSubject {
     <dialog class="modal" [class.modal-open]="showModal()">
       <div class="modal-box">
         <h3 class="font-bold text-lg">
-          {{ editingSubject() ? 'Edit Subject' : 'Add Subject' }}
+          {{ editingSubject() ? 'Editar Matéria' : 'Adicionar Matéria' }}
         </h3>
         <form (submit)="onSubmit($event)">
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Name</legend>
+            <legend class="fieldset-legend">Nome</legend>
             <input
               type="text"
               class="input input-bordered w-full"
-              placeholder="Subject name"
+              placeholder="Nome da matéria"
               [formField]="subjectForm.name"
             />
             @if (subjectForm.name().touched() && subjectForm.name().invalid()) {
@@ -176,12 +178,12 @@ interface ExpandedSubject {
             }
           </fieldset>
           <div class="modal-action">
-            <button type="button" class="btn" (click)="closeModal()">Cancel</button>
+            <button type="button" class="btn" (click)="closeModal()">Cancelar</button>
             <button type="submit" class="btn btn-primary" [disabled]="saving()">
               @if (saving()) {
                 <span class="loading loading-spinner loading-sm"></span>
               }
-              {{ editingSubject() ? 'Save' : 'Create' }}
+              {{ editingSubject() ? 'Salvar' : 'Criar' }}
             </button>
           </div>
         </form>
@@ -195,15 +197,15 @@ interface ExpandedSubject {
     <dialog class="modal" [class.modal-open]="showTopicModal()">
       <div class="modal-box">
         <h3 class="font-bold text-lg">
-          {{ editingTopic() ? 'Edit Topic' : 'Add Topic' }}
+          {{ editingTopic() ? 'Editar Tópico' : 'Adicionar Tópico' }}
         </h3>
         <form (submit)="onSubmitTopic($event)">
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Name</legend>
+            <legend class="fieldset-legend">Nome</legend>
             <input
               type="text"
               class="input input-bordered w-full"
-              placeholder="Topic name"
+              placeholder="Nome do tópico"
               [formField]="topicForm.name"
             />
             @if (topicForm.name().touched() && topicForm.name().invalid()) {
@@ -215,12 +217,12 @@ interface ExpandedSubject {
             }
           </fieldset>
           <div class="modal-action">
-            <button type="button" class="btn" (click)="closeTopicModal()">Cancel</button>
+            <button type="button" class="btn" (click)="closeTopicModal()">Cancelar</button>
             <button type="submit" class="btn btn-primary" [disabled]="savingTopic()">
               @if (savingTopic()) {
                 <span class="loading loading-spinner loading-sm"></span>
               }
-              {{ editingTopic() ? 'Save' : 'Create' }}
+              {{ editingTopic() ? 'Salvar' : 'Criar' }}
             </button>
           </div>
         </form>
@@ -233,13 +235,13 @@ interface ExpandedSubject {
     <!-- Delete subject confirm -->
     <app-confirm-dialog
       [open]="showDeleteConfirm()"
-      title="Delete Subject"
+      title="Excluir Matéria"
       [message]="
-        'Delete subject &quot;' +
+        'Excluir matéria &quot;' +
         (deleteTarget()?.name ?? '') +
-        '&quot; and all its topics? This cannot be undone.'
+        '&quot; e todos os seus tópicos? Esta ação não pode ser desfeita.'
       "
-      confirmLabel="Delete"
+      confirmLabel="Excluir"
       variant="danger"
       (confirmed)="deleteSubject()"
       (cancelled)="showDeleteConfirm.set(false)"
@@ -248,11 +250,13 @@ interface ExpandedSubject {
     <!-- Delete topic confirm -->
     <app-confirm-dialog
       [open]="showDeleteTopicConfirm()"
-      title="Delete Topic"
+      title="Excluir Tópico"
       [message]="
-        'Delete topic &quot;' + (deleteTopicTarget()?.name ?? '') + '&quot;? This cannot be undone.'
+        'Excluir tópico &quot;' +
+        (deleteTopicTarget()?.name ?? '') +
+        '&quot;? Esta ação não pode ser desfeita.'
       "
-      confirmLabel="Delete"
+      confirmLabel="Excluir"
       variant="danger"
       (confirmed)="deleteTopic()"
       (cancelled)="showDeleteTopicConfirm.set(false)"
@@ -279,7 +283,7 @@ export default class SubjectListPage implements OnInit {
 
   protected readonly subjectModel = signal({ name: '' });
   protected readonly subjectForm = form(this.subjectModel, (s) => {
-    required(s.name, { message: 'Name is required' });
+    required(s.name, { message: 'Nome é obrigatório' });
   });
 
   // Topic modal
@@ -293,7 +297,7 @@ export default class SubjectListPage implements OnInit {
 
   protected readonly topicModel = signal({ name: '' });
   protected readonly topicForm = form(this.topicModel, (s) => {
-    required(s.name, { message: 'Name is required' });
+    required(s.name, { message: 'Nome é obrigatório' });
   });
 
   ngOnInit(): void {
@@ -322,7 +326,7 @@ export default class SubjectListPage implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toastService.error('Failed to load subjects');
+        this.toastService.error('Falha ao carregar matérias');
       },
     });
   }
@@ -358,7 +362,7 @@ export default class SubjectListPage implements OnInit {
         this.subjects.update((list) =>
           list.map((s) => (s.subject.id === item.subject.id ? { ...s, topicsLoading: false } : s)),
         );
-        this.toastService.error('Failed to load topics');
+        this.toastService.error('Falha ao carregar tópicos');
       },
     });
   }
@@ -401,10 +405,10 @@ export default class SubjectListPage implements OnInit {
         });
 
         this.closeModal();
-        this.toastService.success(editing ? 'Subject updated!' : 'Subject created!');
+        this.toastService.success(editing ? 'Matéria atualizada!' : 'Matéria criada!');
         this.loadSubjects(this.currentPage());
       } catch {
-        this.toastService.error('Failed to save subject');
+        this.toastService.error('Falha ao salvar matéria');
       } finally {
         this.saving.set(false);
       }
@@ -424,10 +428,10 @@ export default class SubjectListPage implements OnInit {
 
     this.subjectService.delete(slug, subject.id).subscribe({
       next: () => {
-        this.toastService.success('Subject deleted');
+        this.toastService.success('Matéria excluída');
         this.loadSubjects(this.currentPage());
       },
-      error: () => this.toastService.error('Failed to delete subject'),
+      error: () => this.toastService.error('Falha ao excluir matéria'),
     });
   }
 
@@ -473,10 +477,10 @@ export default class SubjectListPage implements OnInit {
         });
 
         this.closeTopicModal();
-        this.toastService.success(editing ? 'Topic updated!' : 'Topic created!');
+        this.toastService.success(editing ? 'Tópico atualizado!' : 'Tópico criado!');
         this.refreshTopics(parentSubject.id);
       } catch {
-        this.toastService.error('Failed to save topic');
+        this.toastService.error('Falha ao salvar tópico');
       } finally {
         this.savingTopic.set(false);
       }
@@ -498,10 +502,10 @@ export default class SubjectListPage implements OnInit {
 
     this.topicService.delete(slug, topic.id).subscribe({
       next: () => {
-        this.toastService.success('Topic deleted');
+        this.toastService.success('Tópico excluído');
         this.refreshTopics(parent.id);
       },
-      error: () => this.toastService.error('Failed to delete topic'),
+      error: () => this.toastService.error('Falha ao excluir tópico'),
     });
   }
 
@@ -517,7 +521,7 @@ export default class SubjectListPage implements OnInit {
           ),
         );
       },
-      error: () => this.toastService.error('Failed to refresh topics'),
+      error: () => this.toastService.error('Falha ao atualizar tópicos'),
     });
   }
 }

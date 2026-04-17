@@ -16,6 +16,16 @@ import { TopicService } from '../../subjects/services/topic.service';
 import { ClassTopicService } from '../services/class-topic.service';
 import { ClassService } from '../services/class.service';
 
+const DAY_LABELS: Record<string, string> = {
+  monday: 'Segunda-feira',
+  tuesday: 'Terça-feira',
+  wednesday: 'Quarta-feira',
+  thursday: 'Quinta-feira',
+  friday: 'Sexta-feira',
+  saturday: 'Sábado',
+  sunday: 'Domingo',
+};
+
 function capitalize(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
@@ -25,12 +35,12 @@ function capitalize(value: string): string {
   imports: [PageHeader, ConfirmDialog, FormField],
   template: `
     <app-page-header
-      [title]="'Class on ' + (detail()?.classInfo?.date ?? '')"
-      subtitle="Class details and topics"
+      [title]="'Aula em ' + (detail()?.classInfo?.date ?? '')"
+      subtitle="Detalhes da aula e tópicos"
     >
       <div class="flex gap-2">
-        <button class="btn" (click)="goBack()">Back</button>
-        <button class="btn" (click)="goToEdit()">Edit</button>
+        <button class="btn" (click)="goBack()">Voltar</button>
+        <button class="btn" (click)="goToEdit()">Editar</button>
       </div>
     </app-page-header>
 
@@ -43,28 +53,28 @@ function capitalize(value: string): string {
         <!-- Class Info Card -->
         <div class="card bg-base-100 shadow-sm border border-base-300">
           <div class="card-body">
-            <h2 class="card-title text-base">Class Information</h2>
+            <h2 class="card-title text-base">Informações da Aula</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
               <div>
-                <p class="text-sm text-base-content/60">Date</p>
+                <p class="text-sm text-base-content/60">Data</p>
                 <p class="font-medium">{{ detail()!.classInfo.date }}</p>
               </div>
               <div>
-                <p class="text-sm text-base-content/60">Student</p>
+                <p class="text-sm text-base-content/60">Aluno</p>
                 <p class="font-medium">
                   {{ detail()!.student.name }} {{ detail()!.student.surname }}
                 </p>
               </div>
               <div>
-                <p class="text-sm text-base-content/60">Teacher</p>
+                <p class="text-sm text-base-content/60">Professor</p>
                 <p class="font-medium">
                   {{ detail()!.teacher.name }} {{ detail()!.teacher.surname }}
                 </p>
               </div>
               <div>
-                <p class="text-sm text-base-content/60">Schedule</p>
+                <p class="text-sm text-base-content/60">Horário</p>
                 <p class="font-medium">
-                  {{ capitalize(detail()!.schedule.dayOfWeek) }}
+                  {{ translateDay(detail()!.schedule.dayOfWeek) }}
                   {{ detail()!.schedule.startTime }}–{{ detail()!.schedule.endTime }}
                 </p>
               </div>
@@ -77,27 +87,29 @@ function capitalize(value: string): string {
           <div class="card-body">
             <div class="flex items-center justify-between">
               <h2 class="card-title text-base">
-                Topics
+                Tópicos
                 @if (topics().length > 0) {
                   <span class="badge badge-primary">{{ topics().length }}</span>
                 }
               </h2>
-              <button class="btn btn-primary" (click)="openAddTopicModal()">+ Add Topic</button>
+              <button class="btn btn-primary" (click)="openAddTopicModal()">
+                + Adicionar Tópico
+              </button>
             </div>
             @if (loadingTopics()) {
               <div class="flex justify-center py-4">
                 <span class="loading loading-spinner loading-md text-primary"></span>
               </div>
             } @else if (topics().length === 0) {
-              <p class="text-base-content/60 mt-2">No topics attached to this class.</p>
+              <p class="text-base-content/60 mt-2">Nenhum tópico vinculado a esta aula.</p>
             } @else {
               <div class="overflow-x-auto mt-2">
                 <table class="table table">
                   <thead>
                     <tr>
-                      <th>Topic</th>
-                      <th>Subject</th>
-                      <th class="text-right">Actions</th>
+                      <th>Tópico</th>
+                      <th>Matéria</th>
+                      <th class="text-right">Ações</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -110,7 +122,7 @@ function capitalize(value: string): string {
                             class="btn btn-ghost text-error"
                             (click)="confirmRemoveTopic(topic)"
                           >
-                            Remove
+                            Remover
                           </button>
                         </td>
                       </tr>
@@ -127,25 +139,25 @@ function capitalize(value: string): string {
     <!-- Add Topic modal -->
     <dialog class="modal" [class.modal-open]="showTopicModal()">
       <div class="modal-box">
-        <h3 class="font-bold text-lg">Add Topic</h3>
+        <h3 class="font-bold text-lg">Adicionar Tópico</h3>
         <form (submit)="onAddTopic($event)">
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Filter by Subject</legend>
+            <legend class="fieldset-legend">Filtrar por Matéria</legend>
             <select
               class="select select-bordered w-full"
               [value]="selectedSubjectId()"
               (change)="onSubjectFilterChange($any($event.target).value)"
             >
-              <option value="">All subjects</option>
+              <option value="">Todas as matérias</option>
               @for (subject of subjects(); track subject.id) {
                 <option [value]="subject.id">{{ subject.name }}</option>
               }
             </select>
           </fieldset>
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Topic</legend>
+            <legend class="fieldset-legend">Tópico</legend>
             <select class="select select-bordered w-full" [formField]="topicForm.topicId">
-              <option value="">Select a topic</option>
+              <option value="">Selecione um tópico</option>
               @for (topic of availableTopics(); track topic.id) {
                 <option [value]="topic.id">{{ topic.name }}</option>
               }
@@ -159,12 +171,12 @@ function capitalize(value: string): string {
             }
           </fieldset>
           <div class="modal-action">
-            <button type="button" class="btn" (click)="closeTopicModal()">Cancel</button>
+            <button type="button" class="btn" (click)="closeTopicModal()">Cancelar</button>
             <button type="submit" class="btn btn-primary" [disabled]="savingTopic()">
               @if (savingTopic()) {
                 <span class="loading loading-spinner loading-sm"></span>
               }
-              Add
+              Adicionar
             </button>
           </div>
         </form>
@@ -176,11 +188,9 @@ function capitalize(value: string): string {
 
     <app-confirm-dialog
       [open]="showRemoveConfirm()"
-      title="Remove Topic"
-      [message]="
-        'Remove topic &quot;' + (removeTarget()?.topicName ?? '') + '&quot; from this class?'
-      "
-      confirmLabel="Remove"
+      title="Remover Tópico"
+      [message]="'Remover tópico &quot;' + (removeTarget()?.topicName ?? '') + '&quot; desta aula?'"
+      confirmLabel="Remover"
       variant="danger"
       (confirmed)="removeTopic()"
       (cancelled)="showRemoveConfirm.set(false)"
@@ -220,10 +230,14 @@ export default class ClassDetailPage implements OnInit {
 
   protected readonly topicModel = signal({ topicId: '' });
   protected readonly topicForm = form(this.topicModel, (s) => {
-    required(s.topicId, { message: 'Topic is required' });
+    required(s.topicId, { message: 'Tópico é obrigatório' });
   });
 
   protected capitalize = capitalize;
+
+  protected translateDay(day: string): string {
+    return DAY_LABELS[day.toLowerCase()] ?? day;
+  }
 
   ngOnInit(): void {
     this.classId = this.route.snapshot.paramMap.get('classId') ?? '';
@@ -242,7 +256,7 @@ export default class ClassDetailPage implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toastService.error('Failed to load class details');
+        this.toastService.error('Falha ao carregar detalhes da aula');
       },
     });
   }
@@ -259,7 +273,7 @@ export default class ClassDetailPage implements OnInit {
       },
       error: () => {
         this.loadingTopics.set(false);
-        this.toastService.error('Failed to load topics');
+        this.toastService.error('Falha ao carregar tópicos');
       },
     });
   }
@@ -289,7 +303,7 @@ export default class ClassDetailPage implements OnInit {
       next: (res: PaginatedResponse<Topic>) => {
         this.allTopics.set(res.items);
       },
-      error: () => this.toastService.error('Failed to load available topics'),
+      error: () => this.toastService.error('Falha ao carregar tópicos disponíveis'),
     });
   }
 
@@ -299,7 +313,7 @@ export default class ClassDetailPage implements OnInit {
 
     this.subjectService.list(slug, 1, 100).subscribe({
       next: (res: PaginatedResponse<Subject>) => this.subjects.set(res.items),
-      error: () => this.toastService.error('Failed to load subjects'),
+      error: () => this.toastService.error('Falha ao carregar matérias'),
     });
   }
 
@@ -319,10 +333,10 @@ export default class ClassDetailPage implements OnInit {
         });
 
         this.closeTopicModal();
-        this.toastService.success('Topic added!');
+        this.toastService.success('Tópico adicionado!');
         this.loadTopics();
       } catch {
-        this.toastService.error('Failed to add topic');
+        this.toastService.error('Falha ao adicionar tópico');
       } finally {
         this.savingTopic.set(false);
       }
@@ -342,10 +356,10 @@ export default class ClassDetailPage implements OnInit {
 
     this.classTopicService.remove(slug, this.classId, target.classTopicId).subscribe({
       next: () => {
-        this.toastService.success('Topic removed');
+        this.toastService.success('Tópico removido');
         this.loadTopics();
       },
-      error: () => this.toastService.error('Failed to remove topic'),
+      error: () => this.toastService.error('Falha ao remover tópico'),
     });
   }
 

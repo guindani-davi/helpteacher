@@ -1,4 +1,4 @@
-import type { LocaleEnum } from '../../i18n/enums/locale.enum';
+import type { LocaleEnum } from '@help-teacher/shared';
 
 export interface JwtPayload {
   sub: string;

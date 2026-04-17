@@ -7,19 +7,29 @@ import { PageHeader } from '../../../shared';
 import { OrgContextService } from '../../organizations/state/org-context.service';
 import { ReportService } from '../services/report.service';
 
+const DAY_LABELS: Record<string, string> = {
+  monday: 'Segunda-feira',
+  tuesday: 'Terça-feira',
+  wednesday: 'Quarta-feira',
+  thursday: 'Quinta-feira',
+  friday: 'Sexta-feira',
+  saturday: 'Sábado',
+  sunday: 'Domingo',
+};
+
 @Component({
   selector: 'app-student-report-page',
   imports: [PageHeader, DatePipe],
   template: `
-    <app-page-header title="Student Report" subtitle="Visual report overview">
+    <app-page-header title="Relatório do Aluno" subtitle="Visão geral do relatório">
       <div class="flex gap-2">
-        <button class="btn" (click)="goBack()">← Back</button>
+        <button class="btn" (click)="goBack()">← Voltar</button>
         @if (report()) {
           <button class="btn btn-primary" [disabled]="downloading()" (click)="downloadPdf()">
             @if (downloading()) {
               <span class="loading loading-spinner loading-sm"></span>
             }
-            📥 Download PDF
+            📥 Baixar PDF
           </button>
         }
       </div>
@@ -43,7 +53,7 @@ import { ReportService } from '../services/report.service';
             }
             <div>
               <h2 class="card-title text-lg">{{ r.organization.name }}</h2>
-              <p class="text-sm text-base-content/60">Student Report</p>
+              <p class="text-sm text-base-content/60">Relatório do Aluno</p>
             </div>
           </div>
         </div>
@@ -51,7 +61,7 @@ import { ReportService } from '../services/report.service';
         <!-- Student Info -->
         <div class="card bg-base-100 shadow-sm border border-base-300">
           <div class="card-body">
-            <h2 class="card-title text-base">Student</h2>
+            <h2 class="card-title text-base">Aluno</h2>
             <p class="text-lg font-semibold mt-1">{{ r.student.name }} {{ r.student.surname }}</p>
           </div>
         </div>
@@ -59,32 +69,32 @@ import { ReportService } from '../services/report.service';
         <!-- Registration -->
         <div class="card bg-base-100 shadow-sm border border-base-300">
           <div class="card-body">
-            <h2 class="card-title text-base">Registration</h2>
+            <h2 class="card-title text-base">Matrícula</h2>
             @if (r.registration; as reg) {
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
                 <div>
-                  <p class="text-sm text-base-content/60">Education Level</p>
+                  <p class="text-sm text-base-content/60">Nível de Ensino</p>
                   <p class="font-medium">{{ reg.educationLevelName }}</p>
                 </div>
                 <div>
-                  <p class="text-sm text-base-content/60">Grade Level</p>
+                  <p class="text-sm text-base-content/60">Série</p>
                   <p class="font-medium">{{ reg.gradeLevelName }}</p>
                 </div>
                 <div>
-                  <p class="text-sm text-base-content/60">School</p>
+                  <p class="text-sm text-base-content/60">Escola</p>
                   <p class="font-medium">{{ reg.schoolName }}</p>
                 </div>
                 <div>
-                  <p class="text-sm text-base-content/60">Start Date</p>
+                  <p class="text-sm text-base-content/60">Data de Início</p>
                   <p class="font-medium">{{ reg.startDate }}</p>
                 </div>
                 <div>
-                  <p class="text-sm text-base-content/60">End Date</p>
-                  <p class="font-medium">{{ reg.endDate ?? 'Ongoing' }}</p>
+                  <p class="text-sm text-base-content/60">Data de Término</p>
+                  <p class="font-medium">{{ reg.endDate ?? 'Em andamento' }}</p>
                 </div>
               </div>
             } @else {
-              <p class="text-base-content/60 mt-2">No active registration.</p>
+              <p class="text-base-content/60 mt-2">Nenhuma matrícula ativa.</p>
             }
           </div>
         </div>
@@ -93,31 +103,31 @@ import { ReportService } from '../services/report.service';
         <div class="card bg-base-100 shadow-sm border border-base-300">
           <div class="card-body">
             <h2 class="card-title text-base">
-              Classes
+              Aulas
               @if (r.classes.length > 0) {
                 <span class="badge badge-primary">{{ r.classes.length }}</span>
               }
             </h2>
             @if (r.classes.length === 0) {
-              <p class="text-base-content/60 mt-2">No classes recorded.</p>
+              <p class="text-base-content/60 mt-2">Nenhuma aula registrada.</p>
             } @else {
               <div class="overflow-x-auto mt-2">
                 <table class="table table">
                   <thead>
                     <tr>
-                      <th>Date</th>
-                      <th>Day</th>
-                      <th>Time</th>
-                      <th>Teacher</th>
-                      <th>Subjects</th>
-                      <th>Topics</th>
+                      <th>Data</th>
+                      <th>Dia</th>
+                      <th>Horário</th>
+                      <th>Professor</th>
+                      <th>Disciplinas</th>
+                      <th>Tópicos</th>
                     </tr>
                   </thead>
                   <tbody>
                     @for (cls of r.classes; track cls.id) {
                       <tr>
                         <td>{{ cls.date }}</td>
-                        <td>{{ cls.dayOfWeek }}</td>
+                        <td>{{ translateDay(cls.dayOfWeek) }}</td>
                         <td>{{ cls.startTime }}–{{ cls.endTime }}</td>
                         <td>{{ cls.teacherName }}</td>
                         <td>
@@ -147,12 +157,12 @@ import { ReportService } from '../services/report.service';
 
         <!-- Footer -->
         <div class="text-center text-sm text-base-content/50 py-4">
-          Generated on {{ today | date: 'mediumDate' }}
+          Gerado em {{ today | date: 'mediumDate' }}
         </div>
       </div>
     } @else {
       <div class="flex justify-center py-16">
-        <p class="text-base-content/60">Failed to load report.</p>
+        <p class="text-base-content/60">Falha ao carregar relatório.</p>
       </div>
     }
   `,
@@ -171,6 +181,10 @@ export default class StudentReportPage implements OnInit {
 
   private studentId = '';
 
+  protected translateDay(day: string): string {
+    return DAY_LABELS[day.toLowerCase()] ?? day;
+  }
+
   ngOnInit(): void {
     this.studentId = this.route.snapshot.paramMap.get('studentId') ?? '';
     this.loadReport();
@@ -187,7 +201,7 @@ export default class StudentReportPage implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.toastService.error('Failed to load student report');
+        this.toastService.error('Falha ao carregar relatório do aluno');
         this.loading.set(false);
       },
     });
@@ -209,7 +223,7 @@ export default class StudentReportPage implements OnInit {
         this.downloading.set(false);
       },
       error: () => {
-        this.toastService.error('Failed to download PDF');
+        this.toastService.error('Falha ao baixar PDF');
         this.downloading.set(false);
       },
     });

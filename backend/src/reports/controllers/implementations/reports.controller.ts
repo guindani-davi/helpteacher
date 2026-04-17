@@ -13,17 +13,13 @@ import { CurrentUser } from '../../../auth/decorators/current-user.decorator';
 import type { JwtPayload } from '../../../auth/models/jwt.model';
 import { MembershipGuard } from '../../../memberships/guards/membership.guard';
 import type { Membership } from '../../../memberships/models/membership.model';
-import { AllowedTiers } from '../../../subscriptions/decorators/allowed-tiers.decorator';
-import { SubscriptionTierEnum } from '../../../subscriptions/enums/subscription-tier.enum';
-import { SubscriptionTierGuard } from '../../../subscriptions/guards/subscription-tier.guard';
 import { GetStudentReportParamsDTO } from '../../dtos/get-student-report.dto';
 import { StudentReport } from '../../models/student-report.model';
 import { IReportsService } from '../../services/i.reports.service';
 import { IReportsController } from '../i.reports.controller';
 
 @Controller('organizations')
-@UseGuards(MembershipGuard, SubscriptionTierGuard)
-@AllowedTiers(SubscriptionTierEnum.PRO)
+@UseGuards(MembershipGuard)
 export class ReportsController extends IReportsController {
   public constructor(@Inject(IReportsService) reportsService: IReportsService) {
     super(reportsService);

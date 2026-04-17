@@ -10,7 +10,7 @@ import { StudentUserService } from '../services/student-user.service';
   selector: 'app-my-students-page',
   imports: [PageHeader, Pagination, EmptyState],
   template: `
-    <app-page-header title="My Students" subtitle="Students linked to your account" />
+    <app-page-header title="Meus Alunos" subtitle="Alunos vinculados à sua conta" />
 
     @if (loading()) {
       <div class="flex justify-center py-16">
@@ -18,8 +18,8 @@ import { StudentUserService } from '../services/student-user.service';
       </div>
     } @else if (students().length === 0) {
       <app-empty-state
-        title="No students linked"
-        description="You don't have any students linked to your account in this organization."
+        title="Nenhum aluno vinculado"
+        description="Você não tem nenhum aluno vinculado à sua conta nesta organização."
         icon="👨‍👩‍👧‍👦"
       />
     } @else {
@@ -51,7 +51,7 @@ import { StudentUserService } from '../services/student-user.service';
                 class="btn btn-primary btn-block mt-4"
                 (click)="goToProgress(student.id); $event.stopPropagation()"
               >
-                View Progress →
+                Ver Progresso →
               </button>
             </div>
           </div>
@@ -99,7 +99,7 @@ export default class MyStudentsPage implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        this.toastService.error('Failed to load students');
+        this.toastService.error('Falha ao carregar alunos');
         this.loading.set(false);
       },
     });

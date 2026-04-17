@@ -10,9 +10,9 @@ import { SchoolService } from '../services/school.service';
   selector: 'app-school-list-page',
   imports: [PageHeader, ConfirmDialog, Pagination, EmptyState, FormField],
   template: `
-    <app-page-header title="Schools" subtitle="Manage your schools">
+    <app-page-header title="Escolas" subtitle="Gerencie suas escolas">
       @if (orgContext.isAdmin()) {
-        <button class="btn btn-primary" (click)="openCreateModal()">+ Add School</button>
+        <button class="btn btn-primary" (click)="openCreateModal()">+ Adicionar Escola</button>
       }
     </app-page-header>
 
@@ -23,11 +23,11 @@ import { SchoolService } from '../services/school.service';
     } @else if (schools().length === 0) {
       <app-empty-state
         icon="🏫"
-        title="No schools yet"
-        description="Create your first school to get started."
+        title="Nenhuma escola ainda"
+        description="Crie sua primeira escola para começar."
       >
         @if (orgContext.isAdmin()) {
-          <button class="btn btn-primary" (click)="openCreateModal()">Add School</button>
+          <button class="btn btn-primary" (click)="openCreateModal()">Adicionar Escola</button>
         }
       </app-empty-state>
     } @else {
@@ -36,8 +36,8 @@ import { SchoolService } from '../services/school.service';
           <table class="table">
             <thead>
               <tr>
-                <th>Name</th>
-                <th class="text-right">Actions</th>
+                <th>Nome</th>
+                <th class="text-right">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -46,9 +46,9 @@ import { SchoolService } from '../services/school.service';
                   <td class="font-medium">{{ school.name }}</td>
                   <td class="text-right">
                     @if (orgContext.isAdmin()) {
-                      <button class="btn btn-ghost" (click)="openEditModal(school)">Edit</button>
+                      <button class="btn btn-ghost" (click)="openEditModal(school)">Editar</button>
                       <button class="btn btn-ghost text-error" (click)="confirmDelete(school)">
-                        Delete
+                        Excluir
                       </button>
                     }
                   </td>
@@ -70,14 +70,16 @@ import { SchoolService } from '../services/school.service';
     <!-- Create / Edit modal -->
     <dialog class="modal" [class.modal-open]="showModal()">
       <div class="modal-box">
-        <h3 class="font-bold text-lg">{{ editingSchool() ? 'Edit School' : 'Add School' }}</h3>
+        <h3 class="font-bold text-lg">
+          {{ editingSchool() ? 'Editar Escola' : 'Adicionar Escola' }}
+        </h3>
         <form (submit)="onSubmit($event)">
           <fieldset class="fieldset mt-4">
-            <legend class="fieldset-legend">Name</legend>
+            <legend class="fieldset-legend">Nome</legend>
             <input
               type="text"
               class="input input-bordered w-full"
-              placeholder="School name"
+              placeholder="Nome da escola"
               [formField]="schoolForm.name"
             />
             @if (schoolForm.name().touched() && schoolForm.name().invalid()) {
@@ -89,12 +91,12 @@ import { SchoolService } from '../services/school.service';
             }
           </fieldset>
           <div class="modal-action">
-            <button type="button" class="btn" (click)="closeModal()">Cancel</button>
+            <button type="button" class="btn" (click)="closeModal()">Cancelar</button>
             <button type="submit" class="btn btn-primary" [disabled]="saving()">
               @if (saving()) {
                 <span class="loading loading-spinner loading-sm"></span>
               }
-              {{ editingSchool() ? 'Save' : 'Create' }}
+              {{ editingSchool() ? 'Salvar' : 'Criar' }}
             </button>
           </div>
         </form>
@@ -106,11 +108,13 @@ import { SchoolService } from '../services/school.service';
 
     <app-confirm-dialog
       [open]="showDeleteConfirm()"
-      title="Delete School"
+      title="Excluir Escola"
       [message]="
-        'Delete school &quot;' + (deleteTarget()?.name ?? '') + '&quot;? This cannot be undone.'
+        'Excluir escola &quot;' +
+        (deleteTarget()?.name ?? '') +
+        '&quot;? Esta ação não pode ser desfeita.'
       "
-      confirmLabel="Delete"
+      confirmLabel="Excluir"
       variant="danger"
       (confirmed)="deleteSchool()"
       (cancelled)="showDeleteConfirm.set(false)"
@@ -134,7 +138,7 @@ export default class SchoolListPage implements OnInit {
 
   protected readonly schoolModel = signal({ name: '' });
   protected readonly schoolForm = form(this.schoolModel, (s) => {
-    required(s.name, { message: 'Name is required' });
+    required(s.name, { message: 'Nome é obrigatório' });
   });
 
   ngOnInit(): void {
@@ -155,7 +159,7 @@ export default class SchoolListPage implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.toastService.error('Failed to load schools');
+        this.toastService.error('Falha ao carregar escolas');
       },
     });
   }
@@ -196,10 +200,10 @@ export default class SchoolListPage implements OnInit {
         });
 
         this.closeModal();
-        this.toastService.success(editing ? 'School updated!' : 'School created!');
+        this.toastService.success(editing ? 'Escola atualizada!' : 'Escola criada!');
         this.loadSchools(this.currentPage());
       } catch {
-        this.toastService.error('Failed to save school');
+        this.toastService.error('Falha ao salvar escola');
       } finally {
         this.saving.set(false);
       }
@@ -219,10 +223,10 @@ export default class SchoolListPage implements OnInit {
 
     this.schoolService.delete(slug, school.id).subscribe({
       next: () => {
-        this.toastService.success('School deleted');
+        this.toastService.success('Escola excluída');
         this.loadSchools(this.currentPage());
       },
-      error: () => this.toastService.error('Failed to delete school'),
+      error: () => this.toastService.error('Falha ao excluir escola'),
     });
   }
 }

@@ -126,11 +126,7 @@ export class AuthService extends IAuthService {
         expires_at: new Date(Date.now() + 3600_000).toISOString(),
       });
 
-      await this.emailService.sendPasswordResetEmail(
-        dto.email,
-        rawToken,
-        user.locale,
-      );
+      await this.emailService.sendPasswordResetEmail(dto.email, rawToken);
     } catch (error) {
       if (error instanceof EntityNotFoundException) {
         return;
